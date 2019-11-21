@@ -8,3 +8,7 @@ Route.post('/sessions', 'SessionController.create')
 Route.resource('broker', 'BrokerController')
   .apiOnly()
   .middleware('auth')
+  
+Route.resource('city', 'CityController')
+.apiOnly()
+.middleware('auth')
