@@ -45,4 +45,4 @@ class CityController {
   }
 }
 
-module.exports = BrokerController
+module.exports = CityController
