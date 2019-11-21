@@ -5,6 +5,6 @@ const Route = use('Route')
 Route.post('/users', 'UserController.create')
 Route.post('/sessions', 'SessionController.create')
 
-Route.resource('photographer', 'PhotographerController')
+Route.resource('broker', 'BrokerController')
   .apiOnly()
   .middleware('auth')

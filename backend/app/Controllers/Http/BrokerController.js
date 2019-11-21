@@ -1,92 +1,47 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Broker = use('App/Models/Broker')
 
-/**
- * Resourceful controller for interacting with brokers
- */
 class BrokerController {
-  /**
-   * Show a list of all brokers.
-   * GET brokers
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async index ({ request, response, view }) {
+    const broker = Broker.all()
+
+    return broker
   }
 
-  /**
-   * Render a form to be used for creating a new broker.
-   * GET brokers/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
-  /**
-   * Create/save a new broker.
-   * POST brokers
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-  }
-
-  /**
-   * Display a single broker.
-   * GET brokers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async show ({ params, request, response, view }) {
+    const broker = await Broker.findOrFail(params.id)
+
+    return broker;
   }
 
-  /**
-   * Render a form to update an existing broker.
-   * GET brokers/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async store ({ request, response }) {
+    const data = request.only([
+      'name'
+    ])
+
+    const broker = await Broker.create(data);
+
+    return broker
   }
 
-  /**
-   * Update broker details.
-   * PUT or PATCH brokers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
+    const broker = await Broker.findOrFail(params.id);
+    const data = request.only([
+      'name'
+    ])
+    
+    broker.merge(data);
+
+    await broker.save();
+    
+    return broker
   }
 
-  /**
-   * Delete a broker with id.
-   * DELETE brokers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
+    const broker = await Broker.findOrFail(params.id)
+    
+    await broker.delete();
   }
 }
 
