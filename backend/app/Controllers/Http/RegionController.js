@@ -1,92 +1,62 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Region = use('App/Models/Region')
+const City = use('App/Models/City')
 
-/**
- * Resourceful controller for interacting with regions
- */
 class RegionController {
-  /**
-   * Show a list of all regions.
-   * GET regions
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async index ({ request, response, view }) {
+    const regions = Region.query()
+                      .with('city')
+                      .fetch()
+
+    return regions
   }
 
-  /**
-   * Render a form to be used for creating a new region.
-   * GET regions/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
-  /**
-   * Create/save a new region.
-   * POST regions
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-  }
-
-  /**
-   * Display a single region.
-   * GET regions/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async show ({ params, request, response, view }) {
+    const region = await Region.findOrFail(params.id)
+    
+    await region.load("city")
+
+    return region;
   }
 
-  /**
-   * Render a form to update an existing region.
-   * GET regions/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async store ({ request, response }) {
+    const data = request.only([
+      'name',
+      'city_id'
+    ])
+
+    const city = await City.findOrFail(data.city_id)
+
+    const region = await Region.create(data);
+
+    region.city_id = city;
+
+    return region
   }
 
-  /**
-   * Update region details.
-   * PUT or PATCH regions/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
+    const region = await Region.findOrFail(params.id);
+    const data = request.only([
+      'name',
+      'city_id'
+    ])
+    
+    const city = await City.findOrFail(data.city_id)
+
+    region.merge(data);
+
+    await region.save();
+
+    region.city_id = city;
+    
+    return region
   }
 
-  /**
-   * Delete a region with id.
-   * DELETE regions/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
+    const region = await Region.findOrFail(params.id)
+    
+    await region.delete();
   }
 }
 

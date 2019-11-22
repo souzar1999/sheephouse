@@ -10,5 +10,13 @@ Route.resource('broker', 'BrokerController')
   .middleware('auth')
   
 Route.resource('city', 'CityController')
-.apiOnly()
-.middleware('auth')
+  .apiOnly()
+  .middleware('auth')
+  
+Route.resource('region', 'RegionController')
+  .apiOnly()
+  .middleware('auth')
+
+Route.resource('horary', 'HoraryController')
+  .apiOnly()
+  .middleware('auth')
