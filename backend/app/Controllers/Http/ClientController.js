@@ -23,6 +23,7 @@ class ClientController {
   async store ({ request, response }) {
     const data = request.only([
       'name',
+      'email',
       'broker_id'
     ])
 
@@ -39,6 +40,7 @@ class ClientController {
     const client = await Client.findOrFail(params.id);
     const data = request.only([
       'name',
+      'email',
       'broker_id'
     ])
     
