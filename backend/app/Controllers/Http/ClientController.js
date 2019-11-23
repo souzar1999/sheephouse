@@ -31,7 +31,7 @@ class ClientController {
 
     const client = await Client.create(data);
 
-    client.broker_id = broker;
+    client.broker = broker;
 
     return client
   }
@@ -50,7 +50,7 @@ class ClientController {
 
     await client.save();
 
-    client.broker_id = broker;
+    client.broker = broker;
     
     return client
   }

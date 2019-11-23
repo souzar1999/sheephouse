@@ -1,16 +1,21 @@
 'use strict'
 
 const Photographer = use('App/Models/Photographer')
+const Region = use('App/Models/Region')
 
 class PhotographerController {
   async index ({ request, response, view }) {
-    const photographer = Photographer.all()
+    const photographers = Photographer.query()
+                      .with('region')
+                      .fetch()
 
-    return photographer
+    return photographers
   }
 
   async show ({ params, request, response, view }) {
     const photographer = await Photographer.findOrFail(params.id)
+    
+    await photographer.load("region")
 
     return photographer;
   }
@@ -23,7 +28,11 @@ class PhotographerController {
       'region_id'
     ])
 
+    const region = await Region.findOrFail(data.region_id)
+
     const photographer = await Photographer.create(data);
+
+    photographer.region = region;
 
     return photographer
   }
@@ -37,9 +46,13 @@ class PhotographerController {
       'region_id'
     ])
     
+    const region = await Region.findOrFail(data.region_id)
+
     photographer.merge(data);
 
     await photographer.save();
+
+    photographer.region = region;
     
     return photographer
   }

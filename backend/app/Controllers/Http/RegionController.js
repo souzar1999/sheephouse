@@ -30,7 +30,7 @@ class RegionController {
 
     const region = await Region.create(data);
 
-    region.city_id = city;
+    region.city = city;
 
     return region
   }
@@ -48,7 +48,7 @@ class RegionController {
 
     await region.save();
 
-    region.city_id = city;
+    region.city = city;
     
     return region
   }

@@ -10,6 +10,11 @@ class PhotographerSchema extends Schema {
       table.string('name').notNullable()
       table.string('email').notNullable()
       table.boolean('drone').notNullable()
+      table
+        .integer('region_id')
+        .unsigned()
+        .references('id')
+        .inTable('regions')
       table.timestamps()
     })
   }
