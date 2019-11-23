@@ -16,6 +16,10 @@ Route.resource('city', 'CityController')
 Route.resource('region', 'RegionController')
   .apiOnly()
   .middleware('auth')
+  
+Route.resource('district', 'DistrictController')
+  .apiOnly()
+  .middleware('auth')
 
 Route.resource('horary', 'HoraryController')
   .apiOnly()
