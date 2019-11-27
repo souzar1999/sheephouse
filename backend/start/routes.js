@@ -36,5 +36,10 @@ Route.resource('property', 'PropertyController')
 Route.resource('region', 'RegionController')
   .apiOnly()
   .middleware('auth')
+
+Route.resource('scheduling', 'SchedulingController')
+  .apiOnly()
+  .middleware('auth')
+        
       
     

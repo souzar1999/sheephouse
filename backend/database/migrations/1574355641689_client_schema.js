@@ -4,11 +4,15 @@
 const Schema = use('Schema')
 
 class ClientSchema extends Schema {
-  up () {
-    this.create('clients', (table) => {
+  up() {
+    this.create('clients', table => {
       table.increments()
       table.string('name').notNullable()
-      table.string('email').notNullable().unique()
+      table
+        .integer('user_id')
+        .unsigned()
+        .references('id')
+        .inTable('users')
       table
         .integer('broker_id')
         .unsigned()
@@ -18,7 +22,7 @@ class ClientSchema extends Schema {
     })
   }
 
-  down () {
+  down() {
     this.drop('clients')
   }
 }

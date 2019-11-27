@@ -6,16 +6,19 @@ const Region = use('App/Models/Region')
 class PhotographerController {
   async index ({ request, response, view }) {
     const photographers = Photographer.query()
-                      .with('region')
-                      .fetch()
+      .with('region')
+      .where('scheduling')
+      .fetch()
 
     return photographers
   }
 
   async show ({ params, request, response, view }) {
-    const photographer = await Photographer.findOrFail(params.id)
-    
-    await photographer.load("region")
+    const photographer = await Photographer.query()
+      .where('id', params.id)   
+      .with('region')
+      .where('scheduling')
+      .fetch()
 
     return photographer;
   }

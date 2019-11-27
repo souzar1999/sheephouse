@@ -4,13 +4,18 @@ const Horary = use('App/Models/Horary')
 
 class HoraryController {
   async index ({ request, response, view }) {
-    const horary = Horary.all()
+    const horary = Horary.query()
+      .with('schedulings')
+      .fetch()
 
     return horary
   }
 
   async show ({ params, request, response, view }) {
-    const horary = await Horary.findOrFail(params.id)
+    const horary = await Horary.query()
+      .where('id', params.id)   
+      .with('schedulings')
+      .fetch()
 
     return horary;
   }

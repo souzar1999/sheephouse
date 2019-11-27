@@ -3,12 +3,15 @@
 const Model = use('Model')
 
 class Client extends Model {
-  
-  property () {
-    return this.hasMany('App/Models/Property')
+  scheduling() {
+    return this.hasMany('App/Models/Scheduling')
   }
-  
-  broker () {
+
+  user() {
+    return this.belongsTo('App/Models/User')
+  }
+
+  broker() {
     return this.belongsTo('App/Models/Broker')
   }
 }

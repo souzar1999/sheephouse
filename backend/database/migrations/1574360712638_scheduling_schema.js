@@ -4,10 +4,13 @@
 const Schema = use('Schema')
 
 class SchedulingSchema extends Schema {
-  up () {
-    this.create('schedulings', (table) => {
+  up() {
+    this.create('schedulings', table => {
       table.increments()
       table.string('date').notNullable()
+      table.string('address').notNullable()
+      table.string('latitude').notNullable()
+      table.string('longitude').notNullable()
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
       table
@@ -16,20 +19,20 @@ class SchedulingSchema extends Schema {
         .references('id')
         .inTable('photographers')
       table
-        .integer('propertie_id')
-        .unsigned()
-        .references('id')
-        .inTable('properties')
-      table
         .integer('horary_id')
         .unsigned()
         .references('id')
         .inTable('horaries')
+      table
+        .integer('client_id')
+        .unsigned()
+        .references('id')
+        .inTable('clients')
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('schedulings')
   }
 }

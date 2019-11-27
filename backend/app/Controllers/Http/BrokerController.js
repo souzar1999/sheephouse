@@ -4,13 +4,18 @@ const Broker = use('App/Models/Broker')
 
 class BrokerController {
   async index ({ request, response, view }) {
-    const broker = Broker.all()
+    const broker = Broker.query()
+      .with('client')
+      .fetch()
 
     return broker
   }
 
   async show ({ params, request, response, view }) {
-    const broker = await Broker.findOrFail(params.id)
+    const broker = await Broker.query()
+      .where('id', params.id)      
+      .with('client')
+      .fetch()
 
     return broker;
   }

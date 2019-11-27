@@ -1,64 +1,54 @@
 'use strict'
 
 const Client = use('App/Models/Client')
+const User = use('App/Models/User')
 const Broker = use('App/Models/Broker')
 
 class ClientController {
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const clients = Client.query()
-                      .with('broker')
-                      .fetch()
+      .with('broker')
+      .with('user')
+      .with('scheduling')
+      .fetch()
 
     return clients
   }
 
-  async show ({ params, request, response, view }) {
-    const client = await Client.findOrFail(params.id)
-    
-    await client.load("broker")
-
-    return client;
-  }
-
-  async store ({ request, response }) {
-    const data = request.only([
-      'name',
-      'email',
-      'broker_id'
-    ])
-
-    const broker = await Broker.findOrFail(data.broker_id)
-
-    const client = await Client.create(data);
-
-    client.broker = broker;
+  async show({ params, request, response, view }) {
+    const client = await Client.query()
+      .where('id', params.id)
+      .with('broker')
+      .with('user')
+      .with('scheduling')
+      .fetch()
 
     return client
   }
 
-  async update ({ params, request, response }) {
-    const client = await Client.findOrFail(params.id);
-    const data = request.only([
-      'name',
-      'email',
-      'broker_id'
-    ])
-    
-    const broker = await Broker.findOrFail(data.broker_id)
+  async store({ request, response }) {
+    const data = request.only(['username', 'email', 'password'])
 
-    client.merge(data);
+    const clientData = request.only(['broker_id', 'name'])
 
-    await client.save();
+    const user = await User.create(data)
 
-    client.broker = broker;
-    
+    clientData.user_id = user.id
+
+    const broker = await Broker.findOrFail(clientData.broker_id)
+
+    const client = await Client.create(clientData)
+
+    client.broker = broker
+    client.user = user
+
     return client
   }
 
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
     const client = await Client.findOrFail(params.id)
-    
-    await client.delete();
+
+    await client.delete()
   }
 }
 

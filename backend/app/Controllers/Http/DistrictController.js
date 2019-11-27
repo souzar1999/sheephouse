@@ -6,16 +6,17 @@ const Region = use('App/Models/Region')
 class DistrictController {
   async index ({ request, response, view }) {
     const districts = District.query()
-                      .with('region')
-                      .fetch()
+      .with('region')
+      .fetch()
 
     return districts
   }
 
   async show ({ params, request, response, view }) {
-    const district = await District.findOrFail(params.id)
-    
-    await district.load("region")
+    const district = await District.query()
+      .where('id', params.id)   
+      .with('region')
+      .fetch()
 
     return district;
   }
