@@ -21,7 +21,7 @@ class BrokerController {
   }
 
   async store({ request, response }) {
-    const data = request.only(['name', 'active'])
+    const data = request.only(['name'])
 
     const broker = await Broker.create(data)
 
@@ -30,20 +30,8 @@ class BrokerController {
 
   async update({ params, request, response }) {
     const broker = await Broker.findOrFail(params.id)
-    const data = request.only(['name', 'active'])
+    const data = request.only(['name'])
 
-    broker.merge(data)
-
-    await broker.save()
-
-    return broker
-  }
-
-  async inactive({ params, request, response }) {
-    const broker = await Broker.findOrFail(params.id)
-    
-    const data.active = false 
-    
     broker.merge(data)
 
     await broker.save()
