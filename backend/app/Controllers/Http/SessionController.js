@@ -4,7 +4,7 @@ class SessionController {
   async create({ request, auth }) {
     const { email, password } = request.all()
 
-    const token = await auth.attempt(email, password)
+    const token = await auth.withRefreshToken().attempt(email, password)
 
     return token
   }
@@ -13,6 +13,14 @@ class SessionController {
     const user = auth.current.user
 
     return user
+  }
+
+  async refreshToken({ request, auth }) {
+    const data = request.only(['refreshToken'])
+
+    return await auth
+      .newRefreshToken()
+      .generateForRefreshToken(data.refreshToken)
   }
 }
 

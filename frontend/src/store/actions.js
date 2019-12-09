@@ -11,9 +11,10 @@ export const closeMenu = () => ({
   type: CLOSE_MENU
 });
 
-export const userLogin = token => ({
+export const userLogin = ({ userToken, refreshToken }) => ({
   type: USER_LOGIN,
-  token
+  userToken,
+  refreshToken
 });
 
 export const userLogout = () => ({

@@ -4,7 +4,8 @@ const appReducer = (
   state = {
     isMenuOpen: false,
     isUserLogged: false,
-    userToken: null
+    userToken: null,
+    refreshToken: null
   },
   action
 ) => {
@@ -22,18 +23,20 @@ const appReducer = (
       };
     }
     case USER_LOGIN: {
-      const { token } = action;
+      const { userToken, refreshToken, password } = action;
       return {
         ...state,
         isUserLogged: true,
-        userToken: token
+        userToken: userToken,
+        refreshToken: refreshToken
       };
     }
     case USER_LOGOUT: {
       return {
         ...state,
         isUserLogged: false,
-        userToken: null
+        userToken: null,
+        refreshToken: null
       };
     }
     default:

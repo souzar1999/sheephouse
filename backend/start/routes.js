@@ -6,6 +6,7 @@ Route.post('/users', 'UserController.create')
 
 Route.post('/sessions', 'SessionController.create')
 Route.get('/user', 'SessionController.show').middleware('auth')
+Route.get('/refresh', 'SessionController.refreshToken').middleware('auth')
 
 Route.resource('broker', 'BrokerController')
   .apiOnly()
