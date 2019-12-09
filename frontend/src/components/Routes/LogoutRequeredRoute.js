@@ -21,7 +21,8 @@ const LogoutRequiredRoute = ({ component: Component, ...rest }) => (
 );
 
 const mapStateToProps = state => ({
-  isUserLogged: state.isUserLogged
+  isUserLogged: state.isUserLogged,
+  isUserAdmin: state.isUserAdmin
 });
 
 export default connect(mapStateToProps, {})(LogoutRequiredRoute);

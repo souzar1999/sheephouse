@@ -35,19 +35,23 @@ class ClientController {
       'active'
     ])
 
-    const broker = await Broker.findOrFail(clientData.broker_id)
+    await Client.create(clientData)
 
-    const client = await Client.create(clientData)
-
-    return await Client.query()
-      .where('id', client.id)
+    return const client = await Client.query()
+      .where('id', params.id)
+      .with('broker')
+      .with('user')
       .fetch()
-
-    return client
   }
 
   async update({ params, request, response }) {
-    const data = request.only(['broker_id', 'name', 'phone', 'active'])
+    const data = request.only([
+      'broker_id',
+      'user_id',
+      'name',
+      'phone',
+      'active'
+    ])
 
     const client = await Client.findOrFail(params.id)
 
@@ -55,11 +59,11 @@ class ClientController {
 
     await client.save()
 
-    return await Client.query()
-      .where('id', client.id)
+    return const client = await Client.query()
+      .where('id', params.id)
+      .with('broker')
+      .with('user')
       .fetch()
-
-    return client
   }
 
   async destroy({ params, request, response }) {

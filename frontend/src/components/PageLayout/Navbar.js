@@ -11,6 +11,7 @@ import { compose } from "redux";
 
 import { connect } from "react-redux";
 import { openMenu, userLogout } from "../../store/actions";
+import history from "../../history";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -62,6 +63,7 @@ const Navbar = ({
                 onUserLogout();
                 localStorage.removeItem("userToken");
                 localStorage.removeItem("refreshToken");
+                history.push("/");
 
                 enqueueSnackbar("Usuário desconectado!", {
                   variant: "success",

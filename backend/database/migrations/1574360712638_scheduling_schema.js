@@ -14,15 +14,15 @@ class SchedulingSchema extends Schema {
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
       table
-        .boolean('active')
+        .boolean('actived')
         .notNullable()
         .defaultTo(true)
       table
-        .boolean('active')
+        .boolean('changed')
         .notNullable()
         .defaultTo(false)
       table
-        .boolean('active')
+        .boolean('completed')
         .notNullable()
         .defaultTo(false)
       table

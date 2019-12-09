@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import { userLogin, userAdmin } from "../../store/actions";
 
 import api from "../../services/api";
+import history from "../../history";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -77,20 +78,25 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserAdmin }) {
 
     await api
       .post("/sessions", { email, password })
-      .then(response => {
-        enqueueSnackbar("Seja bem vindo!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-
+      .then(async response => {
         localStorage.setItem("userToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         onUserLogin();
-        onUserAdmin();
+
+        await api.get("/user").then(response => {
+          enqueueSnackbar(`Seja bem vindo ${response.data.username}!`, {
+            variant: "success",
+            autoHideDuration: 2500,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center"
+            }
+          });
+          if (response.data.admin) {
+            onUserAdmin();
+            history.push("/admin/home");
+          }
+        });
       })
       .catch(error => {
         enqueueSnackbar(
