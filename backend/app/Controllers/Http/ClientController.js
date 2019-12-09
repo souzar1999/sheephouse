@@ -27,42 +27,37 @@ class ClientController {
   }
 
   async store({ request, response }) {
-    const data = request.only(['username', 'email', 'password'])
-
-    const clientData = request.only(['broker_id', 'name', 'phone', 'active'])
-
-    const user = await User.create(data)
-
-    clientData.user_id = user.id
+    const data = request.only([
+      'broker_id',
+      'user_id',
+      'name',
+      'phone',
+      'active'
+    ])
 
     const broker = await Broker.findOrFail(clientData.broker_id)
 
     const client = await Client.create(clientData)
 
-    client.broker = broker
-    client.user = user
+    return await Client.query()
+      .where('id', client.id)
+      .fetch()
 
     return client
   }
 
   async update({ params, request, response }) {
-    const data = request.only(['username', 'email', 'password'])
-
-    const clientData = request.only(['broker_id', 'name', 'phone', 'active'])
+    const data = request.only(['broker_id', 'name', 'phone', 'active'])
 
     const client = await Client.findOrFail(params.id)
-    const user = await User.findOrFail(client.user_id)
 
-    client.merge(clientData)
-    user.merge(data)
+    client.merge(data)
 
-    await user.save()
     await client.save()
 
-    const broker = await Broker.findOrFail(clientData.broker_id)
-
-    client.broker = broker
-    client.user = user
+    return await Client.query()
+      .where('id', client.id)
+      .fetch()
 
     return client
   }
