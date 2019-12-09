@@ -11,6 +11,7 @@ import {
 import UserLogin from "./UserLogin/UserLogin";
 import UserLogout from "./UserLogout/UserLogout";
 import UserRegister from "./UserRegister/UserRegister";
+
 import NotFound from "./NotFound/NotFound";
 
 import AdminHome from "./Admin/Home/Home";
@@ -29,17 +30,17 @@ export default function Routes() {
         <LogoutRequeredRoute path="/" exact component={UserLogin} />
         <LogoutRequeredRoute path="/signup" component={UserRegister} />
         <LoginRequeredRoute path="/logout" component={UserLogout} />
-        <AdminRequeredRoute path="/home" component={AdminHome} />
-        <AdminRequeredRoute path="/city" component={AdminCity} />
-        <AdminRequeredRoute path="/broker" component={AdminBroker} />
-        <AdminRequeredRoute path="/district" component={AdminDistrict} />
-        <AdminRequeredRoute path="/region" component={AdminRegion} />
-        <AdminRequeredRoute path="/client" component={AdminClient} />
+        <AdminRequeredRoute path="/admin/home" component={AdminHome} />
+        <AdminRequeredRoute path="/admin/city" component={AdminCity} />
+        <AdminRequeredRoute path="/admin/broker" component={AdminBroker} />
+        <AdminRequeredRoute path="/admin/district" component={AdminDistrict} />
+        <AdminRequeredRoute path="/admin/region" component={AdminRegion} />
+        <AdminRequeredRoute path="/admin/client" component={AdminClient} />
+        <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
         <AdminRequeredRoute
-          path="/photographer"
+          path="/admin/photographer"
           component={AdminPhotographer}
         />
-        <AdminRequeredRoute path="/horary" component={AdminHorary} />
         <Route component={NotFound} />
       </Switch>
     </Router>

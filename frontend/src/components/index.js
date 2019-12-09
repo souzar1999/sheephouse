@@ -1,7 +1,6 @@
-import Navbar from "./PageLayout/Navbar";
-import Sideitem from "./PageLayout/Sideitem";
-import Sidebar from "./PageLayout/Sidebar";
+import SidebarLayout from "./PageLayout/SidebarLayout";
 import Container from "./PageLayout/Container";
+import Navbar from "./PageLayout/Navbar";
 
 import LoginRequeredRoute from "./Routes/LoginRequeredRoute";
 import LogoutRequeredRoute from "./Routes/LogoutRequeredRoute";
@@ -18,9 +17,8 @@ import AdminBroker from "./Admin/Broker/Broker";
 import AdminClient from "./Admin/Client/Client";
 
 export {
+  SidebarLayout,
   Navbar,
-  Sideitem,
-  Sidebar,
   Container,
   LoginRequeredRoute,
   LogoutRequeredRoute,
