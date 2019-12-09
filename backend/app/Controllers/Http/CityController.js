@@ -8,6 +8,7 @@ class CityController {
       .with('region', region => {
         region.with('district')
       })
+      .orderBy('name')
       .fetch()
 
     return city

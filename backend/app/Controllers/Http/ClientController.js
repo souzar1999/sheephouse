@@ -29,7 +29,7 @@ class ClientController {
   async store({ request, response }) {
     const data = request.only(['username', 'email', 'password'])
 
-    const clientData = request.only(['broker_id', 'name'])
+    const clientData = request.only(['broker_id', 'name', 'phone', 'active'])
 
     const user = await User.create(data)
 
@@ -38,6 +38,28 @@ class ClientController {
     const broker = await Broker.findOrFail(clientData.broker_id)
 
     const client = await Client.create(clientData)
+
+    client.broker = broker
+    client.user = user
+
+    return client
+  }
+
+  async update({ params, request, response }) {
+    const data = request.only(['username', 'email', 'password'])
+
+    const clientData = request.only(['broker_id', 'name', 'phone', 'active'])
+
+    const client = await Client.findOrFail(params.id)
+    const user = await User.findOrFail(client.user_id)
+
+    client.merge(clientData)
+    user.merge(data)
+
+    await user.save()
+    await client.save()
+
+    const broker = await Broker.findOrFail(clientData.broker_id)
 
     client.broker = broker
     client.user = user

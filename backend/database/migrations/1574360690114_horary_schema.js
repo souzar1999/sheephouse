@@ -4,15 +4,16 @@
 const Schema = use('Schema')
 
 class HorarySchema extends Schema {
-  up () {
-    this.create('horaries', (table) => {
+  up() {
+    this.create('horaries', table => {
       table.increments()
       table.time('time', { precision: 6 })
+      table.boolean('active').notNullable()
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('horaries')
   }
 }

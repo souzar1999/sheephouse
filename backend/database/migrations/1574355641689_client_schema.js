@@ -8,6 +8,8 @@ class ClientSchema extends Schema {
     this.create('clients', table => {
       table.increments()
       table.string('name').notNullable()
+      table.string('phone').notNullable()
+      table.boolean('active').notNullable()
       table
         .integer('user_id')
         .unsigned()

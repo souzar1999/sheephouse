@@ -3,7 +3,7 @@
 const Broker = use('App/Models/Broker')
 
 class BrokerController {
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const broker = Broker.query()
       .with('client')
       .fetch()
@@ -11,42 +11,50 @@ class BrokerController {
     return broker
   }
 
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
     const broker = await Broker.query()
-      .where('id', params.id)      
+      .where('id', params.id)
       .with('client')
       .fetch()
 
-    return broker;
+    return broker
   }
 
-  async store ({ request, response }) {
-    const data = request.only([
-      'name'
-    ])
+  async store({ request, response }) {
+    const data = request.only(['name', 'active'])
 
-    const broker = await Broker.create(data);
+    const broker = await Broker.create(data)
 
     return broker
   }
 
-  async update ({ params, request, response }) {
-    const broker = await Broker.findOrFail(params.id);
-    const data = request.only([
-      'name'
-    ])
-    
-    broker.merge(data);
+  async update({ params, request, response }) {
+    const broker = await Broker.findOrFail(params.id)
+    const data = request.only(['name', 'active'])
 
-    await broker.save();
-    
+    broker.merge(data)
+
+    await broker.save()
+
     return broker
   }
 
-  async destroy ({ params, request, response }) {
+  async inactive({ params, request, response }) {
     const broker = await Broker.findOrFail(params.id)
     
-    await broker.delete();
+    const data.active = false 
+    
+    broker.merge(data)
+
+    await broker.save()
+
+    return broker
+  }
+
+  async destroy({ params, request, response }) {
+    const broker = await Broker.findOrFail(params.id)
+
+    await broker.delete()
   }
 }
 

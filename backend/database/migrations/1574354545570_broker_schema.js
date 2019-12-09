@@ -4,15 +4,16 @@
 const Schema = use('Schema')
 
 class BrokerSchema extends Schema {
-  up () {
-    this.create('brokers', (table) => {
+  up() {
+    this.create('brokers', table => {
       table.increments()
       table.string('name').notNullable()
+      table.boolean('active').notNullable()
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('brokers')
   }
 }

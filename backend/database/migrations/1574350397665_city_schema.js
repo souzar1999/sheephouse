@@ -4,15 +4,16 @@
 const Schema = use('Schema')
 
 class CitySchema extends Schema {
-  up () {
-    this.create('cities', (table) => {
+  up() {
+    this.create('cities', table => {
       table.increments()
       table.string('name').notNullable()
+      table.boolean('active').notNullable()
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('cities')
   }
 }

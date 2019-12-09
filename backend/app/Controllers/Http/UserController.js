@@ -1,10 +1,10 @@
-"use strict"
+'use strict'
 
-const User = use("App/Models/User")
+const User = use('App/Models/User')
 
 class UserController {
-  async create ({ request }) {
-    const data = request.only(["username", "email", "password"])
+  async create({ request }) {
+    const data = request.only(['username', 'email', 'password'])
 
     const user = await User.create(data)
 

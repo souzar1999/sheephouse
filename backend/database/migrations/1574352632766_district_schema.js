@@ -4,10 +4,11 @@
 const Schema = use('Schema')
 
 class DistrictSchema extends Schema {
-  up () {
-    this.create('districts', (table) => {
+  up() {
+    this.create('districts', table => {
       table.increments()
       table.string('name').notNullable()
+      table.boolean('active').notNullable()
       table
         .integer('region_id')
         .unsigned()
@@ -17,7 +18,7 @@ class DistrictSchema extends Schema {
     })
   }
 
-  down () {
+  down() {
     this.drop('districts')
   }
 }
