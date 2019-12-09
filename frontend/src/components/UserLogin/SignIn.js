@@ -87,7 +87,9 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
           }
         });
 
-        onUserLogin(response.data.token, response.data.refreshToken);
+        localStorage.setItem("userToken", response.data.token);
+        localStorage.setItem("refreshToken", response.data.refreshToken);
+        onUserLogin();
       })
       .catch(error => {
         enqueueSnackbar(
@@ -159,8 +161,8 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onUserLogin: (userToken, refreshToken) => {
-      dispatch(userLogin(userToken, refreshToken));
+    onUserLogin: () => {
+      dispatch(userLogin());
     }
   };
 };

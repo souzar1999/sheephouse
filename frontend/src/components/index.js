@@ -5,6 +5,7 @@ import Container from "./PageLayout/Container";
 import LoginRequeredRoute from "./Routes/LoginRequeredRoute";
 import LogoutRequeredRoute from "./Routes/LogoutRequeredRoute";
 import SignIn from "./UserLogin/SignIn";
+import Logout from "./UserLogout/Logout";
 import SignUp from "./UserRegister/SignUp";
 import City from "./City/City";
 import Region from "./Region/Region";
@@ -20,6 +21,7 @@ export {
   LoginRequeredRoute,
   LogoutRequeredRoute,
   SignIn,
+  Logout,
   SignUp,
   City,
   Region,

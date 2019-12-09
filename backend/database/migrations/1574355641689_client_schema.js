@@ -9,7 +9,10 @@ class ClientSchema extends Schema {
       table.increments()
       table.string('name').notNullable()
       table.string('phone').notNullable()
-      table.boolean('active').notNullable()
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(true)
       table
         .integer('user_id')
         .unsigned()

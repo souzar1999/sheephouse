@@ -8,7 +8,10 @@ class DistrictSchema extends Schema {
     this.create('districts', table => {
       table.increments()
       table.string('name').notNullable()
-      table.boolean('active').notNullable()
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(true)
       table
         .integer('region_id')
         .unsigned()

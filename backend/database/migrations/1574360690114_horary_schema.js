@@ -8,7 +8,10 @@ class HorarySchema extends Schema {
     this.create('horaries', table => {
       table.increments()
       table.time('time', { precision: 6 })
-      table.boolean('active').notNullable()
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(true)
       table.timestamps()
     })
   }

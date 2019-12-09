@@ -60,6 +60,8 @@ const Navbar = ({
               aria-label="menu"
               onClick={() => {
                 onUserLogout();
+                localStorage.removeItem("userToken");
+                localStorage.removeItem("refreshToken");
 
                 enqueueSnackbar("Usuário desconectado!", {
                   variant: "success",

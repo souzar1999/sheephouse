@@ -8,7 +8,10 @@ class BrokerSchema extends Schema {
     this.create('brokers', table => {
       table.increments()
       table.string('name').notNullable()
-      table.boolean('active').notNullable()
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(true)
       table.timestamps()
     })
   }

@@ -3,9 +3,7 @@ import { OPEN_MENU, CLOSE_MENU, USER_LOGIN, USER_LOGOUT } from "./actions";
 const appReducer = (
   state = {
     isMenuOpen: false,
-    isUserLogged: false,
-    userToken: null,
-    refreshToken: null
+    isUserLogged: false
   },
   action
 ) => {
@@ -23,20 +21,15 @@ const appReducer = (
       };
     }
     case USER_LOGIN: {
-      const { userToken, refreshToken } = action;
       return {
         ...state,
-        isUserLogged: true,
-        userToken: userToken,
-        refreshToken: refreshToken
+        isUserLogged: true
       };
     }
     case USER_LOGOUT: {
       return {
         ...state,
-        isUserLogged: false,
-        userToken: null,
-        refreshToken: null
+        isUserLogged: false
       };
     }
     default:

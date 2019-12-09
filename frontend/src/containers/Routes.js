@@ -5,6 +5,7 @@ import history from "../history";
 import { LoginRequeredRoute, LogoutRequeredRoute } from "../components";
 
 import UserLogin from "./UserLogin/UserLogin";
+import UserLogout from "./UserLogout/UserLogout";
 import UserRegister from "./UserRegister/UserRegister";
 import Home from "./Home/Home";
 import NotFound from "./NotFound/NotFound";
@@ -30,6 +31,7 @@ export default function Routes() {
         <LoginRequeredRoute path="/client" component={Client} />
         <LoginRequeredRoute path="/photographer" component={Photographer} />
         <LoginRequeredRoute path="/horary" component={Horary} />
+        <LoginRequeredRoute path="/logout" component={UserLogout} />
         <Route component={NotFound} />
       </Switch>
     </Router>

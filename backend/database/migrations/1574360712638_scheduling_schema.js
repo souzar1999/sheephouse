@@ -13,9 +13,18 @@ class SchedulingSchema extends Schema {
       table.string('longitude').notNullable()
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
-      table.boolean('active').notNullable()
-      table.boolean('changed').notNullable()
-      table.boolean('completed').notNullable()
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(true)
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(false)
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(false)
       table
         .integer('photographer_id')
         .unsigned()

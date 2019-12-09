@@ -2,6 +2,6 @@ import React from "react";
 
 import { SignIn } from "../../components";
 
-const HomePage = () => <SignIn />;
+const UserLogin = () => <SignIn />;
 
-export default HomePage;
+export default UserLogin;
