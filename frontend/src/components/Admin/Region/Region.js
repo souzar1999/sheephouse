@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
 
-import api from "../../services/api";
+import api from "../../../services/api";
 
-function Client({ enqueueSnackbar }) {
-  const [clients, setClients] = useState([]);
-  const [brokers, setBrokers] = useState([]);
+function Region({ enqueueSnackbar }) {
+  const [regions, setRegions] = useState([]);
+  const [cities, setCities] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Imobiliária", field: "broker_id", lookup: { ...brokers } },
-    { title: "Telefone", field: "phone" },
-    { title: "Email", field: "user.email" }
+    { title: "Cidade", field: "city_id", lookup: { ...cities } }
   ];
 
   useEffect(() => {
@@ -20,28 +18,28 @@ function Client({ enqueueSnackbar }) {
   }, []);
 
   async function handleLoadLookup() {
-    await api.get("/broker").then(response => {
+    await api.get("/city").then(response => {
       let data = [];
 
       response.data.map(item => {
         return (data[item.id] = item.name);
       });
 
-      setBrokers(data);
+      setCities(data);
     });
   }
 
   async function handleLoad() {
-    await api.get("/client").then(response => {
-      setClients(response.data);
+    await api.get("/region").then(response => {
+      setRegions(response.data);
     });
   }
 
   async function handleAdd(newData) {
-    const { name, broker_id } = newData;
+    const { name, city_id } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome do corretor!", {
+      enqueueSnackbar("Informe o nome da região!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -52,8 +50,8 @@ function Client({ enqueueSnackbar }) {
       return;
     }
 
-    if (!broker_id) {
-      enqueueSnackbar("Informe a imobiliária!", {
+    if (!city_id) {
+      enqueueSnackbar("Informe a cidade!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -65,7 +63,7 @@ function Client({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/client`, { name, broker_id })
+      .post(`/region`, { name, city_id })
       .then(response => {
         enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
@@ -91,10 +89,10 @@ function Client({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, broker_id, id } = newData;
+    const { name, city_id, id } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome do corretor!", {
+      enqueueSnackbar("Informe o nome da região!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -105,8 +103,8 @@ function Client({ enqueueSnackbar }) {
       return;
     }
 
-    if (!broker_id) {
-      enqueueSnackbar("Informe a região!", {
+    if (!city_id) {
+      enqueueSnackbar("Informe a cidade!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -118,7 +116,7 @@ function Client({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/client/${id}`, { name, broker_id })
+      .put(`/region/${id}`, { name, city_id })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -147,7 +145,7 @@ function Client({ enqueueSnackbar }) {
     const { id } = oldData;
 
     await api
-      .delete(`/client/${id}`)
+      .delete(`/region/${id}`)
       .then(response => {
         enqueueSnackbar("Registro deletado com sucesso!", {
           variant: "success",
@@ -174,15 +172,14 @@ function Client({ enqueueSnackbar }) {
 
   return (
     <MaterialTable
-      title="Corretor"
+      title="Regiões"
       columns={columns}
-      data={clients}
+      data={regions}
       editable={{
         onRowAdd: newData =>
           new Promise(resolve => {
             resolve();
-            console.log(newData);
-            //handleAdd(newData);
+            handleAdd(newData);
           }),
         onRowUpdate: (newData, oldData) =>
           new Promise(resolve => {
@@ -232,4 +229,4 @@ function Client({ enqueueSnackbar }) {
   );
 }
 
-export default withSnackbar(Client);
+export default withSnackbar(Region);

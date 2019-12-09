@@ -1,10 +1,11 @@
 import React from "react";
 
-import { District as DistrictComponent } from "../../components";
+import { AdminDistrict } from "../../../components";
 
 const District = () => (
   <div>
-    <DistrictComponent />
+    <AdminDistrict />
   </div>
 );
+
 export default District;

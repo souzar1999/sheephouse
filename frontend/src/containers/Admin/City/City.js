@@ -1,10 +1,10 @@
 import React from "react";
 
-import { City as CityComponent } from "../../components";
+import { AdminCity } from "../../../components";
 
 const City = () => (
   <div>
-    <CityComponent />
+    <AdminCity />
   </div>
 );
 

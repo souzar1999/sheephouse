@@ -1,10 +1,10 @@
 import React from "react";
 
-import { Region as RegionComponent } from "../../components";
+import { AdminRegion } from "../../../components";
 
 const Region = () => (
   <div>
-    <RegionComponent />
+    <AdminRegion />
   </div>
 );
 

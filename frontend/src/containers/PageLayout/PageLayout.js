@@ -1,7 +1,7 @@
 import React from "react";
 import Divider from "@material-ui/core/Divider";
 
-import { Navbar, Sidebar, Sideitem, Container } from "../../components";
+import { Navbar, Sidebar, Sideitem, Container } from "../../components/";
 
 const PageLayout = ({ children }) => {
   return (

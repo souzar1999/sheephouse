@@ -1,10 +1,10 @@
 import React from "react";
 
-import { Broker as BrokerComponent } from "../../components";
+import { AdminBroker } from "../../../components";
 
 const Broker = () => (
   <div>
-    <BrokerComponent />
+    <AdminBroker />
   </div>
 );
 

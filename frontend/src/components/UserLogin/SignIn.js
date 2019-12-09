@@ -10,7 +10,7 @@ import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
 import { connect } from "react-redux";
-import { userLogin } from "../../store/actions";
+import { userLogin, userAdmin } from "../../store/actions";
 
 import api from "../../services/api";
 
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SignIn({ enqueueSnackbar, onUserLogin }) {
+function SignIn({ enqueueSnackbar, onUserLogin, onUserAdmin }) {
   const classes = useStyles();
 
   const [email, setEmail] = useState("");
@@ -90,6 +90,7 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
         localStorage.setItem("userToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         onUserLogin();
+        onUserAdmin();
       })
       .catch(error => {
         enqueueSnackbar(
@@ -163,6 +164,9 @@ const mapDispatchToProps = dispatch => {
   return {
     onUserLogin: () => {
       dispatch(userLogin());
+    },
+    onUserAdmin: () => {
+      dispatch(userAdmin());
     }
   };
 };

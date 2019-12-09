@@ -1,9 +1,16 @@
-import { OPEN_MENU, CLOSE_MENU, USER_LOGIN, USER_LOGOUT } from "./actions";
+import {
+  OPEN_MENU,
+  CLOSE_MENU,
+  USER_LOGIN,
+  USER_LOGOUT,
+  USER_ADMIN
+} from "./actions";
 
 const appReducer = (
   state = {
     isMenuOpen: false,
-    isUserLogged: false
+    isUserLogged: false,
+    isUserAdmin: false
   },
   action
 ) => {
@@ -29,7 +36,14 @@ const appReducer = (
     case USER_LOGOUT: {
       return {
         ...state,
-        isUserLogged: false
+        isUserLogged: false,
+        isUserAdmin: false
+      };
+    }
+    case USER_ADMIN: {
+      return {
+        ...state,
+        isUserAdmin: true
       };
     }
     default:

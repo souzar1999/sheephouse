@@ -2,27 +2,56 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
 
-import api from "../../services/api";
+import api from "../../../services/api";
 
-function Broker({ enqueueSnackbar }) {
-  const [brokers, setBrokers] = useState([]);
-  const columns = [{ title: "Nome", field: "name", defaultSort: "asc" }];
+function District({ enqueueSnackbar }) {
+  const [districts, setDistricts] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const columns = [
+    { title: "Nome", field: "name", defaultSort: "asc" },
+    { title: "Região(Cidade)", field: "region_id", lookup: { ...regions } }
+  ];
 
   useEffect(() => {
     handleLoad();
+    handleLoadLookup();
   }, []);
 
+  async function handleLoadLookup() {
+    await api.get("/region").then(response => {
+      let data = [];
+
+      response.data.map(item => {
+        return (data[item.id] = `${item.name} (${item.city.name})`);
+      });
+
+      setRegions(data);
+    });
+  }
+
   async function handleLoad() {
-    await api.get("/broker").then(response => {
-      setBrokers(response.data);
+    await api.get("/district").then(response => {
+      setDistricts(response.data);
     });
   }
 
   async function handleAdd(newData) {
-    const { name } = newData;
+    const { name, region_id } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome da imobiliária!", {
+      enqueueSnackbar("Informe o nome do bairro!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!region_id) {
+      enqueueSnackbar("Informe a região!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -34,9 +63,9 @@ function Broker({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/broker`, { name })
+      .post(`/district`, { name, region_id })
       .then(response => {
-        enqueueSnackbar("Registro cadastrada com sucesso!", {
+        enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
           autoHideDuration: 2500,
           anchorOrigin: {
@@ -60,10 +89,22 @@ function Broker({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, id } = newData;
+    const { name, region_id, id } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome da imobiliária!", {
+      enqueueSnackbar("Informe o nome do bairro!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!region_id) {
+      enqueueSnackbar("Informe a região!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -75,7 +116,7 @@ function Broker({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/broker/${id}`, { name })
+      .put(`/district/${id}`, { name, region_id })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -104,7 +145,7 @@ function Broker({ enqueueSnackbar }) {
     const { id } = oldData;
 
     await api
-      .delete(`/broker/${id}`)
+      .delete(`/district/${id}`)
       .then(response => {
         enqueueSnackbar("Registro deletado com sucesso!", {
           variant: "success",
@@ -131,9 +172,9 @@ function Broker({ enqueueSnackbar }) {
 
   return (
     <MaterialTable
-      title="Imobiliárias"
+      title="Bairros"
       columns={columns}
-      data={brokers}
+      data={districts}
       editable={{
         onRowAdd: newData =>
           new Promise(resolve => {
@@ -188,4 +229,4 @@ function Broker({ enqueueSnackbar }) {
   );
 }
 
-export default withSnackbar(Broker);
+export default withSnackbar(District);

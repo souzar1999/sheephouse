@@ -1,10 +1,10 @@
 import React from "react";
 
-import { Client as ClientComponent } from "../../components";
+import { AdminClient } from "../../../components";
 
 const Client = () => (
   <div>
-    <ClientComponent />
+    <AdminClient />
   </div>
 );
 export default Client;

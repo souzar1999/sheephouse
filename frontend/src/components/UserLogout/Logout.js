@@ -26,7 +26,7 @@ function Logout({ enqueueSnackbar, onUserLogout }) {
     });
 
     onUserLogout();
-  }, []);
+  }, [enqueueSnackbar, onUserLogout]);
 
   return <div></div>;
 }

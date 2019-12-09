@@ -2,68 +2,58 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
 
-import api from "../../services/api";
+import api from "../../../services/api";
 
-function City({ enqueueSnackbar }) {
-  const [cities, setCities] = useState([]);
-  const columns = [{ title: "Nome", field: "name", defaultSort: "asc" }];
+function Client({ enqueueSnackbar }) {
+  const [clients, setClients] = useState([]);
+  const [brokers, setBrokers] = useState([]);
+  const columns = [
+    { title: "Nome", field: "name", defaultSort: "asc" },
+    { title: "Imobiliária", field: "broker_id", lookup: { ...brokers } },
+    { title: "Telefone", field: "phone" },
+    { title: "Email", field: "user.email" }
+  ];
 
   useEffect(() => {
     handleLoad();
+    handleLoadLookup();
   }, []);
 
-  async function handleLoad() {
-    await api.get("/city").then(response => {
-      setCities(response.data);
+  async function handleLoadLookup() {
+    await api.get("/broker").then(response => {
+      let data = [];
+
+      response.data.map(item => {
+        return (data[item.id] = item.name);
+      });
+
+      setBrokers(data);
     });
   }
 
-  async function handleAdd(newData) {
-    const { name } = newData;
-
-    if (!name) {
-      enqueueSnackbar("Informe o nome da cidade!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
-    await api
-      .post(`/city`, { name })
-      .then(response => {
-        enqueueSnackbar("Registro cadastrada com sucesso!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-
-        handleLoad();
-      })
-      .catch(error => {
-        enqueueSnackbar("Erro ao cadastrar registro!", {
-          variant: "error",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-      });
+  async function handleLoad() {
+    await api.get("/client").then(response => {
+      setClients(response.data);
+    });
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, id } = newData;
+    const { name, broker_id, id } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome da cidade!", {
+      enqueueSnackbar("Informe o nome do corretor!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!broker_id) {
+      enqueueSnackbar("Informe a região!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -75,7 +65,7 @@ function City({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/city/${id}`, { name })
+      .put(`/client/${id}`, { name, broker_id })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -104,7 +94,7 @@ function City({ enqueueSnackbar }) {
     const { id } = oldData;
 
     await api
-      .delete(`/city/${id}`)
+      .delete(`/client/${id}`)
       .then(response => {
         enqueueSnackbar("Registro deletado com sucesso!", {
           variant: "success",
@@ -131,15 +121,10 @@ function City({ enqueueSnackbar }) {
 
   return (
     <MaterialTable
-      title="Cidades"
+      title="Corretor"
       columns={columns}
-      data={cities}
+      data={clients}
       editable={{
-        onRowAdd: newData =>
-          new Promise(resolve => {
-            resolve();
-            handleAdd(newData);
-          }),
         onRowUpdate: (newData, oldData) =>
           new Promise(resolve => {
             resolve();
@@ -188,4 +173,4 @@ function City({ enqueueSnackbar }) {
   );
 }
 
-export default withSnackbar(City);
+export default withSnackbar(Client);

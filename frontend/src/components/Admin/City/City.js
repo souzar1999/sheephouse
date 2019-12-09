@@ -2,56 +2,27 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
 
-import api from "../../services/api";
+import api from "../../../services/api";
 
-function District({ enqueueSnackbar }) {
-  const [districts, setDistricts] = useState([]);
-  const [regions, setRegions] = useState([]);
-  const columns = [
-    { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Região(Cidade)", field: "region_id", lookup: { ...regions } }
-  ];
+function City({ enqueueSnackbar }) {
+  const [cities, setCities] = useState([]);
+  const columns = [{ title: "Nome", field: "name", defaultSort: "asc" }];
 
   useEffect(() => {
     handleLoad();
-    handleLoadLookup();
   }, []);
 
-  async function handleLoadLookup() {
-    await api.get("/region").then(response => {
-      let data = [];
-
-      response.data.map(item => {
-        return (data[item.id] = `${item.name} (${item.city.name})`);
-      });
-
-      setRegions(data);
-    });
-  }
-
   async function handleLoad() {
-    await api.get("/district").then(response => {
-      setDistricts(response.data);
+    await api.get("/city").then(response => {
+      setCities(response.data);
     });
   }
 
   async function handleAdd(newData) {
-    const { name, region_id } = newData;
+    const { name } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome do bairro!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
-    if (!region_id) {
-      enqueueSnackbar("Informe a região!", {
+      enqueueSnackbar("Informe o nome da cidade!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -63,9 +34,9 @@ function District({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/district`, { name, region_id })
+      .post(`/city`, { name })
       .then(response => {
-        enqueueSnackbar("Registro cadastrado com sucesso!", {
+        enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
           autoHideDuration: 2500,
           anchorOrigin: {
@@ -89,22 +60,10 @@ function District({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, region_id, id } = newData;
+    const { name, id } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome do bairro!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
-    if (!region_id) {
-      enqueueSnackbar("Informe a região!", {
+      enqueueSnackbar("Informe o nome da cidade!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -116,7 +75,7 @@ function District({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/district/${id}`, { name, region_id })
+      .put(`/city/${id}`, { name })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -145,7 +104,7 @@ function District({ enqueueSnackbar }) {
     const { id } = oldData;
 
     await api
-      .delete(`/district/${id}`)
+      .delete(`/city/${id}`)
       .then(response => {
         enqueueSnackbar("Registro deletado com sucesso!", {
           variant: "success",
@@ -172,9 +131,9 @@ function District({ enqueueSnackbar }) {
 
   return (
     <MaterialTable
-      title="Bairros"
+      title="Cidades"
       columns={columns}
-      data={districts}
+      data={cities}
       editable={{
         onRowAdd: newData =>
           new Promise(resolve => {
@@ -229,4 +188,4 @@ function District({ enqueueSnackbar }) {
   );
 }
 
-export default withSnackbar(District);
+export default withSnackbar(City);
