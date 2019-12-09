@@ -159,8 +159,9 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onUserLogin: ({ userToken, refreshToken }) =>
-      dispatch(userLogin(userToken, refreshToken))
+    onUserLogin: (userToken, refreshToken) => {
+      dispatch(userLogin(userToken, refreshToken));
+    }
   };
 };
 

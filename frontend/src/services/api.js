@@ -7,11 +7,17 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async config => {
-  const token = store.getState().userToken;
+  const userToken = store.getState().userToken;
+  const refreshToken = store.getState().refreshToken;
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (userToken) {
+    config.headers.Authorization = `Bearer ${userToken}`;
+
+    api.get("/user", config).catch(error => {
+      api.get(`/refresh`, { refreshToken }, config);
+    });
   }
+
   return config;
 });
 

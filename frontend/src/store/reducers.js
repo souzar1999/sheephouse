@@ -23,7 +23,7 @@ const appReducer = (
       };
     }
     case USER_LOGIN: {
-      const { userToken, refreshToken, password } = action;
+      const { userToken, refreshToken } = action;
       return {
         ...state,
         isUserLogged: true,
