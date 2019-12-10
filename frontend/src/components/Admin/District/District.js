@@ -26,7 +26,7 @@ function District({ enqueueSnackbar }) {
       let data = [];
 
       response.data.map(item => {
-        return (data[item.id] = `${item.name} (${item.city.name})`);
+        return (data[item.id] = item.name);
       });
 
       setRegions(data);
@@ -89,7 +89,7 @@ function District({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/district`, { name, region_id, active })
+      .post(`/district`, { name, region_id, city_id, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
@@ -154,7 +154,7 @@ function District({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/district/${id}`, { name, region_id, active })
+      .put(`/district/${id}`, { name, region_id, city_id, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
