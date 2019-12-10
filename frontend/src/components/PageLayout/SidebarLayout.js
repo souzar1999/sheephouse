@@ -9,11 +9,13 @@ const SidebarLayout = ({ isUserAdmin }) => {
   if (isUserAdmin) {
     return (
       <Sidebar>
-        <Sideitem link="/admin/home" icon="home" label="Home" />
+        <Sideitem link="/admin/home" icon="home" label="Início" />
         <Divider />
-        <Sideitem link="/admin/district" icon="apartment" label="Bairros" />
-        <Sideitem link="/admin/city" icon="map" label="Cidades" />
-        <Sideitem link="/admin/region" icon="terrain" label="Regiões" />
+        <Sideitem
+          link="/admin/home"
+          icon="cloud_upload"
+          label="Upload (EM BREVE)"
+        />
         <Divider />
         <Sideitem link="/admin/client" icon="face" label="Clientes" />
         <Sideitem
@@ -22,12 +24,18 @@ const SidebarLayout = ({ isUserAdmin }) => {
           label="Imobiliárias"
         />
         <Divider />
+        <Sideitem link="/admin/district" icon="apartment" label="Bairros" />
+        <Sideitem link="/admin/city" icon="map" label="Cidades" />
+        <Sideitem link="/admin/region" icon="terrain" label="Regiões" />
+        <Divider />
         <Sideitem
           link="/admin/photographer"
           icon="camera_alt"
           label="Fotógrafos"
         />
         <Sideitem link="/admin/horary" icon="timer" label="Horários" />
+        <Divider />
+        <Sideitem link="/admin/logout" icon="exit_to_app" label="Sair" />
       </Sidebar>
     );
   } else {
