@@ -10,7 +10,7 @@ function Photographer({ enqueueSnackbar }) {
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
     { title: "E-mail", field: "email" },
-    { title: "Região (Cidade)", field: "region_id", lookup: { ...regions } },
+    { title: "Região", field: "region_id", lookup: { ...regions } },
     { title: "Drone", field: "drone", type: "boolean" },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
@@ -25,7 +25,7 @@ function Photographer({ enqueueSnackbar }) {
       let data = [];
 
       response.data.map(item => {
-        return (data[item.id] = `${item.name} (${item.city.name})`);
+        return (data[item.id] = item.name);
       });
 
       setRegions(data);

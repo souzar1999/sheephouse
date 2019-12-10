@@ -10,6 +10,8 @@ import SignIn from "./UserLogin/SignIn";
 import Logout from "./UserLogout/Logout";
 import SignUp from "./UserRegister/SignUp";
 
+import UserHome from "./User/Home/Home";
+
 import AdminCity from "./Admin/City/City";
 import AdminRegion from "./Admin/Region/Region";
 import AdminDistrict from "./Admin/District/District";
@@ -34,5 +36,6 @@ export {
   AdminBroker,
   AdminDistrict,
   AdminClient,
-  AdminHorary
+  AdminHorary,
+  UserHome
 };

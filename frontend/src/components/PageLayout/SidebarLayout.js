@@ -34,7 +34,7 @@ const SidebarLayout = ({ isUserAdmin }) => {
         />
         <Sideitem link="/admin/horary" icon="timer" label="Horários" />
         <Divider />
-        <Sideitem link="/admin/logout" icon="exit_to_app" label="Sair" />
+        <Sideitem link="/logout" icon="exit_to_app" label="Sair" />
       </Sidebar>
     );
   } else {
@@ -42,15 +42,18 @@ const SidebarLayout = ({ isUserAdmin }) => {
       <Sidebar>
         <Sideitem link="/home" icon="home" label="Home" />
         <Divider />
-        <Sideitem link="/district" icon="apartment" label="Bairros" />
-        <Sideitem link="/city" icon="map" label="Cidades" />
-        <Sideitem link="/region" icon="terrain" label="Regiões" />
+        <Sideitem link="/calendar" icon="event" label="Minha Agenda" />
+        <Sideitem
+          link="/sessions"
+          icon="photo_library"
+          label="Minhas Sessões"
+        />
+        <Sideitem link="/reports" icon="print" label="Relatórios" />
+        <Sideitem link="/contacts" icon="contacts" label="Contato" />
         <Divider />
-        <Sideitem link="/client" icon="face" label="Clientes" />
-        <Sideitem link="/broker" icon="account_balance" label="Imobiliárias" />
+        <Sideitem link="/profile" icon="person" label="Perfil" />
         <Divider />
-        <Sideitem link="/photographer" icon="camera_alt" label="Fotógrafos" />
-        <Sideitem link="/horary" icon="timer" label="Horários" />
+        <Sideitem link="/logout" icon="exit_to_app" label="Sair" />
       </Sidebar>
     );
   }
