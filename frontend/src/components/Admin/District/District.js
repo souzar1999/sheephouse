@@ -9,7 +9,8 @@ function District({ enqueueSnackbar }) {
   const [regions, setRegions] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Região(Cidade)", field: "region_id", lookup: { ...regions } }
+    { title: "Região (Cidade)", field: "region_id", lookup: { ...regions } },
+    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function District({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { name, region_id } = newData;
+    const { name, region_id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do bairro!", {
@@ -63,7 +64,7 @@ function District({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/district`, { name, region_id })
+      .post(`/district`, { name, region_id, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
@@ -89,7 +90,7 @@ function District({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, region_id, id } = newData;
+    const { name, region_id, id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do bairro!", {
@@ -116,7 +117,7 @@ function District({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/district/${id}`, { name, region_id })
+      .put(`/district/${id}`, { name, region_id, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -200,6 +201,9 @@ function District({ enqueueSnackbar }) {
             cancelTooltip: "Cancelar",
             deleteText: "Deseja excluir este registro?"
           },
+          filterRow: {
+            filterTooltip: "Filtro"
+          },
           addTooltip: "Adicionar",
           deleteTooltip: "Deletar",
           editTooltip: "Editar",
@@ -224,6 +228,10 @@ function District({ enqueueSnackbar }) {
           lastAriaLabel: "Última Página",
           lastTooltip: "Última Página"
         }
+      }}
+      options={{
+        search: false,
+        filtering: true
       }}
     />
   );

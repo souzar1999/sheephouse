@@ -9,7 +9,8 @@ function Region({ enqueueSnackbar }) {
   const [cities, setCities] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Cidade", field: "city_id", lookup: { ...cities } }
+    { title: "Cidade", field: "city_id", lookup: { ...cities } },
+    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function Region({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { name, city_id } = newData;
+    const { name, city_id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da região!", {
@@ -63,7 +64,7 @@ function Region({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/region`, { name, city_id })
+      .post(`/region`, { name, city_id, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
@@ -89,7 +90,7 @@ function Region({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, city_id, id } = newData;
+    const { name, city_id, active, id } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da região!", {
@@ -116,7 +117,7 @@ function Region({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/region/${id}`, { name, city_id })
+      .put(`/region/${id}`, { name, active, city_id })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -200,6 +201,9 @@ function Region({ enqueueSnackbar }) {
             cancelTooltip: "Cancelar",
             deleteText: "Deseja excluir este registro?"
           },
+          filterRow: {
+            filterTooltip: "Filtro"
+          },
           addTooltip: "Adicionar",
           deleteTooltip: "Deletar",
           editTooltip: "Editar",
@@ -224,6 +228,10 @@ function Region({ enqueueSnackbar }) {
           lastAriaLabel: "Última Página",
           lastTooltip: "Última Página"
         }
+      }}
+      options={{
+        search: false,
+        filtering: true
       }}
     />
   );

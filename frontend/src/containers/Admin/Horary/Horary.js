@@ -1,5 +1,11 @@
 import React from "react";
 
-const Horary = () => <div>Horary</div>;
+import { AdminHorary } from "../../../components";
+
+const Horary = () => (
+  <div>
+    <AdminHorary />
+  </div>
+);
 
 export default Horary;

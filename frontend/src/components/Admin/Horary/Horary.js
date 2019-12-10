@@ -4,10 +4,10 @@ import { withSnackbar } from "notistack";
 
 import api from "../../../services/api";
 
-function City({ enqueueSnackbar }) {
-  const [cities, setCities] = useState([]);
+function Horary({ enqueueSnackbar }) {
+  const [horaries, setHoraries] = useState([]);
   const columns = [
-    { title: "Nome", field: "name", defaultSort: "asc" },
+    { title: "Horário", field: "time", defaultSort: "asc" },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
@@ -16,16 +16,16 @@ function City({ enqueueSnackbar }) {
   }, []);
 
   async function handleLoad() {
-    await api.get("/city").then(response => {
-      setCities(response.data);
+    await api.get("/horary").then(response => {
+      setHoraries(response.data);
     });
   }
 
   async function handleAdd(newData) {
-    const { name, active } = newData;
+    const { time, active } = newData;
 
-    if (!name) {
-      enqueueSnackbar("Informe o nome da cidade!", {
+    if (!time) {
+      enqueueSnackbar("Informe o horário!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -37,7 +37,7 @@ function City({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/city`, { name, active })
+      .post(`/horary`, { time, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
@@ -63,10 +63,10 @@ function City({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, id, active } = newData;
+    const { time, id, active } = newData;
 
-    if (!name) {
-      enqueueSnackbar("Informe o nome da cidade!", {
+    if (!time) {
+      enqueueSnackbar("Informe o horário!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -78,7 +78,7 @@ function City({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/city/${id}`, { name, active })
+      .put(`/horary/${id}`, { time, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -107,7 +107,7 @@ function City({ enqueueSnackbar }) {
     const { id } = oldData;
 
     await api
-      .delete(`/city/${id}`)
+      .delete(`/horary/${id}`)
       .then(response => {
         enqueueSnackbar("Registro deletado com sucesso!", {
           variant: "success",
@@ -134,9 +134,9 @@ function City({ enqueueSnackbar }) {
 
   return (
     <MaterialTable
-      title="Cidades"
+      title="Horários"
       columns={columns}
-      data={cities}
+      data={horaries}
       editable={{
         onRowAdd: newData =>
           new Promise(resolve => {
@@ -198,4 +198,4 @@ function City({ enqueueSnackbar }) {
   );
 }
 
-export default withSnackbar(City);
+export default withSnackbar(Horary);

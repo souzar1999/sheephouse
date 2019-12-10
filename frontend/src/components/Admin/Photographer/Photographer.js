@@ -4,28 +4,69 @@ import { withSnackbar } from "notistack";
 
 import api from "../../../services/api";
 
-function City({ enqueueSnackbar }) {
-  const [cities, setCities] = useState([]);
+function Photographer({ enqueueSnackbar }) {
+  const [photographers, setPhotographers] = useState([]);
+  const [regions, setRegions] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
+    { title: "E-mail", field: "email" },
+    { title: "Região (Cidade)", field: "region_id", lookup: { ...regions } },
+    { title: "Drone", field: "drone", type: "boolean" },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
   useEffect(() => {
     handleLoad();
+    handleLoadLookup();
   }, []);
 
+  async function handleLoadLookup() {
+    await api.get("/region").then(response => {
+      let data = [];
+
+      response.data.map(item => {
+        return (data[item.id] = `${item.name} (${item.city.name})`);
+      });
+
+      setRegions(data);
+    });
+  }
+
   async function handleLoad() {
-    await api.get("/city").then(response => {
-      setCities(response.data);
+    await api.get("/photographer").then(response => {
+      setPhotographers(response.data);
     });
   }
 
   async function handleAdd(newData) {
-    const { name, active } = newData;
+    const { name, email, drone, region_id, active } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome da cidade!", {
+      enqueueSnackbar("Informe o nome do fotógrafo!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!email) {
+      enqueueSnackbar("Informe o e-mail do fotógrafo!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!region_id) {
+      enqueueSnackbar("Informe a região!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -37,7 +78,7 @@ function City({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/city`, { name, active })
+      .post(`/photographer`, { name, email, drone, region_id, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
@@ -63,10 +104,34 @@ function City({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, id, active } = newData;
+    const { name, email, drone, region_id, id, active } = newData;
 
     if (!name) {
-      enqueueSnackbar("Informe o nome da cidade!", {
+      enqueueSnackbar("Informe o nome do fotógrafo!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!email) {
+      enqueueSnackbar("Informe o e-mail do fotógrafo!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!region_id) {
+      enqueueSnackbar("Informe a região!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -78,7 +143,7 @@ function City({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/city/${id}`, { name, active })
+      .put(`/photographer/${id}`, { name, email, drone, region_id, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -107,7 +172,7 @@ function City({ enqueueSnackbar }) {
     const { id } = oldData;
 
     await api
-      .delete(`/city/${id}`)
+      .delete(`/photographer/${id}`)
       .then(response => {
         enqueueSnackbar("Registro deletado com sucesso!", {
           variant: "success",
@@ -134,9 +199,9 @@ function City({ enqueueSnackbar }) {
 
   return (
     <MaterialTable
-      title="Cidades"
+      title="Fotógrafos"
       columns={columns}
-      data={cities}
+      data={photographers}
       editable={{
         onRowAdd: newData =>
           new Promise(resolve => {
@@ -198,4 +263,4 @@ function City({ enqueueSnackbar }) {
   );
 }
 
-export default withSnackbar(City);
+export default withSnackbar(Photographer);

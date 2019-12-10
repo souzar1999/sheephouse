@@ -15,6 +15,8 @@ import AdminRegion from "./Admin/Region/Region";
 import AdminDistrict from "./Admin/District/District";
 import AdminBroker from "./Admin/Broker/Broker";
 import AdminClient from "./Admin/Client/Client";
+import AdminPhotographer from "./Admin/Photographer/Photographer";
+import AdminHorary from "./Admin/Horary/Horary";
 
 export {
   SidebarLayout,
@@ -28,7 +30,9 @@ export {
   SignUp,
   AdminCity,
   AdminRegion,
-  AdminClient,
+  AdminPhotographer,
   AdminBroker,
-  AdminDistrict
+  AdminDistrict,
+  AdminClient,
+  AdminHorary
 };

@@ -11,7 +11,8 @@ function Client({ enqueueSnackbar }) {
     { title: "Nome", field: "name", defaultSort: "asc" },
     { title: "Imobiliária", field: "broker_id", lookup: { ...brokers } },
     { title: "Telefone", field: "phone" },
-    { title: "Email", field: "user.email" }
+    { title: "Email", field: "user.email", editable: "never" },
+    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
   useEffect(() => {
@@ -38,7 +39,7 @@ function Client({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, broker_id, id } = newData;
+    const { name, broker_id, id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do corretor!", {
@@ -65,7 +66,7 @@ function Client({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/client/${id}`, { name, broker_id })
+      .put(`/client/${id}`, { name, broker_id, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -144,6 +145,9 @@ function Client({ enqueueSnackbar }) {
             cancelTooltip: "Cancelar",
             deleteText: "Deseja excluir este registro?"
           },
+          filterRow: {
+            filterTooltip: "Filtro"
+          },
           addTooltip: "Adicionar",
           deleteTooltip: "Deletar",
           editTooltip: "Editar",
@@ -168,6 +172,10 @@ function Client({ enqueueSnackbar }) {
           lastAriaLabel: "Última Página",
           lastTooltip: "Última Página"
         }
+      }}
+      options={{
+        search: false,
+        filtering: true
       }}
     />
   );

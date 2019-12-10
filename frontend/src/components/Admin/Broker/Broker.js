@@ -6,7 +6,10 @@ import api from "../../../services/api";
 
 function Broker({ enqueueSnackbar }) {
   const [brokers, setBrokers] = useState([]);
-  const columns = [{ title: "Nome", field: "name", defaultSort: "asc" }];
+  const columns = [
+    { title: "Nome", field: "name", defaultSort: "asc" },
+    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
+  ];
 
   useEffect(() => {
     handleLoad();
@@ -19,7 +22,7 @@ function Broker({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { name } = newData;
+    const { name, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da imobiliária!", {
@@ -34,7 +37,7 @@ function Broker({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/broker`, { name })
+      .post(`/broker`, { name, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
@@ -60,7 +63,7 @@ function Broker({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, id } = newData;
+    const { name, active, id } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da imobiliária!", {
@@ -75,7 +78,7 @@ function Broker({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/broker/${id}`, { name })
+      .put(`/broker/${id}`, { name, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -159,6 +162,9 @@ function Broker({ enqueueSnackbar }) {
             cancelTooltip: "Cancelar",
             deleteText: "Deseja excluir este registro?"
           },
+          filterRow: {
+            filterTooltip: "Filtro"
+          },
           addTooltip: "Adicionar",
           deleteTooltip: "Deletar",
           editTooltip: "Editar",
@@ -183,6 +189,10 @@ function Broker({ enqueueSnackbar }) {
           lastAriaLabel: "Última Página",
           lastTooltip: "Última Página"
         }
+      }}
+      options={{
+        search: false,
+        filtering: true
       }}
     />
   );

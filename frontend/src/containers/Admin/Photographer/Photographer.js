@@ -1,5 +1,11 @@
 import React from "react";
 
-const Photographer = () => <div>Photographer</div>;
+import { AdminPhotographer } from "../../../components";
+
+const Photographer = () => (
+  <div>
+    <AdminPhotographer />
+  </div>
+);
 
 export default Photographer;
