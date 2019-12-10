@@ -4,9 +4,12 @@
 const Model = use('Model')
 
 class District extends Model {
-  
-  region () {
+  region() {
     return this.belongsTo('App/Models/Region')
+  }
+
+  city() {
+    return this.belongsTo('App/Models/City')
   }
 }
 

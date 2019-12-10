@@ -6,29 +6,14 @@ import api from "../../../services/api";
 
 function Region({ enqueueSnackbar }) {
   const [regions, setRegions] = useState([]);
-  const [cities, setCities] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Cidade", field: "city_id", lookup: { ...cities } },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
   useEffect(() => {
     handleLoad();
-    handleLoadLookup();
   }, []);
-
-  async function handleLoadLookup() {
-    await api.get("/city").then(response => {
-      let data = [];
-
-      response.data.map(item => {
-        return (data[item.id] = item.name);
-      });
-
-      setCities(data);
-    });
-  }
 
   async function handleLoad() {
     await api.get("/region").then(response => {
@@ -37,7 +22,7 @@ function Region({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { name, city_id, active } = newData;
+    const { name, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da região!", {
@@ -51,20 +36,8 @@ function Region({ enqueueSnackbar }) {
       return;
     }
 
-    if (!city_id) {
-      enqueueSnackbar("Informe a cidade!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
     await api
-      .post(`/region`, { name, city_id, active })
+      .post(`/region`, { name, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
@@ -90,7 +63,7 @@ function Region({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, city_id, active, id } = newData;
+    const { name, active, id } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da região!", {
@@ -104,20 +77,8 @@ function Region({ enqueueSnackbar }) {
       return;
     }
 
-    if (!city_id) {
-      enqueueSnackbar("Informe a cidade!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
     await api
-      .put(`/region/${id}`, { name, active, city_id })
+      .put(`/region/${id}`, { name, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",

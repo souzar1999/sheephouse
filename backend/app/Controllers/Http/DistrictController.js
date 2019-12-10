@@ -1,63 +1,53 @@
 'use strict'
 
 const District = use('App/Models/District')
-const Region = use('App/Models/Region')
+const City = use('App/Models/City')
 
 class DistrictController {
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const districts = District.query()
-      .with('region')
+      .with('city')
       .fetch()
 
     return districts
   }
 
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
     const district = await District.query()
-      .where('id', params.id)   
-      .with('region')
+      .where('id', params.id)
+      .with('city')
       .fetch()
 
-    return district;
+    return district
   }
 
-  async store ({ request, response }) {
-    const data = request.only([
-      'name',
-      'region_id'
-    ])
+  async store({ request, response }) {
+    const data = request.only(['name', 'region_id', 'city_id'])
 
-    const region = await Region.findOrFail(data.region_id)
+    const city = await City.findOrFail(data.city_id)
 
-    const district = await District.create(data);
-
-    district.region = region;
+    const district = await District.create(data)
 
     return district
   }
 
-  async update ({ params, request, response }) {
-    const district = await District.findOrFail(params.id);
-    const data = request.only([
-      'name',
-      'region_id'
-    ])
-    
-    const region = await Region.findOrFail(data.region_id)
-
-    district.merge(data);
-
-    await district.save();
-
-    district.region = region;
-    
-    return district
-  }
-
-  async destroy ({ params, request, response }) {
+  async update({ params, request, response }) {
     const district = await District.findOrFail(params.id)
-    
-    await district.delete();
+    const data = request.only(['name', 'region_id', 'city_id'])
+
+    const city = await City.findOrFail(data.city_id)
+
+    district.merge(data)
+
+    await district.save()
+
+    return district
+  }
+
+  async destroy({ params, request, response }) {
+    const district = await District.findOrFail(params.id)
+
+    await district.delete()
   }
 }
 

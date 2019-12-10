@@ -12,11 +12,6 @@ class RegionSchema extends Schema {
         .boolean('active')
         .notNullable()
         .defaultTo(true)
-      table
-        .integer('city_id')
-        .unsigned()
-        .references('id')
-        .inTable('cities')
       table.timestamps()
     })
   }

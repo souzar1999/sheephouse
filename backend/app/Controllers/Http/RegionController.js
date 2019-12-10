@@ -7,7 +7,6 @@ class RegionController {
   async index({ request, response }) {
     const regions = Region.query()
       .with('district')
-      .with('city')
       .fetch()
 
     return regions
@@ -17,35 +16,25 @@ class RegionController {
     const region = await Region.query()
       .where('id', params.id)
       .with('district')
-      .with('city')
       .fetch()
 
     return region
   }
 
   async store({ request, response }) {
-    const data = request.only(['name', 'city_id'])
-
-    const city = await City.findOrFail(data.city_id)
-
+    const data = request.only(['name'])
     const region = await Region.create(data)
-
-    region.city = city
 
     return region
   }
 
   async update({ params, request, response }) {
     const region = await Region.findOrFail(params.id)
-    const data = request.only(['name', 'city_id'])
-
-    const city = await City.findOrFail(data.city_id)
+    const data = request.only(['name'])
 
     region.merge(data)
 
     await region.save()
-
-    region.city = city
 
     return region
   }

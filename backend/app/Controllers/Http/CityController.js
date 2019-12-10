@@ -5,10 +5,7 @@ const City = use('App/Models/City')
 class CityController {
   async index({ request, response, view }) {
     const city = City.query()
-      .with('region', region => {
-        region.with('district')
-      })
-      .orderBy('name')
+      .with('district')
       .fetch()
 
     return city
@@ -17,9 +14,7 @@ class CityController {
   async show({ params, request, response, view }) {
     const city = await City.query()
       .where('id', params.id)
-      .with('region', region => {
-        region.with('district')
-      })
+      .with('district')
       .fetch()
 
     return city
@@ -30,12 +25,7 @@ class CityController {
 
     const city = await City.create(data)
 
-    return await City.query()
-      .where('id', city.id)
-      .with('region', region => {
-        region.with('district')
-      })
-      .fetch()
+    return city
   }
 
   async update({ params, request, response }) {
@@ -46,12 +36,7 @@ class CityController {
 
     await city.save()
 
-    return await City.query()
-      .where('id', city.id)
-      .with('region', region => {
-        region.with('district')
-      })
-      .fetch()
+    return city
   }
 
   async destroy({ params, request, response }) {

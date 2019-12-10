@@ -4,9 +4,8 @@
 const Model = use('Model')
 
 class City extends Model {
-  
-  region () {
-    return this.hasMany('App/Models/Region')
+  district() {
+    return this.hasMany('App/Models/District')
   }
 }
 

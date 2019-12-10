@@ -7,9 +7,12 @@ import api from "../../../services/api";
 function District({ enqueueSnackbar }) {
   const [districts, setDistricts] = useState([]);
   const [regions, setRegions] = useState([]);
+  const [cities, setCities] = useState([]);
+
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Região (Cidade)", field: "region_id", lookup: { ...regions } },
+    { title: "Cidade", field: "city_id", lookup: { ...cities } },
+    { title: "Região", field: "region_id", lookup: { ...regions } },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
@@ -28,6 +31,16 @@ function District({ enqueueSnackbar }) {
 
       setRegions(data);
     });
+
+    await api.get("/city").then(response => {
+      let data = [];
+
+      response.data.map(item => {
+        return (data[item.id] = item.name);
+      });
+
+      setCities(data);
+    });
   }
 
   async function handleLoad() {
@@ -37,10 +50,22 @@ function District({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { name, region_id, active } = newData;
+    const { name, region_id, city_id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do bairro!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!city_id) {
+      enqueueSnackbar("Informe a cidade!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -90,10 +115,22 @@ function District({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, region_id, id, active } = newData;
+    const { name, region_id, city_id, id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do bairro!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!city_id) {
+      enqueueSnackbar("Informe a cidade!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
