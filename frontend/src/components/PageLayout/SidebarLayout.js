@@ -10,7 +10,6 @@ const SidebarLayout = ({ isUserAdmin }) => {
     return (
       <Sidebar>
         <Sideitem link="/admin/home" icon="home" label="Início" />
-        <Divider />
         <Sideitem
           link="/admin/home"
           icon="cloud_upload"
