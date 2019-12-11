@@ -11,6 +11,7 @@ import Logout from "./UserLogout/Logout";
 import SignUp from "./UserRegister/SignUp";
 
 import UserHome from "./User/Home/Home";
+import UserPhoto from "./User/Photo/Photo";
 
 import AdminCity from "./Admin/City/City";
 import AdminRegion from "./Admin/Region/Region";
@@ -37,5 +38,6 @@ export {
   AdminDistrict,
   AdminClient,
   AdminHorary,
-  UserHome
+  UserHome,
+  UserPhoto
 };

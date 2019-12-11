@@ -15,6 +15,7 @@ import UserRegister from "./UserRegister/UserRegister";
 import NotFound from "./NotFound/NotFound";
 
 import UserHome from "./User/Home/Home";
+import UserPhoto from "./User/Photo/Photo";
 
 import AdminHome from "./Admin/Home/Home";
 import AdminDistrict from "./Admin/District/District";
@@ -39,7 +40,7 @@ export default function Routes() {
         <LoginRequeredRoute path="/reports" component={UserHome} />
         <LoginRequeredRoute path="/contacts" component={UserHome} />
         <LoginRequeredRoute path="/profile" component={UserHome} />
-        <LoginRequeredRoute path="/scheduling/photo" component={UserHome} />
+        <LoginRequeredRoute path="/scheduling/photo" component={UserPhoto} />
         <LoginRequeredRoute path="/scheduling/drone" component={UserHome} />
 
         <AdminRequeredRoute path="/admin/home" component={AdminHome} />
