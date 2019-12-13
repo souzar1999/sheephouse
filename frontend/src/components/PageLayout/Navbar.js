@@ -39,7 +39,7 @@ const Navbar = ({
   if (isUserLogged) {
     return (
       <div className={classes.root}>
-        <AppBar color="inherit" position="fixed">
+        <AppBar color="primary" position="fixed">
           <Toolbar>
             <IconButton
               edge="start"

@@ -5,17 +5,10 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { userLogout } from "../../store/actions";
 
+import history from "../../history";
+
 function Logout({ enqueueSnackbar, onUserLogout }) {
   useEffect(() => {
-    enqueueSnackbar("Algo errado com seu login!", {
-      variant: "info",
-      autoHideDuration: 2500,
-      anchorOrigin: {
-        vertical: "top",
-        horizontal: "center"
-      }
-    });
-
     enqueueSnackbar("Por favor, acesse novamente!", {
       variant: "info",
       autoHideDuration: 2500,
@@ -26,6 +19,7 @@ function Logout({ enqueueSnackbar, onUserLogout }) {
     });
 
     onUserLogout();
+    history.push("/");
   }, [enqueueSnackbar, onUserLogout]);
 
   return <div></div>;

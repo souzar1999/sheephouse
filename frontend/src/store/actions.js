@@ -3,6 +3,7 @@ export const CLOSE_MENU = "CLOSE_MENU";
 export const USER_LOGIN = "USER_LOGIN";
 export const USER_LOGOUT = "USER_LOGOUT";
 export const USER_ADMIN = "USER_ADMIN";
+export const USER_CLIENT = "USER_CLIENT";
 
 export const openMenu = () => ({
   type: OPEN_MENU
@@ -22,4 +23,9 @@ export const userLogout = () => ({
 
 export const userAdmin = () => ({
   type: USER_ADMIN
+});
+
+export const userClient = id => ({
+  type: USER_CLIENT,
+  id
 });

@@ -9,6 +9,10 @@ Route.post('/refresh', 'SessionController.refreshToken')
 
 Route.get('/user', 'SessionController.show').middleware('auth')
 
+Route.get('/client/user/:user_id', 'ClientController.showClient').middleware(
+  'auth'
+)
+
 Route.resource('broker', 'BrokerController')
   .apiOnly()
   .middleware('auth')

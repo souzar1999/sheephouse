@@ -8,9 +8,10 @@ class SchedulingSchema extends Schema {
     this.create('schedulings', table => {
       table.increments()
       table.string('date').notNullable()
-      table.string('address').notNullable()
       table.string('latitude').notNullable()
       table.string('longitude').notNullable()
+      table.string('address').notNullable()
+      table.string('complement').notNullable()
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
       table
@@ -25,6 +26,21 @@ class SchedulingSchema extends Schema {
         .boolean('completed')
         .notNullable()
         .defaultTo(false)
+      table
+        .integer('region_id')
+        .unsigned()
+        .references('id')
+        .inTable('regions')
+      table
+        .integer('city_id')
+        .unsigned()
+        .references('id')
+        .inTable('cities')
+      table
+        .integer('district_id')
+        .unsigned()
+        .references('id')
+        .inTable('districts')
       table
         .integer('photographer_id')
         .unsigned()

@@ -2,16 +2,16 @@ import React from "react";
 import { connect } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
 
-const AdminRequeredRoute = ({ component: Component, ...rest }) => (
+const LoginRequiredRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      rest.isUserLogged && rest.isUserAdmin ? (
+      rest.isUserLogged && rest.clientCode ? (
         <Component {...props} />
       ) : (
         <Redirect
           to={{
-            pathname: "/home",
+            pathname: "/user",
             state: { from: props.location }
           }}
         />
@@ -22,7 +22,7 @@ const AdminRequeredRoute = ({ component: Component, ...rest }) => (
 
 const mapStateToProps = state => ({
   isUserLogged: state.isUserLogged,
-  isUserAdmin: state.isUserAdmin
+  clientCode: state.clientCode
 });
 
-export default connect(mapStateToProps, {})(AdminRequeredRoute);
+export default connect(mapStateToProps, {})(LoginRequiredRoute);

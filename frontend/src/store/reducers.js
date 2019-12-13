@@ -3,14 +3,16 @@ import {
   CLOSE_MENU,
   USER_LOGIN,
   USER_LOGOUT,
-  USER_ADMIN
+  USER_ADMIN,
+  USER_CLIENT
 } from "./actions";
 
 const appReducer = (
   state = {
     isMenuOpen: false,
     isUserLogged: false,
-    isUserAdmin: false
+    isUserAdmin: false,
+    clientCode: null
   },
   action
 ) => {
@@ -37,13 +39,21 @@ const appReducer = (
       return {
         ...state,
         isUserLogged: false,
-        isUserAdmin: false
+        isUserAdmin: false,
+        clientCode: null
       };
     }
     case USER_ADMIN: {
       return {
         ...state,
         isUserAdmin: true
+      };
+    }
+    case USER_CLIENT: {
+      const { id } = action;
+      return {
+        ...state,
+        clientCode: id
       };
     }
     default:

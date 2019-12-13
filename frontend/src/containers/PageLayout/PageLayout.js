@@ -1,12 +1,14 @@
 import React from "react";
 
-import { Navbar, Container, SidebarLayout } from "../../components/";
+import { Navbar, Container, SidebarLayout, Body } from "../../components/";
 
 const PageLayout = ({ children }) => {
   return (
     <>
       <Navbar />
-      <Container>{children}</Container>
+      <Body>
+        <Container>{children}</Container>
+      </Body>
       <SidebarLayout />
     </>
   );

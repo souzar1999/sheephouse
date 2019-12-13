@@ -19,6 +19,13 @@ const useStyles = makeStyles(theme => ({
       alignItems: "stretch"
     }
   },
+  paper: {
+    marginTop: theme.spacing(8),
+    padding: theme.spacing(4),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
+  },
   paperFoto: {
     display: "flex",
     justifyContent: "center",
@@ -70,7 +77,7 @@ function Home() {
   const classes = useStyles();
 
   return (
-    <>
+    <Paper className={classes.paper}>
       <Typography className={classes.title} component="h1" variant="h3">
         Selecione uma das opções
       </Typography>
@@ -95,7 +102,7 @@ function Home() {
           </Grid>
         </Grid>
       </div>
-    </>
+    </Paper>
   );
 }
 

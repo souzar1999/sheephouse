@@ -5,7 +5,8 @@ import history from "../history";
 import {
   LoginRequeredRoute,
   LogoutRequeredRoute,
-  AdminRequeredRoute
+  AdminRequeredRoute,
+  ClientRequeredRoute
 } from "../components";
 
 import UserLogin from "./UserLogin/UserLogin";
@@ -16,6 +17,7 @@ import NotFound from "./NotFound/NotFound";
 
 import UserHome from "./User/Home/Home";
 import UserPhoto from "./User/Photo/Photo";
+import UserClient from "./User/Client/Client";
 
 import AdminHome from "./Admin/Home/Home";
 import AdminDistrict from "./Admin/District/District";
@@ -34,14 +36,16 @@ export default function Routes() {
         <LogoutRequeredRoute path="/signup" component={UserRegister} />
         <LoginRequeredRoute path="/logout" component={UserLogout} />
 
-        <LoginRequeredRoute path="/home" component={UserHome} />
-        <LoginRequeredRoute path="/calendar" component={UserHome} />
-        <LoginRequeredRoute path="/sessions" component={UserHome} />
-        <LoginRequeredRoute path="/reports" component={UserHome} />
-        <LoginRequeredRoute path="/contacts" component={UserHome} />
-        <LoginRequeredRoute path="/profile" component={UserHome} />
-        <LoginRequeredRoute path="/scheduling/photo" component={UserPhoto} />
-        <LoginRequeredRoute path="/scheduling/drone" component={UserHome} />
+        <LoginRequeredRoute path="/user" component={UserClient} />
+
+        <ClientRequeredRoute path="/home" component={UserHome} />
+        <ClientRequeredRoute path="/calendar" component={UserHome} />
+        <ClientRequeredRoute path="/sessions" component={UserHome} />
+        <ClientRequeredRoute path="/reports" component={UserHome} />
+        <ClientRequeredRoute path="/contacts" component={UserHome} />
+        <ClientRequeredRoute path="/profile" component={UserHome} />
+        <ClientRequeredRoute path="/scheduling/photo" component={UserPhoto} />
+        <ClientRequeredRoute path="/scheduling/drone" component={UserHome} />
 
         <AdminRequeredRoute path="/admin/home" component={AdminHome} />
         <AdminRequeredRoute path="/admin/city" component={AdminCity} />

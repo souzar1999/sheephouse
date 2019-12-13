@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import Paper from "@material-ui/core/Paper";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -16,16 +17,13 @@ import api from "../../services/api";
 const useStyles = makeStyles(theme => ({
   paper: {
     marginTop: theme.spacing(8),
+    padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main
-  },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%",
     marginTop: theme.spacing(3)
   },
   submit: {
@@ -129,8 +127,6 @@ function SignUp({ enqueueSnackbar }) {
       return;
     }
 
-    console.log(termsOfUse);
-
     if (!termsOfUse) {
       enqueueSnackbar("Aceite os termos de uso para prosseguir!", {
         variant: "error",
@@ -180,7 +176,7 @@ function SignUp({ enqueueSnackbar }) {
 
   return (
     <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
+      <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
           <img src="./assets/logo.webp" alt="Sheephouse" height={100} />
         </Typography>
@@ -270,7 +266,7 @@ function SignUp({ enqueueSnackbar }) {
             </Link>
           </Grid>
         </form>
-      </div>
+      </Paper>
     </Container>
   );
 }

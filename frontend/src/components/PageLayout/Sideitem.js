@@ -12,7 +12,11 @@ import { closeMenu } from "../../store/actions";
 
 const useStyles = makeStyles({
   list: {
-    width: 250
+    width: 250,
+    color: "#fff"
+  },
+  listIcon: {
+    color: "#fff"
   }
 });
 
@@ -33,7 +37,7 @@ const Sideitem = ({ onCloseMenu, label, link, icon }) => {
       <List>
         <ListItemLink href={link}>
           <ListItemIcon>
-            <Icon>{icon}</Icon>
+            <Icon className={classes.listIcon}>{icon}</Icon>
           </ListItemIcon>
           <ListItemText primary={label} />
         </ListItemLink>

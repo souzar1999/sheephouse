@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -10,14 +11,14 @@ import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
 import { connect } from "react-redux";
-import { userLogin, userAdmin } from "../../store/actions";
+import { userLogin } from "../../store/actions";
 
 import api from "../../services/api";
-import history from "../../history";
 
 const useStyles = makeStyles(theme => ({
   paper: {
     marginTop: theme.spacing(8),
+    padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -31,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SignIn({ enqueueSnackbar, onUserLogin, onUserAdmin }) {
+function SignIn({ enqueueSnackbar, onUserLogin }) {
   const classes = useStyles();
 
   const [email, setEmail] = useState("");
@@ -82,21 +83,6 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserAdmin }) {
         localStorage.setItem("userToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         onUserLogin();
-
-        await api.get("/user").then(response => {
-          enqueueSnackbar(`Seja bem vindo ${response.data.username}!`, {
-            variant: "success",
-            autoHideDuration: 2500,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center"
-            }
-          });
-          if (response.data.admin) {
-            onUserAdmin();
-            history.push("/admin/home");
-          }
-        });
       })
       .catch(error => {
         enqueueSnackbar(
@@ -115,7 +101,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserAdmin }) {
 
   return (
     <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
+      <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
           <img src="./assets/logo.webp" alt="Sheephouse" height={100} />
         </Typography>
@@ -161,7 +147,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserAdmin }) {
             </Link>
           </Grid>
         </form>
-      </div>
+      </Paper>
     </Container>
   );
 }
@@ -170,9 +156,6 @@ const mapDispatchToProps = dispatch => {
   return {
     onUserLogin: () => {
       dispatch(userLogin());
-    },
-    onUserAdmin: () => {
-      dispatch(userAdmin());
     }
   };
 };

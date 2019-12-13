@@ -15,12 +15,20 @@ class ClientController {
     return clients
   }
 
-  async show({ params, request, response, view }) {
+  async show({ params, request, response }) {
     const client = await Client.query()
       .where('id', params.id)
       .with('broker')
       .with('user')
       .with('scheduling')
+      .fetch()
+
+    return client
+  }
+
+  async showClient({ params, request, response }) {
+    const client = await Client.query()
+      .where('user_id', params.user_id)
       .fetch()
 
     return client
@@ -35,13 +43,7 @@ class ClientController {
       'active'
     ])
 
-    await Client.create(clientData)
-
-    return const client = await Client.query()
-      .where('id', params.id)
-      .with('broker')
-      .with('user')
-      .fetch()
+    return await Client.create(data)
   }
 
   async update({ params, request, response }) {
@@ -59,11 +61,11 @@ class ClientController {
 
     await client.save()
 
-    return const client = await Client.query()
+    return (client = await Client.query()
       .where('id', params.id)
       .with('broker')
       .with('user')
-      .fetch()
+      .fetch())
   }
 
   async destroy({ params, request, response }) {
