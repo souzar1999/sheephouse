@@ -13,6 +13,17 @@ Route.get('/client/user/:user_id', 'ClientController.showClient').middleware(
   'auth'
 )
 
+Route.post('/city/byName', 'CityController.showCity').middleware('auth')
+
+Route.post('/district/byName', 'DistrictController.showDistrict').middleware(
+  'auth'
+)
+
+Route.post(
+  '/photographer/byRegion',
+  'PhotographerController.showPhotographer'
+).middleware('auth')
+
 Route.resource('broker', 'BrokerController')
   .apiOnly()
   .middleware('auth')

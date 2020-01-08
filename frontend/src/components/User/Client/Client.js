@@ -50,41 +50,41 @@ function Client({ enqueueSnackbar, onUserClient, onUserAdmin }) {
   const [labelWidth, setLabelWidth] = React.useState(0);
 
   useEffect(() => {
+    async function getUserStatus() {
+      await api.get("/user").then(async response => {
+        if (response.data.admin) {
+          onUserAdmin();
+          history.push("/admin/home");
+          return;
+        }
+
+        enqueueSnackbar("Seja bem vindo!", {
+          variant: "success",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+
+        await api.get(`/client/user/${response.data.id}`).then(response => {
+          if (response.data[0]) {
+            if (response.data[0].id) {
+              onUserClient(response.data[0].id);
+              history.push("/home");
+            }
+          }
+        });
+      });
+    }
+
     getUserStatus();
 
     setLabelWidth(inputLabel.current.offsetWidth);
 
     getBrokers();
     getUser();
-  }, []);
-
-  async function getUserStatus() {
-    await api.get("/user").then(async response => {
-      if (response.data.admin) {
-        onUserAdmin();
-        history.push("/admin/home");
-        return;
-      }
-
-      enqueueSnackbar("Seja bem vindo!", {
-        variant: "success",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-
-      await api.get(`/client/user/${response.data.id}`).then(response => {
-        if (response.data[0]) {
-          if (response.data[0].id) {
-            onUserClient(response.data[0].id);
-            history.push("/home");
-          }
-        }
-      });
-    });
-  }
+  }, [enqueueSnackbar, onUserAdmin, onUserClient]);
 
   async function getBrokers() {
     await api.get("/broker").then(response => {

@@ -23,6 +23,16 @@ class PhotographerController {
     return photographer
   }
 
+  async showPhotographer({ params, request, response }) {
+    const data = request.only(['region_id'])
+
+    const photographer = await Photographer.query()
+      .where('region_id', data.region_id)
+      .fetch()
+
+    return photographer
+  }
+
   async store({ request, response }) {
     const data = request.only(['name', 'email', 'drone', 'region_id'])
 

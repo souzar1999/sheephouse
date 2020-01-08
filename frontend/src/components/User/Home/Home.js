@@ -42,8 +42,8 @@ const useStyles = makeStyles(theme => ({
       width: 300
     },
     [theme.breakpoints.down("xs")]: {
-      height: 200,
-      width: 200
+      height: 150,
+      width: 150
     }
   },
   paperDrone: {
@@ -62,8 +62,8 @@ const useStyles = makeStyles(theme => ({
       width: 300
     },
     [theme.breakpoints.down("xs")]: {
-      height: 200,
-      width: 200
+      height: 150,
+      width: 150
     }
   },
   title: {

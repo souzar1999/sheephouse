@@ -20,6 +20,16 @@ class CityController {
     return city
   }
 
+  async showCity({ params, request, response }) {
+    const data = request.only(['city'])
+
+    const city = await City.query()
+      .where('name', data.city)
+      .fetch()
+
+    return city
+  }
+
   async store({ request, response }) {
     const data = request.only(['name'])
 

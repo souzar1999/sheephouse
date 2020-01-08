@@ -1,7 +1,6 @@
 import SidebarLayout from "./PageLayout/SidebarLayout";
 import Container from "./PageLayout/Container";
 import Navbar from "./PageLayout/Navbar";
-import Body from "./PageLayout/Body";
 
 import LoginRequeredRoute from "./Routes/LoginRequeredRoute";
 import LogoutRequeredRoute from "./Routes/LogoutRequeredRoute";
@@ -28,7 +27,6 @@ export {
   SidebarLayout,
   Navbar,
   Container,
-  Body,
   LoginRequeredRoute,
   LogoutRequeredRoute,
   AdminRequeredRoute,

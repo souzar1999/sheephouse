@@ -4,8 +4,7 @@ import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles({
   container: {
-    paddingTop: "100px",
-    maxWidth: "1000px",
+    paddingTop: "50px",
     height: "100vh",
     textAlign: "center",
     display: "flex",

@@ -21,6 +21,17 @@ class DistrictController {
     return district
   }
 
+  async showDistrict({ params, request, response }) {
+    const data = request.only(['city_id', 'district'])
+
+    const district = await District.query()
+      .where('name', data.district)
+      .where('city_id', data.city_id)
+      .fetch()
+
+    return district
+  }
+
   async store({ request, response }) {
     const data = request.only(['name', 'region_id', 'city_id'])
 
