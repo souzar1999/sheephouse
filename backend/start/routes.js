@@ -57,3 +57,7 @@ Route.resource('region', 'RegionController')
 Route.resource('scheduling', 'SchedulingController')
   .apiOnly()
   .middleware('auth')
+
+Route.get('storages/storage/:storageType/folder/:folderName','StorageController.getAllFilesFromFolder')  
+Route.get('storages/storage/:storageType/folder/:folderName/:fileName/upload','StorageController.getPutPreSignedUrl') 
+Route.get('storages/storage/:storageType/folder/:folderName/:fileName/download','StorageController.getDownloadPreSignedUrl')   
