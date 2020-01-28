@@ -13,6 +13,16 @@ class PhotographerController {
     return photographers
   }
 
+  async indexActive({ request, response, view }) {
+    const photographers = Photographer.query()
+      .with('region')
+      .with('scheduling')
+      .where('active', true)
+      .fetch()
+
+    return photographers
+  }
+
   async show({ params, request, response, view }) {
     const photographer = await Photographer.query()
       .where('id', params.id)
@@ -47,15 +57,15 @@ class PhotographerController {
 
   async update({ params, request, response }) {
     const photographer = await Photographer.findOrFail(params.id)
-    const data = request.only(['name', 'email', 'drone', 'region_id'])
+    const data = request.only(['name', 'email', 'drone', 'region_id', 'code'])
 
-    const region = await Region.findOrFail(data.region_id)
+    if (data.region_id) {
+      const region = await Region.findOrFail(data.region_id)
+    }
 
     photographer.merge(data)
 
     await photographer.save()
-
-    photographer.region = region
 
     return photographer
   }

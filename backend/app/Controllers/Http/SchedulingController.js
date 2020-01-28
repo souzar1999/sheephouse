@@ -32,45 +32,23 @@ class SchedulingController {
   async store({ request, response }) {
     const data = request.only([
       'date',
-      'address',
       'latitude',
       'longitude',
+      'address',
+      'complement',
       'accompanies',
       'drone',
+      'region_id',
       'horary_id',
-      'client_id',
-      'complement'
+      'client_id'
     ])
 
-    const dataCity = request.only(['city'])
-    const dataDistrict = request.only(['district'])
-
-    const city = await Database.select('id')
-      .from('cities')
-      .where('name', dataCity.city)
-
-    const district = await Database.select('id', 'region_id')
-      .from('districts')
-      .where('name', dataDistrict.district)
-      .where('city_id', city[0].id)
-
-    const region = await Region.findOrFail(district[0].region_id)
+    const city = await City.findOrFail(data.city_id)
+    const district = await District.findOrFail(data.district_id)
+    const region = await Region.findOrFail(data.region_id)
     const horary = await Horary.findOrFail(data.horary_id)
     const client = await Client.findOrFail(data.client_id)
-
-    if (data.drone) {
-      var photographer = await Photographer.findByOrFail('drone', data.drone)
-    } else {
-      var photographer = await Photographer.findByOrFail(
-        'region_id',
-        district[0].region_id
-      )
-    }
-
-    data.photographer_id = photographer.id
-    data.city_id = city[0].id
-    data.region_id = district[0].region_id
-    data.district_id = district[0].id
+    const photographer = await Photographer.findByOrFail(data.photographer_id)
 
     const scheduling = await Scheduling.create(data)
 
@@ -87,24 +65,20 @@ class SchedulingController {
       'complement',
       'accompanies',
       'drone',
-      'horary_id',
-      'photographer_id',
-      'city_id',
       'region_id',
-      'district_id',
-      'scheduling_id',
-      'active',
-      'changed',
-      'complement'
+      'horary_id',
+      'client_id',
+      'actived'
     ])
 
+    data.changed = true
+
+    const city = await City.findOrFail(data.city_id)
+    const district = await District.findOrFail(data.district_id)
+    const region = await Region.findOrFail(data.region_id)
     const horary = await Horary.findOrFail(data.horary_id)
     const client = await Client.findOrFail(data.client_id)
-
-    if (data.drone) {
-      var photographer = await Photographer.findByOrFail('drone', data.drone)
-      data.photographer_id = photographer.id
-    }
+    const photographer = await Photographer.findByOrFail(data.photographer_id)
 
     scheduling.merge(data)
 

@@ -11,6 +11,14 @@ class RegionController {
 
     return regions
   }
+  async indexActive({ request, response }) {
+    const regions = Region.query()
+      .with('district')
+      .where('active', true)
+      .fetch()
+
+    return regions
+  }
 
   async show({ params, request, response }) {
     const region = await Region.query()

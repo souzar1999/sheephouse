@@ -11,6 +11,15 @@ class BrokerController {
     return broker
   }
 
+  async indexActive({ request, response, view }) {
+    const broker = Broker.query()
+      .with('client')
+      .where('active', true)
+      .fetch()
+
+    return broker
+  }
+
   async show({ params, request, response, view }) {
     const broker = await Broker.query()
       .where('id', params.id)

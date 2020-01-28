@@ -179,35 +179,6 @@ function District({ enqueueSnackbar }) {
       });
   }
 
-  async function handleDelete(oldData) {
-    const { id } = oldData;
-
-    await api
-      .delete(`/district/${id}`)
-      .then(response => {
-        enqueueSnackbar("Registro deletado com sucesso!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-
-        handleLoad();
-      })
-      .catch(error => {
-        enqueueSnackbar("Erro ao excluir registro!", {
-          variant: "error",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-      });
-  }
-
   return (
     <MaterialTable
       title="Bairros"
@@ -223,12 +194,6 @@ function District({ enqueueSnackbar }) {
           new Promise(resolve => {
             resolve();
             handleUpdate(newData, oldData);
-          }),
-
-        onRowDelete: oldData =>
-          new Promise(resolve => {
-            resolve();
-            handleDelete(oldData);
           })
       }}
       localization={{

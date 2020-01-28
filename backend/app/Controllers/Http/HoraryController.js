@@ -9,6 +9,14 @@ class HoraryController {
     return horary
   }
 
+  async indexActive({ request, response, view }) {
+    const horary = Horary.query()
+      .where('active', true)
+      .fetch()
+
+    return horary
+  }
+
   async show({ params, request, response, view }) {
     const horary = await Horary.query()
       .where('id', params.id)

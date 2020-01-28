@@ -15,6 +15,17 @@ class ClientController {
     return clients
   }
 
+  async indexActive({ request, response, view }) {
+    const clients = Client.query()
+      .with('broker')
+      .with('user')
+      .with('scheduling')
+      .where('active', true)
+      .fetch()
+
+    return clients
+  }
+
   async show({ params, request, response }) {
     const client = await Client.query()
       .where('id', params.id)

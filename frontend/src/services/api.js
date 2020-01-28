@@ -44,7 +44,6 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getRefreshToken();
-      console.log("entrou");
       return api
         .post("/refresh", {
           refreshToken

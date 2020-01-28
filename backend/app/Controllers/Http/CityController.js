@@ -11,6 +11,15 @@ class CityController {
     return city
   }
 
+  async indexActive({ request, response, view }) {
+    const city = City.query()
+      .with('district')
+      .where('active', true)
+      .fetch()
+
+    return city
+  }
+
   async show({ params, request, response, view }) {
     const city = await City.query()
       .where('id', params.id)

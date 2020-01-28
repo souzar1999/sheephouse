@@ -9,6 +9,7 @@ class PhotographerSchema extends Schema {
       table.increments()
       table.string('name').notNullable()
       table.string('email').notNullable()
+      table.string('code')
       table
         .boolean('drone')
         .notNullable()

@@ -12,6 +12,15 @@ class DistrictController {
     return districts
   }
 
+  async indexActive({ request, response, view }) {
+    const districts = District.query()
+      .with('city')
+      .where('active', true)
+      .fetch()
+
+    return districts
+  }
+
   async show({ params, request, response, view }) {
     const district = await District.query()
       .where('id', params.id)

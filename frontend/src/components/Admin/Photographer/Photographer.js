@@ -15,10 +15,52 @@ function Photographer({ enqueueSnackbar }) {
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
+  const queryString = window.location.search,
+    urlParams = new URLSearchParams(queryString),
+    code = urlParams.get("code");
+
   useEffect(() => {
     handleLoad();
     handleLoadLookup();
+
+    if (code) {
+      handleAddCode(code);
+    }
   }, []);
+
+  async function handleAuthUrl() {
+    await api.post(`/google/auth/create`, {}).then(async response => {
+      window.open(response.data);
+    });
+  }
+
+  async function handleAddCode(code) {
+    const id = localStorage.getItem("photographer_id");
+    await api
+      .put(`/photographer/${id}`, { code })
+      .then(response => {
+        enqueueSnackbar("Fotográfo autenticado com sucesso!", {
+          variant: "success",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+
+        handleLoad();
+      })
+      .catch(error => {
+        enqueueSnackbar("Erro ao autenticar fotográfo!", {
+          variant: "error",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+      });
+  }
 
   async function handleLoadLookup() {
     await api.get("/region").then(response => {
@@ -89,7 +131,9 @@ function Photographer({ enqueueSnackbar }) {
           }
         });
 
+        localStorage.setItem("photographer_id", response.data.photographer_id);
         handleLoad();
+        handleAuthUrl();
       })
       .catch(error => {
         enqueueSnackbar("Erro ao cadastrar registro!", {
@@ -168,35 +212,6 @@ function Photographer({ enqueueSnackbar }) {
       });
   }
 
-  async function handleDelete(oldData) {
-    const { id } = oldData;
-
-    await api
-      .delete(`/photographer/${id}`)
-      .then(response => {
-        enqueueSnackbar("Registro deletado com sucesso!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-
-        handleLoad();
-      })
-      .catch(error => {
-        enqueueSnackbar("Erro ao excluir registro!", {
-          variant: "error",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-      });
-  }
-
   return (
     <MaterialTable
       title="Fotógrafos"
@@ -212,12 +227,6 @@ function Photographer({ enqueueSnackbar }) {
           new Promise(resolve => {
             resolve();
             handleUpdate(newData, oldData);
-          }),
-
-        onRowDelete: oldData =>
-          new Promise(resolve => {
-            resolve();
-            handleDelete(oldData);
           })
       }}
       localization={{

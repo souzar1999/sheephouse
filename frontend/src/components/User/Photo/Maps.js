@@ -6,7 +6,7 @@ import { withSnackbar } from "notistack";
 
 import axios from "axios";
 
-const MY_API_KEY = "AIzaSyBuUvsO2t14HU4mguhG0kpHFRdWuBEQfKw";
+const MY_API_KEY = "AIzaSyCnMYW7-ZhejrxXrcysydOis2Vq71g2zoc";
 
 class Maps extends Component {
   state = {
