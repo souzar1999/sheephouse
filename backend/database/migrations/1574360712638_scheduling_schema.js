@@ -12,6 +12,7 @@ class SchedulingSchema extends Schema {
       table.string('longitude').notNullable()
       table.string('address').notNullable()
       table.string('complement').notNullable()
+      table.string('google_event_id')
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
       table

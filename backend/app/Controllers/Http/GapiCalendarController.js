@@ -58,13 +58,15 @@ class GapiController {
 
     oauth2Client.setCredentials(tokens)
 
-    const params = { calendarId, auth: oauth2Client } //, requestBody }
+    const params = { calendarId, auth: oauth2Client , requestBody }
 
-    console.log(params)
+    const res =await calendar.events.insert(params);
 
-    //console.log(await calendar.events.insert(params))
+    scheduling.google_event_id = res.data.id;
 
-    //return res
+    await scheduling.save();
+
+    return response.status(200).send({ message: "Agendamento criado com sucesso"})
   }
 
   async insertEventDrone({ request, response }) {
