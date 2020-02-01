@@ -27,6 +27,7 @@ import AdminClient from "./Admin/Client/Client";
 import AdminBroker from "./Admin/Broker/Broker";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminHorary from "./Admin/Horary/Horary";
+import AdminScheduling from "./Admin/Scheduling/Scheduling";
 
 export default function Routes() {
   return (
@@ -54,10 +55,8 @@ export default function Routes() {
         <AdminRequeredRoute path="/admin/region" component={AdminRegion} />
         <AdminRequeredRoute path="/admin/client" component={AdminClient} />
         <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
-        <AdminRequeredRoute
-          path="/admin/photographer"
-          component={AdminPhotographer}
-        />
+        <AdminRequeredRoute path="/admin/photographer" component={AdminPhotographer}/>
+        <AdminRequeredRoute path="/admin/scheduling" component={AdminScheduling}/>
         <Route component={NotFound} />
       </Switch>
     </Router>

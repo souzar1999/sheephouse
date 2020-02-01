@@ -13,6 +13,7 @@
     "notistack": "^0.9.7",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-dropzone": "^10.2.1",
     "react-google-maps-loader": "^4.2.6",
     "react-google-places-suggest": "^3.9.2",
     "react-redux": "^7.1.3",
