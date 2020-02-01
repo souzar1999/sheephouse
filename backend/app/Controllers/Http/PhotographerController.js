@@ -57,7 +57,14 @@ class PhotographerController {
 
   async update({ params, request, response }) {
     const photographer = await Photographer.findOrFail(params.id)
-    const data = request.only(['name', 'email', 'drone', 'region_id', 'code'])
+    const data = request.only([
+      'name',
+      'email',
+      'drone',
+      'active',
+      'region_id',
+      'tokens'
+    ])
 
     if (data.region_id) {
       const region = await Region.findOrFail(data.region_id)

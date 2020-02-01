@@ -35,7 +35,7 @@ class HoraryController {
 
   async update({ params, request, response }) {
     const horary = await Horary.findOrFail(params.id)
-    const data = request.only(['time'])
+    const data = request.only(['time', 'active'])
 
     horary.merge(data)
 

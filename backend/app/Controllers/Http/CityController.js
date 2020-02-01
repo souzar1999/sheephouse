@@ -49,7 +49,7 @@ class CityController {
 
   async update({ params, request, response }) {
     const city = await City.findOrFail(params.id)
-    const data = request.only(['name'])
+    const data = request.only(['name', 'active'])
 
     city.merge(data)
 

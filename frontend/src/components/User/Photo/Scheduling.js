@@ -45,8 +45,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [horary, setHorary] = useState(""),
     [city, setCity] = useState(""),
     [district, setDistrict] = useState(""),
-    [calendarId, setCalendarId] = useState(""),
-    [oAuth2, setOAuth2] = useState([]),
     [formatDate, setFormatDate] = useState(),
     [horaryDisable, setHoraryDisable] = useState(true),
     [events, setEvents] = useState([]),
@@ -70,9 +68,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   script.src = "https://apis.google.com/js/client.js";
 
   useEffect(() => {
-    getHoraries();
+    const numTime = Date.parse(`1970-01-01T08:00:00Z`),
+      numDate = Date.parse(`2020-03-01  T00:00:00Z`),
+      dateTimeStart = new Date(numDate + numTime),
+      dateTimeEnd = new Date(numDate + numTime + 4500000);
 
+    console.log(dateTimeEnd, dateTimeStart);
     if (step === 1) {
+      getHoraries();
       setLabelWidth(inputLabel.current.offsetWidth);
     }
   }, [enqueueSnackbar, step]);
@@ -81,6 +84,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     await api.get("/horary").then(response => {
       setHoraries(response.data);
     });
+  }
+
+  function getAddress(address, lat, lng, city, district) {
+    setAddress(address);
+    setCity(city);
+    setDistrict(district);
+    setLat(lat);
+    setLng(lng);
   }
 
   function verifyDate(value) {
@@ -106,21 +117,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     }
   }
 
-  function getStateAddress() {
-    setAddress(localStorage.getItem("address"));
-    setCity(localStorage.getItem("city"));
-    setDistrict(localStorage.getItem("district"));
-    setLat(localStorage.getItem("lat"));
-    setLng(localStorage.getItem("lng"));
-  }
-
   function handleReturnStep() {
     setStep(step - 1);
   }
 
   async function getCalendarEvents(date) {
     await api
-      .post(`/calendar/list`, { calendarId, date })
+      .post(`/calendar/event/list`, { photographer_id, date })
       .then(response => {
         setEvents(response.data);
         setHoraryDisable(false);
@@ -146,92 +149,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
   }
 
-  /*  function setCalendarEvent() {
-    var event = {
-      end: {
-        dateTime: "2020-03-01T19:00:00-03:00",
-        timeZone: "America/Sao_Paulo"
-      },
-      start: {
-        dateTime: "2020-03-01T17:00:00-03:00",
-        timeZone: "America/Sao_Paulo"
-      },
-      summary: "Fotografia Imobiliária - Agendamento Teste",
-      description: "Testando \n Muito mesmo"
-    };
-
-    var request = window.gapi.client.calendar.events.insert({
-      calendarId: `${photographer_email}`,
-      resource: event
-    });
-
-    request.execute(event => {
-      console.log(event);
-    });
-  }
-
-  function getAuth() {
-    function authorization() {
-      window.gapi.client.setApiKey(MY_API_KEY);
-
-      window.gapi.auth.authorize(
-        {
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-          scope: SCOPES,
-          immediate: true,
-          access_type: "offline",
-          response_type: "code",
-          include_granted_scopes: true
-        },
-        authorization2
-      );
-    }
-
-    function authorization2() {
-      window.gapi.client.setApiKey(MY_API_KEY);
-
-      window.gapi.auth.authorize(
-        {
-          code:
-            "4/vgFFohLWsqwX9k27r3sz0m7GMSimfigJ45QLyy9RZMBGK_HmW5wZXeDz0W_VRq7qq63sh47dDJL2Pgy9qMR5_Dc",
-          client_id: CLIENT_ID,
-          scope: SCOPES,
-          immediate: true,
-          client_secret: CLIENT_SECRET,
-          grant_type: "authorization_code"
-        },
-        handleAuthResult
-      );
-    }
-
-    function handleAuthResult(authResult) {
-      if (authResult && !authResult.error) {
-        console.log(authResult);
-        loadCalendarApi();
-      } else {
-        enqueueSnackbar("Erro ao autenticar com o Google Calendar!", {
-          variant: "error",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-      }
-    }
-
-    function loadCalendarApi() {
-      window.gapi.client.load("calendar", "v3", setCalendarEvent);
-    }
-
-    script.onload = () => {
-      window.gapi.load("client", authorization2);
-    };
-
-    document.body.appendChild(script);
-  }
-*/
   async function handleSubmitStep0() {
     if (!address) {
       enqueueSnackbar("Necessário informar endereço para prosseguir", {
@@ -249,7 +166,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       .then(async response => {
         setCityId(response.data[0].id);
         await api
-          .post(`/district/byName`, { district, city_id: response.data[0].id })
+          .post(`/district/byName`, {
+            district,
+            city_id: response.data[0].id
+          })
           .then(async response => {
             setDistrictId(response.data[0].id);
             setRegionId(response.data[0].region_id);
@@ -259,7 +179,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               })
               .then(async response => {
                 setPhotographerId(response.data[0].id);
-                setCalendarId(response.data[0].email);
 
                 enqueueSnackbar(
                   "Fotográfo foi selecionado pelo endereço informado!",
@@ -333,13 +252,12 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }
 
   async function handleSubmitStep2() {
-    /*  if (
+    if (
       !date ||
       !latitude ||
       !longitude ||
       !address ||
-      !accompanies ||
-      !drone ||
+      !complement ||
       !region_id ||
       !city_id ||
       !district_id ||
@@ -360,8 +278,55 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       );
       return;
     }
-*/
-    //setCalendarEvent();
+
+    await api
+      .post(`/scheduling`, {
+        date,
+        latitude,
+        longitude,
+        address,
+        complement,
+        accompanies,
+        drone,
+        region_id,
+        city_id,
+        district_id,
+        photographer_id,
+        horary_id,
+        client_id
+      })
+      .then(async response => {
+        enqueueSnackbar("Registro cadastrada com sucesso!", {
+          variant: "success",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+
+        const scheduling_id = response.data.id,
+          numTime = Date.parse(`1970-01-01T${horary}Z`),
+          numDate = Date.parse(`${date}T00:00:00Z`),
+          dateTimeStart = new Date(numDate + numTime),
+          dateTimeEnd = new Date(numDate + numTime + 4500000);
+
+        await api.post(`/google/event/insertPhoto`, {
+          scheduling_id,
+          dateTimeEnd,
+          dateTimeStart
+        });
+      })
+      .catch(error => {
+        enqueueSnackbar("Erro ao cadastrar registro!", {
+          variant: "error",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+      });
   }
 
   if (step === 0) {
@@ -374,13 +339,12 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         <div className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Maps />
+              <Maps addressInfo={getAddress} />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 type="text"
                 onChange={event => {
-                  getStateAddress();
                   setComplement(event.target.value);
                 }}
                 value={complement}

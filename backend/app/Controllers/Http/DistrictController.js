@@ -53,7 +53,7 @@ class DistrictController {
 
   async update({ params, request, response }) {
     const district = await District.findOrFail(params.id)
-    const data = request.only(['name', 'region_id', 'city_id'])
+    const data = request.only(['name', 'region_id', 'city_id', 'active'])
 
     const city = await City.findOrFail(data.city_id)
 

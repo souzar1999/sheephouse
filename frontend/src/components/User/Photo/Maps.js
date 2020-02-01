@@ -23,22 +23,17 @@ class Maps extends Component {
       search: "",
       address: suggest.formatted_address
     });
-    localStorage.setItem("address", suggest.formatted_address);
-    localStorage.setItem("lat", suggest.geometry.location.lat());
-    localStorage.setItem("lng", suggest.geometry.location.lng());
+    const address = suggest.formatted_address,
+      lat = suggest.geometry.location.lat(),
+      lng = suggest.geometry.location.lng();
     axios
       .get(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${suggest.geometry.location.lat()},${suggest.geometry.location.lng()}&key=${MY_API_KEY}`
       )
       .then(response => {
-        localStorage.setItem(
-          "city",
-          response.data.results[0].address_components[3].long_name
-        );
-        localStorage.setItem(
-          "district",
-          response.data.results[0].address_components[2].long_name
-        );
+        const city = response.data.results[0].address_components[3].long_name;
+        const district =
+          response.data.results[0].address_components[2].long_name;
 
         this.props.enqueueSnackbar("Endereço completo encontrado", {
           variant: "success",
@@ -59,6 +54,8 @@ class Maps extends Component {
             }
           }
         );
+
+        this.props.addressInfo(address, lat, lng, city, district);
       });
   };
 

@@ -38,7 +38,7 @@ class RegionController {
 
   async update({ params, request, response }) {
     const region = await Region.findOrFail(params.id)
-    const data = request.only(['name'])
+    const data = request.only(['name', 'active'])
 
     region.merge(data)
 

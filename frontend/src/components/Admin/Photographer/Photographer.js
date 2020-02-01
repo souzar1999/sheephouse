@@ -17,27 +17,28 @@ function Photographer({ enqueueSnackbar }) {
 
   const queryString = window.location.search,
     urlParams = new URLSearchParams(queryString),
-    code = urlParams.get("code");
+    code = urlParams.get("code"),
+    id = localStorage.getItem("photographer_id");
 
   useEffect(() => {
     handleLoad();
     handleLoadLookup();
 
-    if (code) {
-      handleAddCode(code);
+    if (code && id) {
+      console.log(code, id);
+      handleFirstAuth(code, id);
     }
   }, []);
 
   async function handleAuthUrl() {
-    await api.post(`/google/auth/create`, {}).then(async response => {
+    await api.post(`/google/auth/url`, {}).then(async response => {
       window.open(response.data);
     });
   }
 
-  async function handleAddCode(code) {
-    const id = localStorage.getItem("photographer_id");
+  async function handleFirstAuth(code, id) {
     await api
-      .put(`/photographer/${id}`, { code })
+      .post(`/google/auth/first`, { code, id })
       .then(response => {
         enqueueSnackbar("Fotográfo autenticado com sucesso!", {
           variant: "success",
@@ -131,7 +132,7 @@ function Photographer({ enqueueSnackbar }) {
           }
         });
 
-        localStorage.setItem("photographer_id", response.data.photographer_id);
+        localStorage.setItem("photographer_id", response.data.id);
         handleLoad();
         handleAuthUrl();
       })

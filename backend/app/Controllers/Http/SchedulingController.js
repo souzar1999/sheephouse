@@ -4,6 +4,8 @@ const Database = use('Database')
 const Horary = use('App/Models/Horary')
 const Client = use('App/Models/Client')
 const Region = use('App/Models/Region')
+const City = use('App/Models/City')
+const District = use('App/Models/District')
 const Photographer = use('App/Models/Photographer')
 const Scheduling = use('App/Models/Scheduling')
 
@@ -39,6 +41,9 @@ class SchedulingController {
       'accompanies',
       'drone',
       'region_id',
+      'city_id',
+      'district_id',
+      'photographer_id',
       'horary_id',
       'client_id'
     ])
@@ -48,7 +53,7 @@ class SchedulingController {
     const region = await Region.findOrFail(data.region_id)
     const horary = await Horary.findOrFail(data.horary_id)
     const client = await Client.findOrFail(data.client_id)
-    const photographer = await Photographer.findByOrFail(data.photographer_id)
+    const photographer = await Photographer.findOrFail(data.photographer_id)
 
     const scheduling = await Scheduling.create(data)
 

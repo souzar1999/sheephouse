@@ -18,9 +18,19 @@ Route.post('/city/byName', 'CityController.showCity').middleware('auth')
 Route.post('/district/byName', 'DistrictController.showDistrict').middleware(
   'auth'
 )
-Route.post('/calendar/list', 'GapiController.list')
-Route.post('/google/auth/create', 'GapiController.authCreate')
-Route.post('/google/auth/refresh', 'GapiController.authCode')
+Route.post('/calendar/event/list', 'GapiCalendarController.eventList')
+Route.post(
+  '/google/event/insertPhoto',
+  'GapiCalendarController.insertEventPhoto'
+)
+Route.post(
+  '/google/event/insertDrone',
+  'GapiCalendarController.insertEventDrone'
+)
+
+Route.post('/google/auth/url', 'GapiAuthController.authUrl')
+Route.post('/google/auth/first', 'GapiAuthController.authFirst')
+Route.post('/google/auth/token', 'GapiAuthController.authToken')
 
 Route.get('/broker/active', 'BrokerController.indexActive').middleware('auth')
 Route.get('/city/active', 'CityController.indexActive').middleware('auth')

@@ -39,7 +39,7 @@ class BrokerController {
 
   async update({ params, request, response }) {
     const broker = await Broker.findOrFail(params.id)
-    const data = request.only(['name'])
+    const data = request.only(['name', 'active'])
 
     broker.merge(data)
 
