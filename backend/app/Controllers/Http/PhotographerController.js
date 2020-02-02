@@ -38,6 +38,7 @@ class PhotographerController {
 
     const photographer = await Photographer.query()
       .where('region_id', data.region_id)
+      .where('active', true)
       .fetch()
 
     return photographer

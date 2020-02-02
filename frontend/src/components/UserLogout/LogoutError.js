@@ -9,6 +9,15 @@ import history from "../../history";
 
 function Logout({ enqueueSnackbar, onUserLogout }) {
   useEffect(() => {
+    enqueueSnackbar("Por favor, acesse novamente!", {
+      variant: "info",
+      autoHideDuration: 2500,
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center"
+      }
+    });
+
     onUserLogout();
     history.push("/");
   }, [enqueueSnackbar, onUserLogout]);

@@ -17,7 +17,7 @@ import api from "../../services/api";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(6),
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
@@ -33,10 +33,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SignIn({ enqueueSnackbar, onUserLogin }) {
-  const classes = useStyles();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const classes = useStyles(),
+    [email, setEmail] = useState(""),
+    [password, setPassword] = useState("");
 
   async function handleSubmit(event) {
     event.preventDefault();

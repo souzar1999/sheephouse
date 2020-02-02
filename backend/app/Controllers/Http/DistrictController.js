@@ -36,6 +36,7 @@ class DistrictController {
     const district = await District.query()
       .where('name', data.district)
       .where('city_id', data.city_id)
+      .where('active', true)
       .fetch()
 
     return district

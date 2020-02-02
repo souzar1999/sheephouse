@@ -12,6 +12,9 @@ const useStyles = makeStyles(theme => ({
       justifyContent: "center",
       alignItems: "center"
     },
+    [theme.breakpoints.down("sm")]: {
+      width: "100%"
+    },
     [theme.breakpoints.down("xs")]: {
       height: "auto",
       flexDirection: "column",
@@ -24,26 +27,25 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%"
+    }
   },
   paperFoto: {
-    display: "flex",
+    display: "inline-block",
     justifyContent: "center",
     alignItems: "center",
     backgroundImage: `url("./assets/camera.jpg")`,
     backgroundPosition: "center",
     backgroundSize: "cover",
     [theme.breakpoints.up("sm")]: {
-      height: 400,
-      width: 400
-    },
-    [theme.breakpoints.down("sm")]: {
       height: 300,
       width: 300
     },
-    [theme.breakpoints.down("xs")]: {
-      height: 150,
-      width: 150
+    [theme.breakpoints.down("sm")]: {
+      height: 250,
+      width: 250
     }
   },
   paperDrone: {
@@ -54,16 +56,12 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     backgroundSize: "cover",
     [theme.breakpoints.up("sm")]: {
-      height: 400,
-      width: 400
-    },
-    [theme.breakpoints.down("sm")]: {
       height: 300,
       width: 300
     },
-    [theme.breakpoints.down("xs")]: {
-      height: 150,
-      width: 150
+    [theme.breakpoints.down("sm")]: {
+      height: 250,
+      width: 250
     }
   },
   title: {

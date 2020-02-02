@@ -87,7 +87,7 @@ function Client({ enqueueSnackbar, onUserClient, onUserAdmin }) {
   }, [enqueueSnackbar, onUserAdmin, onUserClient]);
 
   async function getBrokers() {
-    await api.get("/broker").then(response => {
+    await api.get("/broker/active").then(response => {
       setBrokers(response.data);
     });
   }

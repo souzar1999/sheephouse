@@ -10,19 +10,14 @@ const api = axios.create({
   baseURL: "http://127.0.0.1:3333"
 });
 
-api.interceptors.request.use(
-  config => {
-    const token = localStorage.getAccessToken();
+api.interceptors.request.use(config => {
+  const token = localStorage.getAccessToken();
 
-    if (token) {
-      config.headers["Authorization"] = "Bearer " + token;
-    }
-    return config;
-  },
-  error => {
-    Promise.reject(error);
+  if (token) {
+    config.headers["Authorization"] = "Bearer " + token;
   }
-);
+  return config;
+});
 
 api.interceptors.response.use(
   response => {
@@ -36,7 +31,7 @@ api.interceptors.response.use(
       originalRequest.url === "http://127.0.0.1:3333/refresh"
     ) {
       localStorage.clearToken();
-      history.push("/logout");
+      history.push("/logout/e");
       return Promise.reject(error);
     }
 
