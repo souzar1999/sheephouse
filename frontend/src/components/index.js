@@ -9,6 +9,7 @@ import ClientRequeredRoute from "./Routes/ClientRequeredRoute";
 
 import SignIn from "./UserLogin/SignIn";
 import Logout from "./UserLogout/Logout";
+import LogoutError from "./UserLogout/LogoutError";
 import SignUp from "./UserRegister/SignUp";
 
 import UserClient from "./User/Client/Client";
@@ -34,6 +35,7 @@ export {
   ClientRequeredRoute,
   SignIn,
   Logout,
+  LogoutError,
   SignUp,
   AdminCity,
   AdminRegion,

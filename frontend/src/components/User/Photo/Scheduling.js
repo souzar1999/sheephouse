@@ -81,7 +81,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }, [enqueueSnackbar, step]);
 
   async function getHoraries() {
-    await api.get("/horary").then(response => {
+    await api.get("/horary/active").then(response => {
       setHoraries(response.data);
     });
   }
@@ -567,6 +567,22 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 }}
               />
             </Grid>
+            <Grid item xs={12}>
+              <FormGroup row>
+                <FormControlLabel
+                  label="Cliente estará presente na sessão"
+                  control={
+                    <Checkbox
+                      checked={accompanies}
+                      value={accompanies}
+                      InputProps={{
+                        readOnly: true
+                      }}
+                    />
+                  }
+                />
+              </FormGroup>
+            </Grid>
             <Grid item xs={4}>
               <Button
                 variant="contained"
@@ -593,7 +609,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   handleSubmitStep2();
                 }}
               >
-                Continuar
+                Agendar
               </Button>
             </Grid>
           </Grid>

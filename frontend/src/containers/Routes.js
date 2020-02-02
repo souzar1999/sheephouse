@@ -11,6 +11,7 @@ import {
 
 import UserLogin from "./UserLogin/UserLogin";
 import UserLogout from "./UserLogout/UserLogout";
+import UserLogoutError from "./UserLogout/UserLogoutError";
 import UserRegister from "./UserRegister/UserRegister";
 
 import NotFound from "./NotFound/NotFound";
@@ -36,6 +37,7 @@ export default function Routes() {
         <LogoutRequeredRoute path="/" exact component={UserLogin} />
         <LogoutRequeredRoute path="/signup" component={UserRegister} />
         <LoginRequeredRoute path="/logout" component={UserLogout} />
+        <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
 
         <LoginRequeredRoute path="/user" component={UserClient} />
 

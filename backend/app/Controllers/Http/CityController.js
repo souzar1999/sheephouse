@@ -34,6 +34,7 @@ class CityController {
 
     const city = await City.query()
       .where('name', data.city)
+      .where('active', true)
       .fetch()
 
     return city

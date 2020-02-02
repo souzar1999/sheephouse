@@ -16,11 +16,14 @@ import api from "../../services/api";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(-7),
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      marginTop: theme.spacing(1)
+    }
   },
   form: {
     width: "100%",
