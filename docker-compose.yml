@@ -1,0 +1,17 @@
+version: '3'
+services:
+    sheephouse-backend:
+        build: ./backend
+        container_name: sheephouse-backend
+        ports:
+            - 3333:3333
+        command: npm start  
+
+    sheephouse-frontend:
+        build: ./frontend
+        container_name: sheephouse-frontend
+        ports:
+            - 3000:3000
+        links:
+            - sheephouse-backend
+        command: npm start  
