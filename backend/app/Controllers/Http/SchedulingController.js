@@ -27,7 +27,7 @@ class SchedulingController {
       .with('photographer')
       .with('client')
       .fetch()
-
+      
     return scheduling
   }
 

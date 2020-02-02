@@ -11,9 +11,9 @@ const SidebarLayout = ({ isUserAdmin }) => {
       <Sidebar>
         <Sideitem link="/admin/home" icon="home" label="Início" />
         <Sideitem
-          link="/admin/home"
-          icon="cloud_upload"
-          label="Upload (EM BREVE)"
+          link="/admin/Scheduling"
+          icon="event"
+          label="Agendamentos"
         />
         <Divider />
         <Sideitem link="/admin/client" icon="face" label="Clientes" />

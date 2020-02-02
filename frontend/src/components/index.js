@@ -23,6 +23,7 @@ import AdminBroker from "./Admin/Broker/Broker";
 import AdminClient from "./Admin/Client/Client";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminHorary from "./Admin/Horary/Horary";
+import AdminScheduling from "./Admin/Scheduling/Scheduling";
 
 export {
   SidebarLayout,
@@ -43,6 +44,7 @@ export {
   AdminDistrict,
   AdminClient,
   AdminHorary,
+  AdminScheduling,
   UserClient,
   UserHome,
   UserPhoto

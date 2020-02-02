@@ -7,7 +7,6 @@ const s3 = new AWS.S3({
   secretAccessKey: Env.get('S3_SECRET')
 });
 
-
 class StorageController {
   async getAllFilesFromFolder({ params, request, response, view }) {
 
@@ -19,7 +18,6 @@ class StorageController {
     };
     var s3ObjectList = await s3.listObjectsV2(s3params).promise();
 
-    console.log(s3ObjectList.Contents)
     if (s3ObjectList.KeyCount == 0){
       return response.status(200).send({ error:{ message: "Pasta Vazia."}})
     }else{
