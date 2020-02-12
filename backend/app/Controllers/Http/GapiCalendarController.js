@@ -34,8 +34,8 @@ class GapiCalendarController {
         'dateTimeStart'
       ]),
       oauth2Client = new google.auth.OAuth2(
-        Env.get('GCLIEND_ID'),
-        Env.get('GCLIEND_SECRET')
+        Env.get('GCLIENT_ID'),
+        Env.get('GCLIENT_SECRET')
       ),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
@@ -56,37 +56,19 @@ class GapiCalendarController {
       },
       tokens = JSON.parse(photographer.tokens)
 
-    oauth2Client.setCredentials({
-      refresh_token: tokens.refresh_token
-    })
-
-    oauth2Client.on('tokens', tokens => {
-      if (tokens.refresh_token) {
-        // store the refresh_token in my database!
-        console.log(tokens.refresh_token)
-      }
-      console.log(tokens.access_token)
-    })
+    oauth2Client.setCredentials(tokens)
 
     const params = { calendarId, auth: oauth2Client, requestBody }
 
-    console.log(' - - - - -  - -')
-    await calendar.events
-      .insert(params)
-      .then(async res => {
-        console.log(res.data)
+    await calendar.events.insert(params).then(async res => {
+      scheduling.google_event_id = res.data.id
 
-        scheduling.google_event_id = res.data.id
+      await scheduling.save()
 
-        await scheduling.save()
-
-        return response
-          .status(200)
-          .send({ message: 'Agendamento criado com sucesso' })
-      })
-      .catch(err => {
-        console.log(err)
-      })
+      return response
+        .status(200)
+        .send({ message: 'Agendamento criado com sucesso' })
+    })
   }
 
   async editEvent({ request, response }) {
@@ -96,8 +78,8 @@ class GapiCalendarController {
         'dateTimeStart'
       ]),
       oauth2Client = new google.auth.OAuth2(
-        Env.get('GCLIEND_ID'),
-        Env.get('GCLIEND_SECRET')
+        Env.get('GCLIENT_ID'),
+        Env.get('GCLIENT_SECRET')
       ),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
@@ -117,7 +99,7 @@ class GapiCalendarController {
 
     const res = await calendar.events.insert(params)
 
-    scheduling.changed = res.data.id
+    scheduling.changed = true
 
     await scheduling.save()
 
@@ -129,8 +111,8 @@ class GapiCalendarController {
   async cancelEvent({ request, response }) {
     const { scheduling_id } = request.only(['scheduling_id']),
       oauth2Client = new google.auth.OAuth2(
-        Env.get('GCLIEND_ID'),
-        Env.get('GCLIEND_SECRET')
+        Env.get('GCLIENT_ID'),
+        Env.get('GCLIENT_SECRET')
       ),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
