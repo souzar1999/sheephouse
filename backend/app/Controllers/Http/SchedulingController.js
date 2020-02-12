@@ -27,7 +27,7 @@ class SchedulingController {
       .with('photographer')
       .with('client')
       .fetch()
-      
+
     return scheduling
   }
 
@@ -73,10 +73,10 @@ class SchedulingController {
       'region_id',
       'horary_id',
       'client_id',
-      'actived'
+      'actived',
+      'changed',
+      'completed'
     ])
-
-    data.changed = true
 
     const city = await City.findOrFail(data.city_id)
     const district = await District.findOrFail(data.district_id)

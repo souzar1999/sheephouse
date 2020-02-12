@@ -5,15 +5,15 @@ import { withSnackbar } from "notistack";
 import api from "../../../services/api";
 
 function Client({ enqueueSnackbar }) {
-  const [clients, setClients] = useState([]);
-  const [brokers, setBrokers] = useState([]);
-  const columns = [
-    { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Imobiliária", field: "broker_id", lookup: { ...brokers } },
-    { title: "Telefone", field: "phone" },
-    { title: "Email", field: "user.email", editable: "never" },
-    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
-  ];
+  const [clients, setClients] = useState([]),
+    [brokers, setBrokers] = useState([]),
+    columns = [
+      { title: "Nome", field: "name", defaultSort: "asc" },
+      { title: "Imobiliária", field: "broker_id", lookup: { ...brokers } },
+      { title: "Telefone", field: "phone" },
+      { title: "Email", field: "user.email", editable: "never" },
+      { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
+    ];
 
   useEffect(() => {
     handleLoad();

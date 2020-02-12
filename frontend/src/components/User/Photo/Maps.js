@@ -3,10 +3,11 @@ import ReactGoogleMapLoader from "react-google-maps-loader";
 import ReactGooglePlacesSuggest from "react-google-places-suggest";
 import TextField from "@material-ui/core/TextField";
 import { withSnackbar } from "notistack";
-
 import axios from "axios";
 
-const MY_API_KEY = "AIzaSyCnMYW7-ZhejrxXrcysydOis2Vq71g2zoc";
+require("dotenv").config();
+
+const MY_API_KEY = process.env.REACT_APP_GAPI_KEY;
 
 class Maps extends Component {
   state = {

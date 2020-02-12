@@ -4,10 +4,12 @@ import history from "../history";
 
 import LocalStorage from "./localStorage.js";
 
+require("dotenv").config();
+
 const localStorage = LocalStorage.getService();
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:3333"
+  baseURL: `${process.env.REACT_APP_API_URL}`
 });
 
 api.interceptors.request.use(config => {
@@ -28,7 +30,7 @@ api.interceptors.response.use(
 
     if (
       error.response.status === 401 &&
-      originalRequest.url === "http://127.0.0.1:3333/refresh"
+      originalRequest.url === `${process.env.REACT_APP_API_URL}/refresh`
     ) {
       localStorage.clearToken();
       history.push("/logout/e");

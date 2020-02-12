@@ -27,6 +27,8 @@ Route.post(
   '/google/event/insertDrone',
   'GapiCalendarController.insertEventDrone'
 )
+Route.post('/google/event/cancelEvent', 'GapiCalendarController.cancelEvent')
+Route.post('/google/event/editEvent', 'GapiCalendarController.editEvent')
 
 Route.post('/google/auth/url', 'GapiAuthController.authUrl')
 Route.post('/google/auth/first', 'GapiAuthController.authFirst')
@@ -96,3 +98,9 @@ Route.get(
   'storages/storage/:storageType/folder/:folderName/:fileName/download',
   'StorageController.getDownloadPreSignedUrl'
 ).middleware('auth')
+
+Route.post('/resetPassword', 'ResetPasswordController.store')
+Route.post('/forgotPassword', 'ForgotPasswordController.store')
+Route.get('emails.forgotpassword', ({ view }) => {
+  return view.render('emails/forgotpassword')
+})

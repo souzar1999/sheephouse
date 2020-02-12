@@ -2,17 +2,12 @@ import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { withSnackbar } from "notistack";
-import { compose } from "redux";
 
-import { connect } from "react-redux";
-import { userLogin } from "../../store/actions";
-
+import history from "../../history";
 import api from "../../services/api";
 
 const useStyles = makeStyles(theme => ({
@@ -32,10 +27,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SignIn({ enqueueSnackbar, onUserLogin }) {
+function ResetPassword({ enqueueSnackbar }) {
   const classes = useStyles(),
     [email, setEmail] = useState(""),
-    [password, setPassword] = useState("");
+    [password, setPassword] = useState(""),
+    [password2, setPassword2] = useState(""),
+    queryString = window.location.search,
+    urlParams = new URLSearchParams(queryString),
+    token = urlParams.get("token");
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -65,7 +64,31 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
     }
 
     if (!password) {
-      enqueueSnackbar("Informe a senha!", {
+      enqueueSnackbar("Informe a senha para prosseguir!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!password2) {
+      enqueueSnackbar("Informe a senha novamente para prosseguir!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (password !== password2) {
+      enqueueSnackbar("As senhas não conferem!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -77,15 +100,22 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
     }
 
     await api
-      .post("/sessions", { email, password })
+      .post("/resetPassword", { email, password, token })
       .then(async response => {
-        localStorage.setItem("userToken", response.data.token);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
-        onUserLogin();
+        enqueueSnackbar("Senha alterada com sucesso!", {
+          variant: "success",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+
+        history.push("/");
       })
       .catch(error => {
         enqueueSnackbar(
-          "Email e senha informados não correspondem a nenhum usuário!",
+          "Problemas ao trocar a senha, solicite um novo email para troca!",
           {
             variant: "error",
             autoHideDuration: 2500,
@@ -95,55 +125,6 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
             }
           }
         );
-      });
-  }
-
-  async function handleForgotPassword() {
-    if (!email) {
-      enqueueSnackbar("Informe o email!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
-    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-      enqueueSnackbar("Informe um email válido para prosseguir!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
-    await api
-      .post("/forgotPassword", { email })
-      .then(async response => {
-        enqueueSnackbar("Acesse seu email para conseguir trocar a senha!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-      })
-      .catch(error => {
-        enqueueSnackbar("Problemas ao enviar email de troca de senha!", {
-          variant: "error",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
       });
   }
 
@@ -180,6 +161,19 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
             value={password}
             onChange={event => setPassword(event.target.value)}
           />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password2"
+            label="Senha Novamente"
+            type="password"
+            id="password2"
+            autoComplete="current-password"
+            value={password2}
+            onChange={event => setPassword2(event.target.value)}
+          />
           <Button
             type="submit"
             fullWidth
@@ -187,33 +181,12 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
             color="primary"
             className={classes.submit}
           >
-            Entrar
+            Trocar Senha
           </Button>
-          <Grid container justify="center">
-            <Link href="/signup" variant="body2">
-              Não possui uma conta? Cadastre-se!
-            </Link>
-          </Grid>
-          <br />
-          <Grid container justify="center">
-            <Link onClick={handleForgotPassword} variant="body2">
-              Esqueci minha senha!
-            </Link>
-          </Grid>
         </form>
       </Paper>
     </Container>
   );
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onUserLogin: () => {
-      dispatch(userLogin());
-    }
-  };
-};
-
-const withConnect = connect(null, mapDispatchToProps);
-
-export default compose(withSnackbar, withConnect)(SignIn);
+export default withSnackbar(ResetPassword);

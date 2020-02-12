@@ -20,6 +20,8 @@ import { connect } from "react-redux";
 
 import api from "../../../services/api";
 
+import history from "../../../history";
+
 import Maps from "./Maps";
 
 const useStyles = makeStyles(theme => ({
@@ -68,12 +70,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   script.src = "https://apis.google.com/js/client.js";
 
   useEffect(() => {
-    const numTime = Date.parse(`1970-01-01T08:00:00Z`),
-      numDate = Date.parse(`2020-03-01  T00:00:00Z`),
-      dateTimeStart = new Date(numDate + numTime),
-      dateTimeEnd = new Date(numDate + numTime + 4500000);
-
-    console.log(dateTimeEnd, dateTimeStart);
     if (step === 1) {
       getHoraries();
       setLabelWidth(inputLabel.current.offsetWidth);
@@ -311,11 +307,15 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           dateTimeStart = new Date(numDate + numTime),
           dateTimeEnd = new Date(numDate + numTime + 4500000);
 
-        await api.post(`/google/event/insertPhoto`, {
-          scheduling_id,
-          dateTimeEnd,
-          dateTimeStart
-        });
+        await api
+          .post(`/google/event/insertPhoto`, {
+            scheduling_id,
+            dateTimeEnd,
+            dateTimeStart
+          })
+          .then(() => {
+            //history.push(`/sessions`);
+          });
       })
       .catch(error => {
         enqueueSnackbar("Erro ao cadastrar registro!", {

@@ -4,21 +4,66 @@ import { withSnackbar } from "notistack";
 
 import api from "../../../services/api";
 
+import history from "../../../history";
+
 function Scheduling({ enqueueSnackbar }) {
-  const [Schedulings, setScheduling] = useState([]);
-  const columns = [
-    { title: "Cliente", field: "client.name", defaultSort: "asc" },
-    { title: "Data", field: "date", defaultSort: "asc" },
-    { title: "Horario", field: "horary.time", defaultSort: "asc" },
-    { title: "Fotografo", field: "photographer.name", defaultSort: "asc" },
-    { title: "Endereço", field: "address", defaultSort: "asc" },
-    { title: "Complemento", field: "complement", defaultSort: "asc" },
-    { title: "Drone", field: "drone", type: "boolean", editable: "onUpdate" },
-    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
-  ];
+  const [Schedulings, setScheduling] = useState([]),
+    [Clients, setClients] = useState([]),
+    [Photographers, setPhotographers] = useState([]),
+    [Horaries, setHoraries] = useState([]),
+    columns = [
+      {
+        title: "Cliente",
+        field: "client_id",
+        defaultSort: "asc",
+        lookup: { ...Clients }
+      },
+      {
+        title: "Data",
+        field: "date",
+        defaultSort: "asc",
+        type: "date",
+        cellStyle: {
+          width: 150,
+          maxWidth: 150,
+          textAlign: "center"
+        },
+        headerStyle: {
+          width: 150,
+          maxWidth: 150
+        }
+      },
+      {
+        title: "Horario",
+        field: "horary_id",
+        defaultSort: "asc",
+        lookup: { ...Horaries },
+        cellStyle: {
+          width: 120,
+          maxWidth: 120,
+          textAlign: "center"
+        },
+        headerStyle: {
+          width: 120,
+          maxWidth: 120
+        }
+      },
+      {
+        title: "Fotografo",
+        field: "photographer_id",
+        defaultSort: "asc",
+        render: rowData => {
+          const name = rowData.photographer.name.split(" ");
+          return name[0];
+        },
+        lookup: { ...Photographers }
+      },
+      { title: "Drone", field: "drone", type: "boolean" }
+    ];
 
   useEffect(() => {
     handleLoad();
+    handleLoadLookup();
   }, []);
 
   async function handleLoad() {
@@ -27,86 +72,36 @@ function Scheduling({ enqueueSnackbar }) {
     });
   }
 
-  async function handleAdd(newData) {
-    const { name, active } = newData;
+  async function handleLoadLookup() {
+    await api.get("/photographer").then(response => {
+      let data = [];
 
-    if (!name) {
-      enqueueSnackbar("Informe o nome da região!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
+      response.data.map(item => {
+        return (data[item.id] = item.name);
       });
-      return;
-    }
 
-    await api
-      .post(`/Scheduling`, { name, active })
-      .then(response => {
-        enqueueSnackbar("Registro cadastrado com sucesso!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
+      setPhotographers(data);
+    });
 
-        handleLoad();
-      })
-      .catch(error => {
-        enqueueSnackbar("Erro ao cadastrar registro!", {
-          variant: "error",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
+    await api.get("/horary/active").then(response => {
+      let data = [];
+
+      response.data.map(item => {
+        return (data[item.id] = item.time);
       });
-  }
 
-  async function handleUpdate(newData, oldData) {
-    const { name, active, id } = newData;
+      setHoraries(data);
+    });
 
-    if (!name) {
-      enqueueSnackbar("Informe o nome da região!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
+    await api.get("/client").then(response => {
+      let data = [];
+
+      response.data.map(item => {
+        return (data[item.id] = `${item.name} (${item.broker.name})`);
       });
-      return;
-    }
 
-    await api
-      .put(`/Scheduling/${id}`, { name, active })
-      .then(response => {
-        enqueueSnackbar("Registro atualizado com sucesso!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-
-        handleLoad();
-      })
-      .catch(error => {
-        enqueueSnackbar("Erro ao atualizar registro!", {
-          variant: "error",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
-      });
+      setClients(data);
+    });
   }
 
   return (
@@ -114,39 +109,79 @@ function Scheduling({ enqueueSnackbar }) {
       title="Agendamentos"
       columns={columns}
       data={Schedulings}
-      editable={{
-        onRowAdd: newData =>
-          new Promise(resolve => {
-            resolve();
-            handleAdd(newData);
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise(resolve => {
-            resolve();
-            handleUpdate(newData, oldData);
-          })
-      }}
+      detailPanel={[
+        {
+          tooltip: "Show Name",
+          render: rowData => {
+            return (
+              <div style={{ margin: "0 50px" }}>
+                <p>
+                  <strong>Endereço:</strong> {rowData.address}
+                </p>
+                <p>
+                  <strong>Complemento:</strong>
+                  {rowData.complement}
+                </p>
+              </div>
+            );
+          }
+        }
+      ]}
+      actions={[
+        {
+          icon: "edit",
+          tooltip: "Reagendar",
+          onClick: async (event, rowData) => {
+            history.push(`/admin/rescheduling/${rowData.id}`);
+          }
+        },
+        {
+          icon: "cancel",
+          tooltip: "Cancelar",
+          onClick: async (event, rowData) => {
+            const scheduling_id = rowData.id;
+
+            await api
+              .post(`/google/event/cancelEvent`, {
+                scheduling_id
+              })
+              .then(response => {
+                enqueueSnackbar("Sessão cancelada com sucesso!", {
+                  variant: "success",
+                  autoHideDuration: 2500,
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center"
+                  }
+                });
+              })
+              .catch(error => {
+                enqueueSnackbar("Problemas ao cancelar agendamento!", {
+                  variant: "error",
+                  autoHideDuration: 2500,
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center"
+                  }
+                });
+              });
+          }
+        },
+        {
+          icon: "backup",
+          tooltip: "Fotos",
+          onClick: (event, rowData) => alert("You want to delete")
+        }
+      ]}
       localization={{
         body: {
-          editRow: {
-            saveTooltip: "Salvar",
-            cancelTooltip: "Cancelar",
-            deleteText: "Deseja excluir este registro?"
-          },
           filterRow: {
             filterTooltip: "Filtro"
           },
-          addTooltip: "Adicionar",
-          deleteTooltip: "Deletar",
-          editTooltip: "Editar",
           emptyDataSourceMessage: "Sem registros para mostrar"
         },
         header: {
           actions: "Ações"
-        },
-        toolbar: {
-          searchTooltip: "Pesquisar",
-          searchPlaceholder: "Pesquisar"
         },
         pagination: {
           labelRowsSelect: "Registros",

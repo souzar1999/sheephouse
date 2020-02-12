@@ -13,12 +13,14 @@ import UserLogin from "./UserLogin/UserLogin";
 import UserLogout from "./UserLogout/UserLogout";
 import UserLogoutError from "./UserLogout/UserLogoutError";
 import UserRegister from "./UserRegister/UserRegister";
+import UserResetPassword from "./UserResetPassword/UserResetPassword";
 
 import NotFound from "./NotFound/NotFound";
 
 import UserHome from "./User/Home/Home";
 import UserPhoto from "./User/Photo/Photo";
 import UserClient from "./User/Client/Client";
+import UserContact from "./User/Contact/Contact";
 
 import AdminHome from "./Admin/Home/Home";
 import AdminDistrict from "./Admin/District/District";
@@ -29,6 +31,7 @@ import AdminBroker from "./Admin/Broker/Broker";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminHorary from "./Admin/Horary/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
+import AdminRescheduling from "./Admin/Scheduling/Rescheduling";
 
 export default function Routes() {
   return (
@@ -36,6 +39,7 @@ export default function Routes() {
       <Switch>
         <LogoutRequeredRoute path="/" exact component={UserLogin} />
         <LogoutRequeredRoute path="/signup" component={UserRegister} />
+        <LogoutRequeredRoute path="/reset" component={UserResetPassword} />
         <LoginRequeredRoute path="/logout" component={UserLogout} />
         <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
 
@@ -45,7 +49,7 @@ export default function Routes() {
         <ClientRequeredRoute path="/calendar" component={UserHome} />
         <ClientRequeredRoute path="/sessions" component={UserHome} />
         <ClientRequeredRoute path="/reports" component={UserHome} />
-        <ClientRequeredRoute path="/contacts" component={UserHome} />
+        <ClientRequeredRoute path="/contacts" component={UserContact} />
         <ClientRequeredRoute path="/profile" component={UserHome} />
         <ClientRequeredRoute path="/scheduling/photo" component={UserPhoto} />
         <ClientRequeredRoute path="/scheduling/drone" component={UserHome} />
@@ -57,8 +61,18 @@ export default function Routes() {
         <AdminRequeredRoute path="/admin/region" component={AdminRegion} />
         <AdminRequeredRoute path="/admin/client" component={AdminClient} />
         <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
-        <AdminRequeredRoute path="/admin/photographer" component={AdminPhotographer}/>
-        <AdminRequeredRoute path="/admin/scheduling" component={AdminScheduling}/>
+        <AdminRequeredRoute
+          path="/admin/photographer"
+          component={AdminPhotographer}
+        />
+        <AdminRequeredRoute
+          path="/admin/scheduling"
+          component={AdminScheduling}
+        />
+        <AdminRequeredRoute
+          path="/admin/rescheduling/:id"
+          component={AdminRescheduling}
+        />
         <Route component={NotFound} />
       </Switch>
     </Router>

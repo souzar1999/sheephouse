@@ -25,7 +25,6 @@ function Photographer({ enqueueSnackbar }) {
     handleLoadLookup();
 
     if (code && id) {
-      console.log(code, id);
       handleFirstAuth(code, id);
     }
   }, []);
