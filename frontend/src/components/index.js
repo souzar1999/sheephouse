@@ -15,7 +15,7 @@ import ResetPassword from "./UserResetPassword/ResetPassword";
 
 import UserClient from "./User/Client/Client";
 import UserHome from "./User/Home/Home";
-import UserPhoto from "./User/Photo/Photo";
+import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
 
 import AdminCity from "./Admin/City/City";
@@ -26,7 +26,9 @@ import AdminClient from "./Admin/Client/Client";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminHorary from "./Admin/Horary/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
-import AdminRescheduling from "./Admin/Scheduling/Rescheduling";
+
+import GlobalScheduling from "./Global/Scheduling/Scheduling";
+import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
 
 export {
   SidebarLayout,
@@ -48,10 +50,11 @@ export {
   AdminClient,
   AdminHorary,
   AdminScheduling,
-  AdminRescheduling,
+  GlobalScheduling,
+  GlobalRescheduling,
   UserClient,
   UserHome,
-  UserPhoto,
+  UserScheduling,
   UserContact,
   ResetPassword
 };

@@ -1,5 +1,6 @@
 'use strict'
 const { google } = require('googleapis'),
+  Mail = use('Mail'),
   Env = use('Env'),
   calendar = google.calendar(Env.get('GAPI_VERSION')),
   Photographer = use('App/Models/Photographer'),
@@ -39,12 +40,15 @@ class GapiCalendarController {
       ),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
-      horary = await Horary.findOrFail(scheduling.horary_id),
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
+      horary = await Horary.findOrFail(scheduling.horary_id),
+      admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
-      summary = `Fotografia Imobiliária - (${user.email} | ${broker.name})`,
+      title = scheduling.drone ? 'Filmagem Aérea' : 'Fotografia Imobiliária',
+      summary = `${title} - (${user.email} | ${broker.name})`,
+      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel / Observação: ${scheduling.address} (${scheduling.complement})\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -52,7 +56,7 @@ class GapiCalendarController {
         end,
         start,
         summary,
-        description: 'Testando \n Muito mesmo'
+        description
       },
       tokens = JSON.parse(photographer.tokens)
 
@@ -64,6 +68,24 @@ class GapiCalendarController {
       scheduling.google_event_id = res.data.id
 
       await scheduling.save()
+
+      await Mail.send(
+        'emails.addEvent',
+        {
+          client,
+          scheduling,
+          photographer,
+          horary,
+          admin
+        },
+        message => {
+          message
+            .to(user.email)
+            .cc(admin.email)
+            .from('noreply@sheephouse.com.br', 'Sheephouse')
+            .subject('Sheephouse - Sessão agendada')
+        }
+      )
 
       return response
         .status(200)
@@ -83,29 +105,54 @@ class GapiCalendarController {
       ),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
+      client = await Client.findOrFail(scheduling.client_id),
+      broker = await Broker.findOrFail(client.broker_id),
+      user = await User.findOrFail(client.user_id),
+      horary = await Horary.findOrFail(scheduling.horary_id),
+      admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
+      eventId = scheduling.google_event_id,
+      title = scheduling.drone ? 'Filmagem Aérea' : 'Fotografia Imobiliária',
+      summary = `${title} - (${user.email} | ${broker.name})`,
+      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel / Observação: ${scheduling.address} (${scheduling.complement})\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
       requestBody = {
         end,
-        start
+        start,
+        summary,
+        description
       },
       tokens = JSON.parse(photographer.tokens)
 
     oauth2Client.setCredentials(tokens)
 
-    const params = { calendarId, auth: oauth2Client, requestBody }
+    const params = { calendarId, eventId, auth: oauth2Client, requestBody }
 
-    const res = await calendar.events.insert(params)
+    await calendar.events.update(params).then(async res => {
+      await Mail.send(
+        'emails.reschedulingEvent',
+        {
+          client,
+          scheduling,
+          photographer,
+          horary,
+          admin
+        },
+        message => {
+          message
+            .to(user.email)
+            .cc(admin.email)
+            .from('noreply@sheephouse.com.br', 'Sheephouse')
+            .subject('Sheephouse - Sessão reagendada')
+        }
+      )
 
-    scheduling.changed = true
-
-    await scheduling.save()
-
-    return response
-      .status(200)
-      .send({ message: 'Agendamento alterado com sucesso' })
+      return response
+        .status(200)
+        .send({ message: 'Agendamento alterado com sucesso' })
+    })
   }
 
   async cancelEvent({ request, response }) {
@@ -116,6 +163,11 @@ class GapiCalendarController {
       ),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
+      client = await Client.findOrFail(scheduling.client_id),
+      broker = await Broker.findOrFail(client.broker_id),
+      user = await User.findOrFail(client.user_id),
+      horary = await Horary.findOrFail(scheduling.horary_id),
+      admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
       tokens = JSON.parse(photographer.tokens)
@@ -124,15 +176,29 @@ class GapiCalendarController {
 
     const params = { calendarId, auth: oauth2Client, eventId }
 
-    const res = await calendar.events.delete(params)
+    await calendar.events.delete(params).then(async res => {
+      await Mail.send(
+        'emails.cancelEvent',
+        {
+          client,
+          scheduling,
+          photographer,
+          horary,
+          admin
+        },
+        message => {
+          message
+            .to(user.email)
+            .cc(admin.email)
+            .from('noreply@sheephouse.com.br', 'Sheephouse')
+            .subject('Sheephouse - Sessão cancelada')
+        }
+      )
 
-    scheduling.actived = false
-
-    await scheduling.save()
-
-    return response
-      .status(200)
-      .send({ message: 'Agendamento cancelado com sucesso' })
+      return response
+        .status(200)
+        .send({ message: 'Agendamento alterado com sucesso' })
+    })
   }
 }
 

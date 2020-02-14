@@ -15,6 +15,7 @@ class ForgotPasswordController {
 
     const user = await User.findByOrFail('email', email),
       client = await Client.findByOrFail('user_id', user.id),
+      admin = await User.findByOrFail('admin', true),
       random = await promisify(randomBytes)(24),
       token = random.toString('hex')
 
@@ -31,7 +32,8 @@ class ForgotPasswordController {
       message => {
         message
           .to(user.email)
-          .from('noreply@sheephouse.com.br')
+          .cc(admin.email)
+          .from('noreply@sheephouse.com.br', 'Sheephouse')
           .subject('Sheephouse - Recuperação de senha')
       }
     )

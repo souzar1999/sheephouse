@@ -94,7 +94,7 @@ function Home() {
           <Grid item sm={6} xs={12}>
             <Paper
               component={Link}
-              to="/scheduling/drone"
+              to="/contacts"
               className={classes.paperDrone}
             ></Paper>
           </Grid>

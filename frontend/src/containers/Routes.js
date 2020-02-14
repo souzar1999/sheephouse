@@ -18,7 +18,7 @@ import UserResetPassword from "./UserResetPassword/UserResetPassword";
 import NotFound from "./NotFound/NotFound";
 
 import UserHome from "./User/Home/Home";
-import UserPhoto from "./User/Photo/Photo";
+import UserScheduling from "./User/Scheduling/Scheduling";
 import UserClient from "./User/Client/Client";
 import UserContact from "./User/Contact/Contact";
 
@@ -31,7 +31,9 @@ import AdminBroker from "./Admin/Broker/Broker";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminHorary from "./Admin/Horary/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
-import AdminRescheduling from "./Admin/Scheduling/Rescheduling";
+
+import GlobalScheduling from "./Global/Scheduling/Scheduling";
+import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
 
 export default function Routes() {
   return (
@@ -51,8 +53,10 @@ export default function Routes() {
         <ClientRequeredRoute path="/reports" component={UserHome} />
         <ClientRequeredRoute path="/contacts" component={UserContact} />
         <ClientRequeredRoute path="/profile" component={UserHome} />
-        <ClientRequeredRoute path="/scheduling/photo" component={UserPhoto} />
-        <ClientRequeredRoute path="/scheduling/drone" component={UserHome} />
+        <ClientRequeredRoute
+          path="/scheduling/photo"
+          component={UserScheduling}
+        />
 
         <AdminRequeredRoute path="/admin/home" component={AdminHome} />
         <AdminRequeredRoute path="/admin/city" component={AdminCity} />
@@ -62,17 +66,25 @@ export default function Routes() {
         <AdminRequeredRoute path="/admin/client" component={AdminClient} />
         <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
         <AdminRequeredRoute
-          path="/admin/photographer"
-          component={AdminPhotographer}
-        />
-        <AdminRequeredRoute
           path="/admin/scheduling"
           component={AdminScheduling}
         />
         <AdminRequeredRoute
-          path="/admin/rescheduling/:id"
-          component={AdminRescheduling}
+          path="/admin/photographer"
+          component={AdminPhotographer}
         />
+
+        <LoginRequeredRoute
+          exact
+          path="/scheduling"
+          component={GlobalScheduling}
+        />
+        <LoginRequeredRoute
+          exact
+          path="/scheduling/:id"
+          component={GlobalRescheduling}
+        />
+
         <Route component={NotFound} />
       </Switch>
     </Router>

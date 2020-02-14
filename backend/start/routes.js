@@ -52,6 +52,11 @@ Route.post(
   'PhotographerController.showPhotographer'
 ).middleware('auth')
 
+Route.get(
+  '/scheduling/byClient/:client_id',
+  'SchedulingController.indexClient'
+).middleware('auth')
+
 Route.resource('broker', 'BrokerController')
   .apiOnly()
   .middleware('auth')
