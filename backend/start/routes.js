@@ -19,14 +19,7 @@ Route.post('/district/byName', 'DistrictController.showDistrict').middleware(
   'auth'
 )
 Route.post('/calendar/event/list', 'GapiCalendarController.eventList')
-Route.post(
-  '/google/event/insertPhoto',
-  'GapiCalendarController.insertEventPhoto'
-)
-Route.post(
-  '/google/event/insertDrone',
-  'GapiCalendarController.insertEventDrone'
-)
+Route.post('/google/event/insertEvent', 'GapiCalendarController.insertEvent')
 Route.post('/google/event/cancelEvent', 'GapiCalendarController.cancelEvent')
 Route.post('/google/event/editEvent', 'GapiCalendarController.editEvent')
 

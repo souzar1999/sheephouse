@@ -299,13 +299,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           dateTimeEnd = new Date(numDate + numTime + 4500000);
 
         await api
-          .post(`/google/event/insertPhoto`, {
+          .post(`/google/event/insertEvent`, {
             scheduling_id,
             dateTimeEnd,
             dateTimeStart
           })
           .then(() => {
-            enqueueSnackbar("Registro cadastrada com sucesso!", {
+            enqueueSnackbar("Registro cadastrado com sucesso!", {
               variant: "success",
               autoHideDuration: 2500,
               anchorOrigin: {

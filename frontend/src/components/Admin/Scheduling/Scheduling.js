@@ -14,9 +14,6 @@ import Typography from "@material-ui/core/Typography";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
-import { compose } from "redux";
-
-import { connect } from "react-redux";
 
 import api from "../../../services/api";
 
@@ -40,10 +37,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Scheduling({ enqueueSnackbar, clientCode }) {
+function Scheduling({ enqueueSnackbar }) {
   const classes = useStyles(),
-    [step, setStep] = useState(0),
     [horaries, setHoraries] = useState([]),
+    [photographers, setPhotographers] = useState([]),
+    [clients, setClients] = useState([]),
     [horary, setHorary] = useState(""),
     [city, setCity] = useState(""),
     [district, setDistrict] = useState(""),
@@ -56,13 +54,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [address, setAddress] = useState(""),
     [complement, setComplement] = useState(""),
     [accompanies, setAccompanies] = useState(false),
-    drone = false,
+    [drone, setDrone] = useState(false),
     [region_id, setRegionId] = useState(""),
     [city_id, setCityId] = useState(""),
     [district_id, setDistrictId] = useState(""),
     [photographer_id, setPhotographerId] = useState(""),
     [horary_id, setHoraryId] = useState(""),
-    client_id = clientCode,
+    [client_id, setClientId] = useState(""),
     [labelWidth, setLabelWidth] = useState(0),
     inputLabel = React.useRef(null),
     script = document.createElement("script");
@@ -70,15 +68,27 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   script.src = "https://apis.google.com/js/client.js";
 
   useEffect(() => {
-    if (step === 1) {
-      getHoraries();
-      setLabelWidth(inputLabel.current.offsetWidth);
-    }
-  }, [enqueueSnackbar, step]);
+    getHoraries();
+    getPhotographers();
+    getClients();
+    setLabelWidth(inputLabel.current.offsetWidth);
+  }, [enqueueSnackbar]);
 
   async function getHoraries() {
     await api.get("/horary/active").then(response => {
       setHoraries(response.data);
+    });
+  }
+
+  async function getPhotographers() {
+    await api.get("/photographer/active").then(response => {
+      setPhotographers(response.data);
+    });
+  }
+
+  async function getClients() {
+    await api.get("/client").then(response => {
+      setClients(response.data);
     });
   }
 
@@ -88,6 +98,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setDistrict(district);
     setLat(lat);
     setLng(lng);
+
+    handleInsertAddress(city, district);
   }
 
   function verifyDate(value) {
@@ -111,10 +123,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         value.slice(8, 10) + "/" + value.slice(5, 7) + "/" + value.slice(0, 4)
       );
     }
-  }
-
-  function handleReturnStep() {
-    setStep(step - 1);
   }
 
   async function getCalendarEvents(date) {
@@ -145,18 +153,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
   }
 
-  async function handleSubmitStep0() {
-    if (!address) {
-      enqueueSnackbar("Necessário informar endereço para prosseguir", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
+  async function handleInsertAddress(city, district) {
     await api
       .post(`/city/byName`, { city })
       .then(async response => {
@@ -169,39 +166,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           .then(async response => {
             setDistrictId(response.data[0].id);
             setRegionId(response.data[0].region_id);
-            await api
-              .post(`/photographer/byRegion`, {
-                region_id: response.data[0].region_id
-              })
-              .then(async response => {
-                setPhotographerId(response.data[0].id);
-
-                enqueueSnackbar(
-                  "Fotográfo foi selecionado pelo endereço informado!",
-                  {
-                    variant: "success",
-                    autoHideDuration: 2500,
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "center"
-                    }
-                  }
-                );
-
-                enqueueSnackbar(
-                  "Informe a data da sessão para carregar os horários livres!",
-                  {
-                    variant: "success",
-                    autoHideDuration: 2500,
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "center"
-                    }
-                  }
-                );
-
-                setStep(1);
-              });
           });
       })
       .catch(error => {
@@ -219,35 +183,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
   }
 
-  async function handleSubmitStep1() {
-    if (!date) {
-      enqueueSnackbar("Necessário informar data da sessão para prosseguir", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
-    if (!horary_id) {
-      enqueueSnackbar("Necessário informar horário da sessão para prosseguir", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
-    setStep(2);
-  }
-
-  async function handleSubmitStep2() {
+  async function handleSubmit() {
     if (
       !date ||
       !latitude ||
@@ -299,13 +235,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           dateTimeEnd = new Date(numDate + numTime + 4500000);
 
         await api
-          .post(`/google/event/insertPhoto`, {
+          .post(`/google/event/insertEvent`, {
             scheduling_id,
             dateTimeEnd,
             dateTimeStart
           })
           .then(() => {
-            enqueueSnackbar("Registro cadastrada com sucesso!", {
+            enqueueSnackbar("Registro cadastrado com sucesso!", {
               variant: "success",
               autoHideDuration: 2500,
               anchorOrigin: {
@@ -314,7 +250,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               }
             });
 
-            history.push(`/sessions`);
+            history.push(`/scheduling`);
           });
       })
       .catch(error => {
@@ -329,300 +265,212 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
   }
 
-  if (step === 0) {
-    return (
-      <Paper className={classes.paper}>
-        <Typography component="h2" variant="h4">
-          Onde será a sessão de fotos
-        </Typography>
+  return (
+    <Paper className={classes.paper}>
+      <Typography component="h2" variant="h4">
+        Agende a sessão de fotos
+      </Typography>
 
-        <div className={classes.form}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Maps addressInfo={getAddress} />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
+      <div className={classes.form}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Maps addressInfo={getAddress} />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              type="text"
+              onChange={event => {
+                setComplement(event.target.value);
+              }}
+              value={complement}
+              label="Complemento"
+              variant="outlined"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="photographerSelect">
+                Fotógrafos
+              </InputLabel>
+              <Select
+                id="photographerSelect"
+                labelWidth={labelWidth}
+                value={photographer_id}
                 onChange={event => {
-                  setComplement(event.target.value);
-                }}
-                value={complement}
-                label="Complemento"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                size="small"
-                className={classes.submit}
-                onClick={() => {
-                  handleSubmitStep0();
+                  setPhotographerId(event.target.value);
                 }}
               >
-                Continuar
-              </Button>
-            </Grid>
+                <MenuItem value="">-- Selecione --</MenuItem>
+                {photographers.map(item => {
+                  return (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </Grid>
-        </div>
-      </Paper>
-    );
-  }
-
-  if (step === 1) {
-    return (
-      <Paper className={classes.paper}>
-        <Typography component="h2" variant="h4">
-          Quando será a sessão de fotos
-        </Typography>
-
-        <div className={classes.form}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                type="date"
+          <Grid item xs={12}>
+            <TextField
+              type="date"
+              onChange={event => {
+                verifyDate(event.target.value);
+              }}
+              value={date}
+              label="Data da Sessão"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="horarySelect">
+                Horários
+              </InputLabel>
+              <Select
+                id="horarySelect"
+                labelWidth={labelWidth}
+                value={horary_id}
+                disabled={horaryDisable}
                 onChange={event => {
-                  verifyDate(event.target.value);
+                  setHoraryId(event.target.value);
+                  setHorary(event.nativeEvent.srcElement.innerText);
                 }}
-                value={date}
-                label="Data da Sessão"
-                variant="outlined"
-                fullWidth
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl variant="outlined" fullWidth>
-                <InputLabel ref={inputLabel} id="horarySelect">
-                  Horários
-                </InputLabel>
-                <Select
-                  id="horarySelect"
-                  labelWidth={labelWidth}
-                  value={horary_id}
-                  disabled={horaryDisable}
-                  onChange={event => {
-                    setHoraryId(event.target.value);
-                    setHorary(event.nativeEvent.srcElement.innerText);
-                  }}
-                >
-                  <MenuItem value="">-- Selecione --</MenuItem>
-                  {horaries.map(item => {
-                    const date_horary = `${date} ${item.time}`;
-                    let validHorary = true;
+              >
+                <MenuItem value="">-- Selecione --</MenuItem>
+                {horaries.map(item => {
+                  const date_horary = `${date} ${item.time}`;
+                  let validHorary = true;
 
-                    if (!date_horary) {
-                      return;
-                    }
-
-                    events.map(event => {
-                      const eventStart = event.start.date
-                        ? `${event.start.date} 00:00:00`
-                        : event.start.dateTime;
-                      const eventEnd = event.end.date
-                        ? `${event.end.date} 23:59:59`
-                        : event.end.dateTime;
-
-                      if (
-                        (Date.parse(date_horary) + 1 >=
-                          Date.parse(eventStart) &&
-                          Date.parse(date_horary) + 1 <=
-                            Date.parse(eventEnd)) ||
-                        (Date.parse(date_horary) + 4499999 >=
-                          Date.parse(eventStart) &&
-                          Date.parse(date_horary) + 4499999 <=
-                            Date.parse(eventEnd))
-                      ) {
-                        validHorary = false;
-                      }
-                    });
-
-                    if (validHorary) {
-                      return (
-                        <MenuItem id={item.time} key={item.id} value={item.id}>
-                          {item.time}
-                        </MenuItem>
-                      );
-                    }
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Cliente estará presente na sessão?"
-                  control={
-                    <Checkbox
-                      checked={accompanies}
-                      onChange={event => {
-                        setAccompanies(!accompanies);
-                      }}
-                      value={accompanies}
-                    />
+                  if (!date_horary) {
+                    return;
                   }
-                />
-              </FormGroup>
-            </Grid>
-            <Grid item xs={4}>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleReturnStep();
-                }}
-              >
-                Voltar
-              </Button>
-            </Grid>
-            <Grid item xs={8}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleSubmitStep1();
-                }}
-              >
-                Continuar
-              </Button>
-            </Grid>
-          </Grid>
-        </div>
-      </Paper>
-    );
-  }
 
-  if (step === 2) {
-    return (
-      <Paper className={classes.paper}>
-        <Typography component="h2" variant="h4">
-          Confirme as informações do agendamento
-        </Typography>
+                  events.map(event => {
+                    const eventStart = event.start.date
+                      ? `${event.start.date} 00:00:00`
+                      : event.start.dateTime;
+                    const eventEnd = event.end.date
+                      ? `${event.end.date} 23:59:59`
+                      : event.end.dateTime;
 
-        <div className={classes.form}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={address}
-                label="Endereço"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={complement}
-                label="Complemento"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={formatDate}
-                label="Data da Sessão"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={horary}
-                label="Horário da Sessão"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Cliente estará presente na sessão"
-                  control={
-                    <Checkbox
-                      checked={accompanies}
-                      value={accompanies}
-                      InputProps={{
-                        readOnly: true
-                      }}
-                    />
+                    if (
+                      (Date.parse(date_horary) + 1 >= Date.parse(eventStart) &&
+                        Date.parse(date_horary) + 1 <= Date.parse(eventEnd)) ||
+                      (Date.parse(date_horary) + 4499999 >=
+                        Date.parse(eventStart) &&
+                        Date.parse(date_horary) + 4499999 <=
+                          Date.parse(eventEnd))
+                    ) {
+                      validHorary = false;
+                    }
+                  });
+
+                  if (validHorary) {
+                    return (
+                      <MenuItem id={item.time} key={item.id} value={item.id}>
+                        {item.time}
+                      </MenuItem>
+                    );
                   }
-                />
-              </FormGroup>
-            </Grid>
-            <Grid item xs={4}>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleReturnStep();
-                }}
-              >
-                Voltar
-              </Button>
-            </Grid>
-            <Grid item xs={8}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleSubmitStep2();
-                }}
-              >
-                Agendar
-              </Button>
-            </Grid>
+                })}
+              </Select>
+            </FormControl>
           </Grid>
-        </div>
-      </Paper>
-    );
-  }
+          <Grid item xs={12}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="clientSelect">
+                Cliente
+              </InputLabel>
+              <Select
+                id="clientSelect"
+                labelWidth={labelWidth}
+                value={client_id}
+                onChange={event => {
+                  setClientId(event.target.value);
+                }}
+              >
+                <MenuItem value="">-- Selecione --</MenuItem>
+                {clients.map(item => {
+                  return (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormGroup row>
+              <FormControlLabel
+                label="Cliente estará presente na sessão?"
+                control={
+                  <Checkbox
+                    checked={accompanies}
+                    onChange={event => {
+                      setAccompanies(!accompanies);
+                    }}
+                    value={accompanies}
+                  />
+                }
+              />
+            </FormGroup>
+          </Grid>
+          <Grid item xs={12}>
+            <FormGroup row>
+              <FormControlLabel
+                label="Sessão com uso de drone?"
+                control={
+                  <Checkbox
+                    checked={drone}
+                    onChange={event => {
+                      setDrone(!drone);
+                    }}
+                    value={drone}
+                  />
+                }
+              />
+            </FormGroup>
+          </Grid>
+          <Grid item xs={4}>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              fullWidth
+              className={classes.submit}
+              onClick={() => {
+                history.push("/scheduling");
+              }}
+            >
+              Voltar
+            </Button>
+          </Grid>
+          <Grid item xs={8}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="small"
+              fullWidth
+              className={classes.submit}
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              Agendar
+            </Button>
+          </Grid>
+        </Grid>
+      </div>
+    </Paper>
+  );
 }
 
-const mapStateToProps = state => ({
-  clientCode: state.clientCode
-});
-
-const withConnect = connect(mapStateToProps, {});
-
-export default compose(withSnackbar, withConnect)(Scheduling);
+export default withSnackbar(Scheduling);

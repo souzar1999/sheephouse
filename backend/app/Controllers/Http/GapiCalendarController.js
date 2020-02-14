@@ -28,7 +28,7 @@ class GapiCalendarController {
     return res.data.items
   }
 
-  async insertEventPhoto({ request, response }) {
+  async insertEvent({ request, response }) {
     const { scheduling_id, dateTimeEnd, dateTimeStart } = request.only([
         'scheduling_id',
         'dateTimeEnd',

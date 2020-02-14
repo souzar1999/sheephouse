@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MaterialTable from "material-table";
+import MaterialTable, { MTableCell } from "material-table";
 
 import api from "../../../services/api";
 import { withSnackbar } from "notistack";
@@ -62,7 +62,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         },
         lookup: { ...Photographers }
       },
-      { title: "Drone", field: "drone", type: "boolean" }
+      { title: "Ativo", field: "actived", type: "boolean" },
+      { title: "Finalizado", field: "completed", type: "boolean" }
     ];
 
   useEffect(() => {
@@ -155,10 +156,30 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           icon: "add",
           tooltip: "Agendar",
           isFreeAction: true,
-          onClick: event => history.push(`/admin/scheduling/`),
-          hidden: clientCode
+          onClick: event =>
+            clientCode
+              ? history.push(`/scheduling/photo`)
+              : history.push(`/admin/scheduling/`)
         }
       ]}
+      components={{
+        Cell: props => {
+          return (
+            <MTableCell
+              style={{
+                background: props.rowData.completed
+                  ? "#eefeee"
+                  : !props.rowData.actived
+                  ? "#feeeee"
+                  : props.rowData.changed
+                  ? "#eeeefe"
+                  : "inherit"
+              }}
+              {...props}
+            />
+          );
+        }
+      }}
       localization={{
         body: {
           filterRow: {
