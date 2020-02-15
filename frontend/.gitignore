@@ -11,6 +11,9 @@
 # production
 /build
 
+# Environment variables, never commit this file
+.env
+
 # misc
 .DS_Store
 .env.local
