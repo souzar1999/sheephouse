@@ -141,7 +141,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         rowData => ({
           icon: "photo_library",
           tooltip: "Fotos",
-          onClick: (event, rowData) => alert("You want to delete"),
+          onClick: (event, rowData) => {
+            history.push(`filemanager/Scheduling/${rowData.id}`);
+          },
           hidden: (clientCode && !rowData.completed) || !rowData.actived
         }),
         rowData => ({

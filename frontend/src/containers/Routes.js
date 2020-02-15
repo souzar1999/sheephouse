@@ -34,6 +34,7 @@ import AdminScheduling from "./Admin/Scheduling/Scheduling";
 
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
+import GlobalFileManager from "./Global/Scheduling/FileManager";
 
 export default function Routes() {
   return (
@@ -83,6 +84,11 @@ export default function Routes() {
           exact
           path="/scheduling/:id"
           component={GlobalRescheduling}
+        />
+        <LoginRequeredRoute
+          exact
+          path="/filemanager/:uploadType/:folderName"
+          component={GlobalFileManager}
         />
 
         <Route component={NotFound} />

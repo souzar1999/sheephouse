@@ -14,4 +14,4 @@ services:
             - 3000:3000
         links:
             - sheephouse-backend
-        command: npm start  
+        command: serve -s build -l 3000 
