@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import api from "../../../services/api";
 import history from "../../../history";
 
-function FileDownloader({ enqueueSnackbar }) {
+function FileDownloader({ clientCode }) {
     const { uploadType, folderName } = useParams();
     const [files, setFiles] = useState([]);
     const columns = [
@@ -25,18 +25,40 @@ function FileDownloader({ enqueueSnackbar }) {
         });
     }
 
+    async function viewFile(filename) {
+        await api.get("/storages/storage/" + uploadType + "/folder/" + folderName + "/" + filename + "/download").then(response => {
+            window.open(response.data.result, "_blank")
+        });
+    }
+    async function downloadFile(filename) {
+        alert("You want to delete")
+    }
+
     return (
         <MaterialTable
             title="Gerenciador de arquivos"
             actions={[rowData => ({
                 icon: "photo_library",
                 tooltip: "Visualizar",
-                onClick: (event, rowData) => alert("You want to delete")
+                onClick: (event, rowData) => {
+                    viewFile(rowData.Key)
+                }
+
             }),
             rowData => ({
                 icon: "cloud_download';",
                 tooltip: "Baixar",
-                onClick: (event, rowData) => alert("You want to delete")
+                onClick: (event, rowData) => {
+                    downloadFile(rowData.Key)
+                }
+            }),
+            rowData => ({
+                icon: "delete';",
+                tooltip: "Excluir",
+                onClick: (event, rowData) => {
+                    downloadFile(rowData.Key)
+                },
+                hidden: clientCode
             }),
             {
                 icon: "cloud_upload",
@@ -44,7 +66,8 @@ function FileDownloader({ enqueueSnackbar }) {
                 isFreeAction: true,
                 onClick: (event, rowData) => {
                     history.push("/fileuploader/" + uploadType + "/" + folderName);
-                  }
+                },
+                hidden: clientCode
             }
             ]}
             columns={columns}
@@ -83,5 +106,9 @@ function FileDownloader({ enqueueSnackbar }) {
         />
     );
 }
+
+const mapStateToProps = state => ({
+    clientCode: state.clientCode
+  });
 
 export default withSnackbar(FileDownloader);

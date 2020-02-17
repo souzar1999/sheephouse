@@ -4,7 +4,6 @@ import "./Upload.css";
 import Progress from "../Progress/Progress";
 import Button from "@material-ui/core/Button";
 import api from "../../../../../services/api";
-import axios from "axios";
 
 class Upload extends Component {
   constructor(props) {
@@ -86,14 +85,7 @@ class Upload extends Component {
         this.setState({ uploadProgress: copy });
         reject(req.response);
       });
-      /*var options = {
-        headers: {
-          'Content-Type': file.type
-        }
-      };*/
-      //axios.put(url,file,options)
-      //req.open("PUT", url);
-      //req.send({"file": file});
+
       req.open('PUT', url);
       req.setRequestHeader('Content-Type', file.type);
       req.send({
