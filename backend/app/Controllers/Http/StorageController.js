@@ -14,10 +14,12 @@ class StorageController {
 
     var s3params = {
       Bucket: Env.get('S3_BUCKET'),
-      Delimiter: StorageType + '/' + FolderName
+      Prefix : StorageType + "/" + FolderName
     };
+    console.log(s3params);
     var s3ObjectList = await s3.listObjectsV2(s3params).promise();
 
+    console.log(s3ObjectList)
     if (s3ObjectList.KeyCount == 0){
       return response.status(200).send({ error:{ message: "Pasta Vazia."}})
     }else{
@@ -28,14 +30,14 @@ class StorageController {
 
   async getPutPreSignedUrl({ params, request, response, view }) {
 
-    const { storageType: StorageType, folderName: FolderName, fileName: FileName } = params
-
-    const S3BucketName =  Env.get('S3_BUCKET')
-
+    const { storageType: StorageType, folderName: FolderName, fileName: FileName } = params;
+    const query = request.get();
+    const S3BucketName =  Env.get('S3_BUCKET');
     var S3params = {
       Bucket: S3BucketName,
       Key: StorageType + '/' + FolderName + '/' +  FileName,
-      Expires: 500
+      Expires: 500,
+      ContentType: query.contentType,
     };
 
     const Url = await s3.getSignedUrlPromise('putObject', S3params)

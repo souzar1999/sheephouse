@@ -3,7 +3,8 @@ import Dropzone from "../Dropzone/Dropzone";
 import "./Upload.css";
 import Progress from "../Progress/Progress";
 import Button from "@material-ui/core/Button";
-import api from "../../../../../../services/api";
+import api from "../../../../../services/api";
+import axios from "axios";
 
 class Upload extends Component {
   constructor(props) {
@@ -35,7 +36,7 @@ class Upload extends Component {
     var folderName = this.props.folderName;
     var uploadType = this.props.uploadType;
     this.state.files.forEach(file => {
-      promisesUrl.push(api.get("storages/storage/"+ uploadType +"/folder/"+ folderName +"/" + file.name + "/upload"));
+      promisesUrl.push(api.get("storages/storage/"+ uploadType +"/folder/"+ folderName +"/" + file.name + "/upload?contentType="+ file.type));
     });
 
     const resultado = await Promise.all(promisesUrl);
@@ -53,7 +54,6 @@ class Upload extends Component {
 
       this.setState({ successfullUploaded: true, uploading: false });
     } catch (e) {
-      // Not Production ready! Do some error handling here instead...
       this.setState({ successfullUploaded: true, uploading: false });
     }
   }
@@ -86,13 +86,22 @@ class Upload extends Component {
         this.setState({ uploadProgress: copy });
         reject(req.response);
       });
-      const formData = new FormData();
-      formData.append("file", file, file.name);
-
-      console.log("url"+ url);
-      req.open("PUT", url);
-      req.send(formData);
-
+      /*var options = {
+        headers: {
+          'Content-Type': file.type
+        }
+      };*/
+      //axios.put(url,file,options)
+      //req.open("PUT", url);
+      //req.send({"file": file});
+      req.open('PUT', url);
+      req.setRequestHeader('Content-Type', file.type);
+      req.send({
+          file: file,
+          type: file.type,
+          name: file.name
+      });
+      
     });
   }
 
@@ -105,7 +114,7 @@ class Upload extends Component {
           <img
             className="CheckIcon"
             alt="done"
-            src="baseline-check_circle_outline-24px.svg"
+            src="../../assets/baseline-check_circle_outline-24px.svg"
             style={{
               opacity:
                 uploadProgress && uploadProgress.state === "done" ? 0.5 : 0

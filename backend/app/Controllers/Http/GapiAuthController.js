@@ -13,7 +13,7 @@ class GapiAuthController {
     const oauth2Client = new google.auth.OAuth2(
       Env.get('GCLIENT_ID'),
       Env.get('GCLIENT_SECRET'),
-      'http://localhost:3000/admin/photographer/authorizationCode'
+      `${Env.get('FRONT_URL')}/admin/photographer/authorizationCode`
     )
 
     const url = oauth2Client.generateAuthUrl({
