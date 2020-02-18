@@ -11,9 +11,10 @@ import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
 import { connect } from "react-redux";
-import { userLogin } from "../../store/actions";
+import { userLogin, userClient, userAdmin } from "../../store/actions";
 
 import api from "../../services/api";
+import history from "../../history";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SignIn({ enqueueSnackbar, onUserLogin }) {
+function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
   const classes = useStyles(),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState("");
@@ -81,7 +82,64 @@ function SignIn({ enqueueSnackbar, onUserLogin }) {
       .then(async response => {
         localStorage.setItem("userToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
-        onUserLogin();
+
+        await api
+          .get("/user", {
+            headers: { Authorization: `Bearer ${response.data.token}` }
+          })
+          .then(async response => {
+            if (response.data.admin) {
+              onUserAdmin();
+              onUserLogin();
+
+              enqueueSnackbar("Seja bem vindo!", {
+                variant: "success",
+                autoHideDuration: 2500,
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center"
+                }
+              });
+
+              history.push("/admin/home");
+
+              return;
+            }
+
+            await api.get(`/client/user/${response.data.id}`).then(response => {
+              if (response.data[0]) {
+                if (response.data[0].id) {
+                  onUserClient(response.data[0].id);
+                  onUserLogin();
+
+                  enqueueSnackbar("Seja bem vindo!", {
+                    variant: "success",
+                    autoHideDuration: 2500,
+                    anchorOrigin: {
+                      vertical: "top",
+                      horizontal: "center"
+                    }
+                  });
+
+                  history.push("/home");
+
+                  return;
+                }
+              } else {
+                enqueueSnackbar(
+                  "Seu usuário está desativado, entre em contato com o administrador para verificar a situação!",
+                  {
+                    variant: "error",
+                    autoHideDuration: 2500,
+                    anchorOrigin: {
+                      vertical: "top",
+                      horizontal: "center"
+                    }
+                  }
+                );
+              }
+            });
+          });
       })
       .catch(error => {
         enqueueSnackbar(
@@ -210,6 +268,12 @@ const mapDispatchToProps = dispatch => {
   return {
     onUserLogin: () => {
       dispatch(userLogin());
+    },
+    onUserClient: id => {
+      dispatch(userClient(id));
+    },
+    onUserAdmin: () => {
+      dispatch(userAdmin());
     }
   };
 };

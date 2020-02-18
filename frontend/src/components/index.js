@@ -13,7 +13,6 @@ import LogoutError from "./UserLogout/LogoutError";
 import SignUp from "./UserRegister/SignUp";
 import ResetPassword from "./UserResetPassword/ResetPassword";
 
-import UserClient from "./User/Client/Client";
 import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
@@ -26,6 +25,7 @@ import AdminClient from "./Admin/Client/Client";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminHorary from "./Admin/Horary/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
+import AdminHome from "./Admin/Home/Home";
 
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
@@ -51,10 +51,10 @@ export {
   AdminClient,
   AdminHorary,
   AdminScheduling,
+  AdminHome,
   GlobalScheduling,
   GlobalRescheduling,
   GlobalFileManager,
-  UserClient,
   UserHome,
   UserScheduling,
   UserContact,

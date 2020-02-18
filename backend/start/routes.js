@@ -50,6 +50,20 @@ Route.get(
   'SchedulingController.indexClient'
 ).middleware('auth')
 
+Route.get(
+  '/scheduling/completed/month/:dateIni/:dateEnd',
+  'SchedulingController.indexMonthCompleted'
+).middleware('auth')
+
+Route.get(
+  '/scheduling/canceled/month/:dateIni/:dateEnd',
+  'SchedulingController.indexMonthCanceled'
+).middleware('auth')
+
+Route.get('/scheduling/day/:date', 'SchedulingController.indexDay').middleware(
+  'auth'
+)
+
 Route.resource('broker', 'BrokerController')
   .apiOnly()
   .middleware('auth')

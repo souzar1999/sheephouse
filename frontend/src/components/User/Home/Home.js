@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
+
+import history from "../../../history";
+import api from "../../../services/api";
 
 const useStyles = makeStyles(theme => ({
   root: {

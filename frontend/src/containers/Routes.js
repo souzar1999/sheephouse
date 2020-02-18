@@ -19,7 +19,6 @@ import NotFound from "./NotFound/NotFound";
 
 import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
-import UserClient from "./User/Client/Client";
 import UserContact from "./User/Contact/Contact";
 
 import AdminHome from "./Admin/Home/Home";
@@ -45,8 +44,6 @@ export default function Routes() {
         <LogoutRequeredRoute path="/reset" component={UserResetPassword} />
         <LoginRequeredRoute path="/logout" component={UserLogout} />
         <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
-
-        <LoginRequeredRoute path="/user" component={UserClient} />
 
         <ClientRequeredRoute path="/home" component={UserHome} />
         <ClientRequeredRoute path="/calendar" component={UserHome} />

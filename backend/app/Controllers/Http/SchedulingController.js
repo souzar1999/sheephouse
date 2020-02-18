@@ -31,6 +31,35 @@ class SchedulingController {
     return scheduling
   }
 
+  async indexMonthCompleted({ params, request, response, view }) {
+    const scheduling = Scheduling.query()
+      .where('date', '>=', params.dateIni)
+      .where('date', '<=', params.dateEnd)
+      //.where('completed', true)
+      .fetch()
+
+    return scheduling
+  }
+
+  async indexMonthCanceled({ params, request, response, view }) {
+    const count = Scheduling.query()
+      .where('date', '>=', params.dateIni)
+      .where('date', '<=', params.dateEnd)
+      //.where('active', false)
+      .getCount()
+
+    return count
+  }
+
+  async indexDay({ params, request, response, view }) {
+    const scheduling = Scheduling.query()
+      .where('date', params.date)
+      .where('actived', true)
+      .fetch()
+
+    return scheduling
+  }
+
   async show({ params, request, response, view }) {
     const scheduling = await Scheduling.query()
       .where('id', params.id)

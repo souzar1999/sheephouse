@@ -37,8 +37,10 @@ const useStyles = makeStyles(theme => ({
 function SignUp({ enqueueSnackbar }) {
   const classes = useStyles();
 
+  const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [termsOfUse, setTermsOfUse] = useState(false);
@@ -46,8 +48,8 @@ function SignUp({ enqueueSnackbar }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!username) {
-      enqueueSnackbar("Informe o usuário para prosseguir!", {
+    if (!name) {
+      enqueueSnackbar("Informe o nome!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -72,6 +74,18 @@ function SignUp({ enqueueSnackbar }) {
 
     if (!email) {
       enqueueSnackbar("Informe o email para prosseguir!", {
+        variant: "error",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
+    if (!phone) {
+      enqueueSnackbar("Informe o telefone!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {
@@ -144,26 +158,32 @@ function SignUp({ enqueueSnackbar }) {
 
     await api
       .post("/users", { username, email, password })
-      .then(response => {
-        enqueueSnackbar("Usuário cadastrado!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
+      .then(async response => {
+        const user_id = response.data.id,
+          actived = false;
+        await api
+          .post("/client", { name, phone, user_id, actived })
+          .then(response => {
+            enqueueSnackbar("Usuário cadastrado!", {
+              variant: "success",
+              autoHideDuration: 2500,
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center"
+              }
+            });
 
-        enqueueSnackbar("Faça o login!", {
-          variant: "success",
-          autoHideDuration: 2500,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
-          }
-        });
+            enqueueSnackbar("Aguarde a aprovação do administrador!", {
+              variant: "success",
+              autoHideDuration: 2500,
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center"
+              }
+            });
 
-        history.push("/");
+            history.push("/");
+          });
       })
       .catch(error => {
         enqueueSnackbar("Problemas ao cadastrar usuário!", {
@@ -187,16 +207,16 @@ function SignUp({ enqueueSnackbar }) {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                autoComplete="username"
+                autoComplete="name"
                 name="userName"
                 variant="outlined"
                 required
                 fullWidth
-                id="username"
-                label="Usuário"
+                id="name"
+                label="Nome"
                 autoFocus
-                value={username}
-                onChange={event => setUsername(event.target.value)}
+                value={name}
+                onChange={event => setName(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -209,7 +229,23 @@ function SignUp({ enqueueSnackbar }) {
                 name="email"
                 autoComplete="email"
                 value={email}
-                onChange={event => setEmail(event.target.value)}
+                onChange={event => {
+                  setEmail(event.target.value);
+                  setUsername(event.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="phone"
+                label="Telefone (xx)xxxxx-xxxx"
+                name="phone"
+                autoComplete="phone"
+                value={phone}
+                onChange={event => setPhone(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>

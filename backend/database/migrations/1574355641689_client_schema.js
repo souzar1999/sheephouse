@@ -10,7 +10,7 @@ class ClientSchema extends Schema {
       table.string('name').notNullable()
       table.string('phone').notNullable()
       table
-        .boolean('active')
+        .boolean('actived')
         .notNullable()
         .defaultTo(true)
       table

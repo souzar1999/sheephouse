@@ -20,7 +20,7 @@ class ClientController {
       .with('broker')
       .with('user')
       .with('scheduling')
-      .where('active', true)
+      .where('actived', true)
       .fetch()
 
     return clients
@@ -40,6 +40,7 @@ class ClientController {
   async showClient({ params, request, response }) {
     const client = await Client.query()
       .where('user_id', params.user_id)
+      .where('actived', true)
       .fetch()
 
     return client
@@ -51,7 +52,7 @@ class ClientController {
       'user_id',
       'name',
       'phone',
-      'active'
+      'actived'
     ])
 
     return await Client.create(data)
@@ -63,7 +64,7 @@ class ClientController {
       'user_id',
       'name',
       'phone',
-      'active'
+      'actived'
     ])
 
     const client = await Client.findOrFail(params.id)
@@ -72,11 +73,7 @@ class ClientController {
 
     await client.save()
 
-    return (client = await Client.query()
-      .where('id', params.id)
-      .with('broker')
-      .with('user')
-      .fetch())
+    return client
   }
 
   async destroy({ params, request, response }) {

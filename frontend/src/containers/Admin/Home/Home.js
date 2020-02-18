@@ -1,5 +1,11 @@
 import React from "react";
 
-const Home = () => <div>ola</div>;
+import { AdminHome } from "../../../components";
+
+const Home = () => (
+  <div>
+    <AdminHome />
+  </div>
+);
 
 export default Home;

@@ -11,7 +11,7 @@ const LogoutRequiredRoute = ({ component: Component, ...rest }) => (
       ) : (
         <Redirect
           to={{
-            pathname: "/home",
+            pathname: "/admin/home",
             state: { from: props.location }
           }}
         />

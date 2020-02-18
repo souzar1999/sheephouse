@@ -12,7 +12,12 @@ function Client({ enqueueSnackbar }) {
       { title: "Imobiliária", field: "broker_id", lookup: { ...brokers } },
       { title: "Telefone", field: "phone" },
       { title: "Email", field: "user.email", editable: "never" },
-      { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
+      {
+        title: "Ativo",
+        field: "actived",
+        type: "boolean",
+        editable: "onUpdate"
+      }
     ];
 
   useEffect(() => {
@@ -39,7 +44,7 @@ function Client({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, broker_id, id, active } = newData;
+    const { name, broker_id, id, phone, actived } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do corretor!", {
@@ -66,7 +71,7 @@ function Client({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/client/${id}`, { name, broker_id, active })
+      .put(`/client/${id}`, { name, broker_id, phone, actived })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",

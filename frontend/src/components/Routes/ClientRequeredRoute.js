@@ -11,7 +11,7 @@ const LoginRequiredRoute = ({ component: Component, ...rest }) => (
       ) : (
         <Redirect
           to={{
-            pathname: "/user",
+            pathname: "/logout",
             state: { from: props.location }
           }}
         />
