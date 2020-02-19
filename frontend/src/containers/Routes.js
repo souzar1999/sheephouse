@@ -20,6 +20,7 @@ import NotFound from "./NotFound/NotFound";
 import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
+import UserReports from "./User/Reports/Reports";
 
 import AdminHome from "./Admin/Home/Home";
 import AdminDistrict from "./Admin/District/District";
@@ -30,6 +31,7 @@ import AdminBroker from "./Admin/Broker/Broker";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminHorary from "./Admin/Horary/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
+import AdminReports from "./Admin/Reports/Reports";
 
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
@@ -48,7 +50,7 @@ export default function Routes() {
         <ClientRequeredRoute path="/home" component={UserHome} />
         <ClientRequeredRoute path="/calendar" component={UserHome} />
         <ClientRequeredRoute path="/sessions" component={UserHome} />
-        <ClientRequeredRoute path="/reports" component={UserHome} />
+        <ClientRequeredRoute path="/reports" component={UserReports} />
         <ClientRequeredRoute path="/contacts" component={UserContact} />
         <ClientRequeredRoute path="/profile" component={UserHome} />
         <ClientRequeredRoute
@@ -63,6 +65,7 @@ export default function Routes() {
         <AdminRequeredRoute path="/admin/region" component={AdminRegion} />
         <AdminRequeredRoute path="/admin/client" component={AdminClient} />
         <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
+        <AdminRequeredRoute path="/admin/reports" component={AdminReports} />
         <AdminRequeredRoute
           path="/admin/scheduling"
           component={AdminScheduling}

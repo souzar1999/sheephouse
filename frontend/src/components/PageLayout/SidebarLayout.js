@@ -11,6 +11,7 @@ const SidebarLayout = ({ isUserAdmin }) => {
       <Sidebar>
         <Sideitem link="/admin/home" icon="home" label="Início" />
         <Sideitem link="/scheduling" icon="event" label="Agendamentos" />
+        <Sideitem link="/admin/reports" icon="print" label="Relatórios" />
         <Divider />
         <Sideitem link="/admin/client" icon="face" label="Clientes" />
         <Sideitem
@@ -38,7 +39,6 @@ const SidebarLayout = ({ isUserAdmin }) => {
       <Sidebar>
         <Sideitem link="/home" icon="home" label="Home" />
         <Divider />
-        <Sideitem link="/calendar" icon="event" label="Minha Agenda" />
         <Sideitem
           link="/scheduling"
           icon="photo_library"

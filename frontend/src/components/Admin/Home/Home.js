@@ -20,8 +20,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Home({ enqueueSnackbar }) {
-  const classes = useStyles();
-  const [today, setToday] = useState([]),
+  const classes = useStyles(),
+    [today, setToday] = useState([]),
     [tomorrow, setTomorrow] = useState([]),
     [completedPhoto, setCompletedPhoto] = useState(0),
     [completedDrone, setCompletedDrone] = useState(0),
