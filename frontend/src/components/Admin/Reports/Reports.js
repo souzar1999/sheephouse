@@ -16,7 +16,7 @@ function Reports({ enqueueSnackbar }) {
       {
         title: "Serviço",
         field: "drone",
-        lookup: { 0: "Fotografia Imobiliária", 1: "Filmagem Aérea" }
+        lookup: { 0: "Fotografia", 1: "Filmagem/Drone" }
       },
       {
         title: "Imobiliária",
@@ -26,8 +26,16 @@ function Reports({ enqueueSnackbar }) {
       {
         title: "Cliente",
         field: "client_id",
-        filtering: false,
-        lookup: { ...Clients }
+        lookup: { ...Clients },
+        cellStyle: {
+          display: "none"
+        },
+        filterCellStyle: {
+          display: "none"
+        },
+        headerStyle: {
+          display: "none"
+        }
       },
       {
         title: "Dia",
@@ -51,7 +59,8 @@ function Reports({ enqueueSnackbar }) {
           "09": "Setembro",
           "10": "Outubro",
           "11": "Novembro",
-          "12": "Dezembro"
+          "12": "Dezembro",
+          "": "Administrador irá agendar"
         }
       },
       {
@@ -60,13 +69,19 @@ function Reports({ enqueueSnackbar }) {
         defaultSort: "asc",
         filterPlaceholder: "9999",
         cellStyle: {
-          width: 120,
-          maxWidth: 120,
+          width: 200,
+          maxWidth: 200,
           textAlign: "left"
         },
+        filterCellStyle: {
+          paddingTop: 15,
+          paddingBottom: 15,
+          paddingLeft: 2,
+          paddingRight: 2
+        },
         headerStyle: {
-          width: 120,
-          maxWidth: 120
+          width: 200,
+          maxWidth: 200
         }
       },
       {
@@ -78,6 +93,15 @@ function Reports({ enqueueSnackbar }) {
         },
         lookup: { ...Photographers }
       },
+      {
+        title: "Ativo/Cancelado",
+        field: "actived",
+        lookup: {
+          0: "Cancelado",
+          1: "Ativo"
+        }
+      },
+      { title: "Finalizado", field: "completed", type: "boolean" },
       {
         title: "Endereço",
         field: "address",
@@ -109,7 +133,7 @@ function Reports({ enqueueSnackbar }) {
       {
         title: "Serviço",
         field: "drone",
-        lookup: { 0: "Fotografia Imobiliária", 1: "Filmagem Aérea" }
+        lookup: { 0: "Fotografia", 1: "Filmagem/Drone" }
       },
       {
         title: "Cliente",
@@ -139,7 +163,8 @@ function Reports({ enqueueSnackbar }) {
           "09": "Setembro",
           "10": "Outubro",
           "11": "Novembro",
-          "12": "Dezembro"
+          "12": "Dezembro",
+          "": "Administrador irá agendar"
         }
       },
       {
@@ -148,13 +173,19 @@ function Reports({ enqueueSnackbar }) {
         defaultSort: "asc",
         filterPlaceholder: "9999",
         cellStyle: {
-          width: 120,
-          maxWidth: 120,
+          width: 200,
+          maxWidth: 200,
           textAlign: "left"
         },
+        filterCellStyle: {
+          paddingTop: 15,
+          paddingBottom: 15,
+          paddingLeft: 2,
+          paddingRight: 2
+        },
         headerStyle: {
-          width: 120,
-          maxWidth: 120
+          width: 200,
+          maxWidth: 200
         }
       },
       {
@@ -166,6 +197,15 @@ function Reports({ enqueueSnackbar }) {
         },
         lookup: { ...Photographers }
       },
+      {
+        title: "Ativo/Cancelado",
+        field: "actived",
+        lookup: {
+          0: "Cancelado",
+          1: "Ativo"
+        }
+      },
+      { title: "Finalizado", field: "completed", type: "boolean" },
       {
         title: "Endereço",
         field: "address",
@@ -204,13 +244,17 @@ function Reports({ enqueueSnackbar }) {
       let schedulingsComplete = [];
 
       response.data.forEach(item => {
-        if (!item.completed) {
+        if (item.date) {
           const date = item.date.split("-");
           item.day = date[2];
           item.month = date[1];
           item.year = date[0];
-          schedulingsComplete.push(item);
+        } else {
+          item.day = "";
+          item.month = "";
+          item.year = "";
         }
+        schedulingsComplete.push(item);
       });
 
       setScheduling(schedulingsComplete);
@@ -232,7 +276,11 @@ function Reports({ enqueueSnackbar }) {
       let data = [];
 
       response.data.map(item => {
-        return (data[item.id] = `${item.name}`);
+        if (item.broker) {
+          return (data[item.id] = `${item.name} (${item.broker.name})`);
+        } else {
+          return (data[item.id] = `${item.name}`);
+        }
       });
 
       setClients(data);
@@ -266,8 +314,13 @@ function Reports({ enqueueSnackbar }) {
                       <strong>Endereço:</strong> {rowData.address}
                     </p>
                     <p>
-                      <strong>Complemento:</strong> {rowData.complement}
+                      <strong>Observações:</strong> {rowData.comments}
                     </p>
+                    {rowData.date_cancel && (
+                      <p>
+                        <strong>Cancelamento:</strong> {rowData.date_cancel}
+                      </p>
+                    )}
                   </div>
                 );
               }
@@ -312,8 +365,13 @@ function Reports({ enqueueSnackbar }) {
                       <strong>Endereço:</strong> {rowData.address}
                     </p>
                     <p>
-                      <strong>Complemento:</strong> {rowData.complement}
+                      <strong>Observações:</strong> {rowData.comments}
                     </p>
+                    {rowData.date_cancel && (
+                      <p>
+                        <strong>Cancelamento:</strong> {rowData.date_cancel}
+                      </p>
+                    )}
                   </div>
                 );
               }

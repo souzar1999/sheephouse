@@ -1,3 +1,4 @@
+import "date-fns";
 import React, { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -11,6 +12,11 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import DateFnsUtils from "@date-io/date-fns";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from "@material-ui/pickers";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
@@ -47,12 +53,14 @@ function Scheduling({ enqueueSnackbar }) {
     [district, setDistrict] = useState(""),
     [formatDate, setFormatDate] = useState(),
     [horaryDisable, setHoraryDisable] = useState(true),
+    [dateDisable, setDateDisable] = useState(true),
     [events, setEvents] = useState([]),
-    [date, setDate] = useState(),
+    [date, setDate] = useState(null),
     [latitude, setLat] = useState(""),
     [longitude, setLng] = useState(""),
     [address, setAddress] = useState(""),
     [complement, setComplement] = useState(""),
+    [comments, setComments] = useState(""),
     [accompanies, setAccompanies] = useState(false),
     [drone, setDrone] = useState(false),
     [region_id, setRegionId] = useState(""),
@@ -107,7 +115,7 @@ function Scheduling({ enqueueSnackbar }) {
     setHoraryDisable(true);
     setHoraryId();
 
-    if (Date.parse(value) > Date.now()) {
+    if (Date.parse(value) > Date.now() - 43200000) {
       getCalendarEvents(value);
 
       enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
@@ -170,7 +178,7 @@ function Scheduling({ enqueueSnackbar }) {
       })
       .catch(error => {
         enqueueSnackbar(
-          "Problemas com endereço informado! Entre em contato com o administrador.",
+          "Problemas com endereço informado! Entre em contato pelo e-mail sheeephouse@gmail.com.",
           {
             variant: "error",
             autoHideDuration: 2500,
@@ -218,6 +226,7 @@ function Scheduling({ enqueueSnackbar }) {
         longitude,
         address,
         complement,
+        comments,
         accompanies,
         drone,
         region_id,
@@ -289,6 +298,19 @@ function Scheduling({ enqueueSnackbar }) {
             />
           </Grid>
           <Grid item xs={12}>
+            <TextField
+              onChange={event => {
+                setComments(event.target.value);
+              }}
+              value={comments}
+              label="Observações"
+              variant="outlined"
+              rows="3"
+              fullWidth
+              multiline
+            />
+          </Grid>
+          <Grid item xs={12}>
             <FormControl variant="outlined" fullWidth>
               <InputLabel ref={inputLabel} id="photographerSelect">
                 Fotógrafos
@@ -298,6 +320,7 @@ function Scheduling({ enqueueSnackbar }) {
                 labelWidth={labelWidth}
                 value={photographer_id}
                 onChange={event => {
+                  setDateDisable(false);
                   setPhotographerId(event.target.value);
                 }}
               >
@@ -313,19 +336,27 @@ function Scheduling({ enqueueSnackbar }) {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              type="date"
-              onChange={event => {
-                verifyDate(event.target.value);
-              }}
-              value={date}
-              label="Data da Sessão"
-              variant="outlined"
-              fullWidth
-              InputLabelProps={{
-                shrink: true
-              }}
-            />
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                autoOk
+                value={date ? new Date(+new Date(date) + 86400000) : date}
+                inputVariant="outlined"
+                fullWidth
+                label="Data da Sessão"
+                disabled={!photographer_id}
+                onChange={date => {
+                  if (date) {
+                    const year = date.getFullYear(),
+                      month = ("0" + (date.getMonth() + 1)).slice(-2),
+                      day = ("0" + date.getDate()).slice(-2);
+
+                    verifyDate(`${year}-${month}-${day}`);
+                  }
+                }}
+                minDate={new Date()}
+                format="dd/MM/yyyy"
+              />
+            </MuiPickersUtilsProvider>
           </Grid>
           <Grid item xs={12}>
             <FormControl variant="outlined" fullWidth>
@@ -336,7 +367,7 @@ function Scheduling({ enqueueSnackbar }) {
                 id="horarySelect"
                 labelWidth={labelWidth}
                 value={horary_id}
-                disabled={horaryDisable}
+                disabled={horaryDisable || dateDisable}
                 onChange={event => {
                   setHoraryId(event.target.value);
                   setHorary(event.nativeEvent.srcElement.innerText);
@@ -349,6 +380,10 @@ function Scheduling({ enqueueSnackbar }) {
 
                   if (!date_horary) {
                     return;
+                  }
+
+                  if (new Date(date_horary).getDay() == 6 && !item.sabado) {
+                    validHorary = false;
                   }
 
                   events.map(event => {
@@ -409,23 +444,7 @@ function Scheduling({ enqueueSnackbar }) {
           <Grid item xs={12}>
             <FormGroup row>
               <FormControlLabel
-                label="Cliente estará presente na sessão?"
-                control={
-                  <Checkbox
-                    checked={accompanies}
-                    onChange={event => {
-                      setAccompanies(!accompanies);
-                    }}
-                    value={accompanies}
-                  />
-                }
-              />
-            </FormGroup>
-          </Grid>
-          <Grid item xs={12}>
-            <FormGroup row>
-              <FormControlLabel
-                label="Sessão com uso de drone?"
+                label="Filmagem e/ou uso de Drone"
                 control={
                   <Checkbox
                     checked={drone}

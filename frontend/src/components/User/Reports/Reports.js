@@ -17,7 +17,7 @@ function Reports({ enqueueSnackbar, clientCode }) {
       {
         title: "Serviço",
         field: "drone",
-        lookup: { 0: "Fotografia Imobiliária", 1: "Filmagem Aérea" }
+        lookup: { 0: "Fotografia", 1: "Filmagem/Drone" }
       },
       {
         title: "Dia",
@@ -42,7 +42,8 @@ function Reports({ enqueueSnackbar, clientCode }) {
           "09": "Setembro",
           "10": "Outubro",
           "11": "Novembro",
-          "12": "Dezembro"
+          "12": "Dezembro",
+          "": "Administrador irá agendar"
         }
       },
       {
@@ -51,13 +52,19 @@ function Reports({ enqueueSnackbar, clientCode }) {
         defaultSort: "asc",
         filterPlaceholder: "9999",
         cellStyle: {
-          width: 120,
-          maxWidth: 120,
+          width: 200,
+          maxWidth: 200,
           textAlign: "left"
         },
+        filterCellStyle: {
+          paddingTop: 15,
+          paddingBottom: 15,
+          paddingLeft: 2,
+          paddingRight: 2
+        },
         headerStyle: {
-          width: 120,
-          maxWidth: 120
+          width: 200,
+          maxWidth: 200
         }
       },
       {
@@ -69,6 +76,15 @@ function Reports({ enqueueSnackbar, clientCode }) {
         },
         lookup: { ...Photographers }
       },
+      {
+        title: "Ativo/Cancelado",
+        field: "actived",
+        lookup: {
+          0: "Cancelado",
+          1: "Ativo"
+        }
+      },
+      { title: "Finalizado", field: "completed", type: "boolean" },
       {
         title: "Endereço",
         field: "address",
@@ -107,13 +123,17 @@ function Reports({ enqueueSnackbar, clientCode }) {
       let schedulingsComplete = [];
 
       response.data.forEach(item => {
-        if (!item.completed) {
+        if (item.date) {
           const date = item.date.split("-");
           item.day = date[2];
           item.month = date[1];
           item.year = date[0];
-          schedulingsComplete.push(item);
+        } else {
+          item.day = "";
+          item.month = "";
+          item.year = "";
         }
+        schedulingsComplete.push(item);
       });
 
       setScheduling(schedulingsComplete);
@@ -149,8 +169,32 @@ function Reports({ enqueueSnackbar, clientCode }) {
                       <strong>Endereço:</strong> {rowData.address}
                     </p>
                     <p>
-                      <strong>Complemento:</strong> {rowData.complement}
+                      <strong>Observações:</strong> {rowData.comments}
                     </p>
+                    {rowData.date_cancel && (
+                      <p>
+                        <strong>Cancelamento:</strong>
+                        {" " +
+                          new Date(rowData.date_cancel)
+                            .toISOString()
+                            .split("T")[0]
+                            .split("-")[2] +
+                          "/" +
+                          new Date(rowData.date_cancel)
+                            .toISOString()
+                            .split("T")[0]
+                            .split("-")[1] +
+                          "/" +
+                          new Date(rowData.date_cancel)
+                            .toISOString()
+                            .split("T")[0]
+                            .split("-")[0] +
+                          " " +
+                          new Date(rowData.date_cancel)
+                            .toTimeString()
+                            .split(" ")[0]}
+                      </p>
+                    )}
                   </div>
                 );
               }

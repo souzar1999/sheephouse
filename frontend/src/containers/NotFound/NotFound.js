@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 
 function NotFound() {
   const classes = useStyles();
-  return <img className={classes.image} src="./assets/404.jpg" />;
+  return <img className={classes.image} src="/assets/404.jpg" />;
 }
 
 export default NotFound;

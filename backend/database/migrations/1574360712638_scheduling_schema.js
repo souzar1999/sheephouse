@@ -7,11 +7,13 @@ class SchedulingSchema extends Schema {
   up() {
     this.create('schedulings', table => {
       table.increments()
-      table.string('date').notNullable()
+      table.string('date')
+      table.datetime('date_cancel')
       table.string('latitude').notNullable()
       table.string('longitude').notNullable()
       table.string('address').notNullable()
       table.string('complement').notNullable()
+      table.string('comments')
       table.string('google_event_id')
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()

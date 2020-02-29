@@ -16,6 +16,11 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [Horaries, setHoraries] = useState([]),
     columns = [
       {
+        title: "Serviço",
+        field: "drone",
+        lookup: { 0: "Fotografia", 1: "Filmagem/Drone" }
+      },
+      {
         title: "Cliente",
         field: "client_id",
         defaultSort: "asc",
@@ -23,18 +28,51 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         hidden: clientCode
       },
       {
-        title: "Data",
-        field: "date",
+        title: "Dia",
+        field: "day",
         defaultSort: "asc",
-        type: "date",
+        filtering: false,
+        type: "numeric"
+      },
+      {
+        title: "Mês",
+        field: "month",
+        defaultSort: "asc",
+        lookup: {
+          "01": "Janeiro",
+          "02": "Fevereiro",
+          "03": "Março",
+          "04": "Abril",
+          "05": "Maio",
+          "06": "Junho",
+          "07": "Julho",
+          "08": "Agosto",
+          "09": "Setembro",
+          "10": "Outubro",
+          "11": "Novembro",
+          "12": "Dezembro",
+          "": "Administrador irá agendar"
+        }
+      },
+      {
+        title: "Ano",
+        field: "year",
+        defaultSort: "asc",
+        filterPlaceholder: "9999",
         cellStyle: {
-          width: 150,
-          maxWidth: 150,
-          textAlign: "center"
+          width: 400,
+          maxWidth: 400,
+          textAlign: "left"
+        },
+        filterCellStyle: {
+          paddingTop: 15,
+          paddingBottom: 15,
+          paddingLeft: 2,
+          paddingRight: 2
         },
         headerStyle: {
-          width: 150,
-          maxWidth: 150
+          width: 400,
+          maxWidth: 400
         }
       },
       {
@@ -62,7 +100,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         },
         lookup: { ...Photographers }
       },
-      { title: "Ativo", field: "actived", type: "boolean" },
+      {
+        title: "Ativo/Cancelado",
+        field: "actived",
+        lookup: {
+          0: "Cancelado",
+          1: "Ativo"
+        }
+      },
       { title: "Finalizado", field: "completed", type: "boolean" }
     ];
 
@@ -74,11 +119,43 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   async function handleLoad() {
     if (clientCode) {
       await api.get(`/Scheduling/byclient/${clientCode}`).then(response => {
-        setScheduling(response.data);
+        let schedulingsData = [];
+
+        response.data.forEach(item => {
+          if (item.date) {
+            const date = item.date.split("-");
+            item.day = date[2];
+            item.month = date[1];
+            item.year = date[0];
+          } else {
+            item.day = "";
+            item.month = "";
+            item.year = "";
+          }
+          schedulingsData.push(item);
+        });
+
+        setScheduling(schedulingsData);
       });
     } else {
       await api.get("/Scheduling").then(response => {
-        setScheduling(response.data);
+        let schedulingsData = [];
+
+        response.data.forEach(item => {
+          if (item.date) {
+            const date = item.date.split("-");
+            item.day = date[2];
+            item.month = date[1];
+            item.year = date[0];
+          } else {
+            item.day = "";
+            item.month = "";
+            item.year = "";
+          }
+          schedulingsData.push(item);
+        });
+
+        setScheduling(schedulingsData);
       });
     }
   }
@@ -108,7 +185,11 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       let data = [];
 
       response.data.map(item => {
-        return (data[item.id] = `${item.name} (${item.broker.name})`);
+        if (item.broker) {
+          return (data[item.id] = `${item.name} (${item.broker.name})`);
+        } else {
+          return (data[item.id] = `${item.name}`);
+        }
       });
 
       setClients(data);
@@ -132,6 +213,33 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 <p>
                   <strong>Complemento:</strong> {rowData.complement}
                 </p>
+                <p>
+                  <strong>Observações:</strong> {rowData.comments}
+                </p>
+                {rowData.date_cancel && (
+                  <p>
+                    <strong>Cancelamento:</strong>
+                    {" " +
+                      new Date(rowData.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[2] +
+                      "/" +
+                      new Date(rowData.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[1] +
+                      "/" +
+                      new Date(rowData.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[0] +
+                      " " +
+                      new Date(rowData.date_cancel)
+                        .toTimeString()
+                        .split(" ")[0]}
+                  </p>
+                )}
               </div>
             );
           }
@@ -144,7 +252,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           onClick: (event, rowData) => {
             history.push(`filemanager/Scheduling/${rowData.id}`);
           },
-          hidden: (clientCode && !rowData.completed) || !rowData.actived
+          hidden:
+            (clientCode && !rowData.completed) ||
+            !rowData.actived ||
+            !rowData.date
         }),
         rowData => ({
           icon: "event",
@@ -152,7 +263,15 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           onClick: (event, rowData) => {
             history.push(`/scheduling/${rowData.id}`);
           },
-          hidden: rowData.completed || !rowData.actived
+          hidden: rowData.completed || !rowData.actived || !rowData.date
+        }),
+        rowData => ({
+          icon: "event",
+          tooltip: "Agendar",
+          onClick: (event, rowData) => {
+            history.push(`/scheduling/${rowData.id}`);
+          },
+          hidden: rowData.date || clientCode
         }),
         {
           icon: "add",
@@ -169,7 +288,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           return (
             <MTableCell
               style={{
-                background: props.rowData.completed
+                background: !props.rowData.date
+                  ? "#ddd"
+                  : props.rowData.completed
                   ? "#eefeee"
                   : !props.rowData.actived
                   ? "#feeeee"

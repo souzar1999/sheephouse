@@ -26,7 +26,7 @@ class HoraryController {
   }
 
   async store({ request, response }) {
-    const data = request.only(['time'])
+    const data = request.only(['time', 'sabado'])
 
     const horary = await Horary.create(data)
 
@@ -35,7 +35,7 @@ class HoraryController {
 
   async update({ params, request, response }) {
     const horary = await Horary.findOrFail(params.id)
-    const data = request.only(['time', 'active'])
+    const data = request.only(['time', 'sabado', 'active'])
 
     horary.merge(data)
 

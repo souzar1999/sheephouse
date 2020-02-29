@@ -11,6 +11,11 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import DateFnsUtils from "@date-io/date-fns";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from "@material-ui/pickers";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
@@ -45,6 +50,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [step, setStep] = useState(0),
     [horaries, setHoraries] = useState([]),
     [horary, setHorary] = useState(""),
+    [parcial, setParcial] = useState(false),
     [city, setCity] = useState(""),
     [district, setDistrict] = useState(""),
     [formatDate, setFormatDate] = useState(),
@@ -55,8 +61,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [longitude, setLng] = useState(""),
     [address, setAddress] = useState(""),
     [complement, setComplement] = useState(""),
+    [comments, setComments] = useState(""),
     [accompanies, setAccompanies] = useState(false),
-    drone = false,
+    [drone, setDrone] = useState(false),
     [region_id, setRegionId] = useState(""),
     [city_id, setCityId] = useState(""),
     [district_id, setDistrictId] = useState(""),
@@ -82,12 +89,44 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     });
   }
 
-  function getAddress(address, lat, lng, city, district) {
+  async function getAddress(address, lat, lng, city, district) {
     setAddress(address);
     setCity(city);
     setDistrict(district);
     setLat(lat);
     setLng(lng);
+    await api.post(`/city/byName`, { city }).then(async response => {
+      setCityId(response.data[0].id);
+      await api
+        .post(`/district/byName`, {
+          district,
+          city_id: response.data[0].id
+        })
+        .then(async response => {
+          setDistrictId(response.data[0].id);
+          setRegionId(response.data[0].region_id);
+          await api
+            .post(`/photographer/byRegion`, {
+              region_id: response.data[0].region_id
+            })
+            .then(async response => {
+              setPhotographerId(response.data[0].id);
+            });
+        })
+        .catch(error => {
+          enqueueSnackbar(
+            "Problemas com endereço informado! Entre em contato pelo email sheeephouse@gmail.com relatando o acontecimento.",
+            {
+              variant: "error",
+              autoHideDuration: 2500,
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center"
+              }
+            }
+          );
+        });
+    });
   }
 
   function verifyDate(value) {
@@ -95,7 +134,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setHoraryDisable(true);
     setHoraryId();
 
-    if (Date.parse(value) > Date.now()) {
+    if (Date.parse(value) > Date.now() - 43200000) {
       getCalendarEvents(value);
 
       enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
@@ -157,66 +196,70 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
       return;
     }
-    await api
-      .post(`/city/byName`, { city })
-      .then(async response => {
-        setCityId(response.data[0].id);
-        await api
-          .post(`/district/byName`, {
-            district,
-            city_id: response.data[0].id
-          })
-          .then(async response => {
-            setDistrictId(response.data[0].id);
-            setRegionId(response.data[0].region_id);
-            await api
-              .post(`/photographer/byRegion`, {
-                region_id: response.data[0].region_id
-              })
-              .then(async response => {
-                setPhotographerId(response.data[0].id);
 
-                enqueueSnackbar(
-                  "Fotográfo foi selecionado pelo endereço informado!",
-                  {
-                    variant: "success",
-                    autoHideDuration: 2500,
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "center"
-                    }
-                  }
-                );
-
-                enqueueSnackbar(
-                  "Informe a data da sessão para carregar os horários livres!",
-                  {
-                    variant: "success",
-                    autoHideDuration: 2500,
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "center"
-                    }
-                  }
-                );
-
-                setStep(1);
-              });
+    if (parcial || drone) {
+      await api
+        .post(`/scheduling`, {
+          latitude,
+          longitude,
+          address,
+          complement,
+          comments,
+          drone,
+          region_id,
+          city_id,
+          district_id,
+          photographer_id,
+          client_id,
+          accompanies,
+          actived: false
+        })
+        .then(async response => {
+          enqueueSnackbar("Sessão cadastrada com sucesso!", {
+            variant: "success",
+            autoHideDuration: 2500,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center"
+            }
           });
-      })
-      .catch(error => {
-        enqueueSnackbar(
-          "Problemas com endereço informado! Entre em contato com o administrador.",
-          {
+
+          history.push(`/scheduling`);
+        })
+        .catch(error => {
+          enqueueSnackbar("Erro ao cadastrar sessão!", {
             variant: "error",
             autoHideDuration: 2500,
             anchorOrigin: {
               vertical: "top",
               horizontal: "center"
             }
-          }
-        );
+          });
+        });
+    } else {
+      enqueueSnackbar("Fotográfo foi selecionado pelo endereço informado!", {
+        variant: "success",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
       });
+
+      enqueueSnackbar(
+        "Informe a data da sessão para carregar os horários livres!",
+        {
+          variant: "success",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        }
+      );
+
+      setStep(1);
+    }
   }
 
   async function handleSubmitStep1() {
@@ -282,6 +325,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         longitude,
         address,
         complement,
+        comments,
         accompanies,
         drone,
         region_id,
@@ -314,7 +358,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               }
             });
 
-            history.push(`/sessions`);
+            history.push(`/scheduling`);
           });
       })
       .catch(error => {
@@ -354,6 +398,73 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               />
             </Grid>
             <Grid item xs={12}>
+              <TextField
+                onChange={event => {
+                  setComments(event.target.value);
+                }}
+                value={comments}
+                label="Observações"
+                variant="outlined"
+                rows="3"
+                fullWidth
+                multiline
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormGroup row>
+                <FormControlLabel
+                  label="Retirar chaves na imobiliária"
+                  control={
+                    <Checkbox
+                      checked={parcial}
+                      onChange={event => {
+                        setParcial(!parcial);
+                      }}
+                      value={parcial}
+                    />
+                  }
+                />
+              </FormGroup>
+              <small style={{ float: "left", fontStyle: "italic" }}>
+                Para IMÓVEIS desocupados a Sheep House fornece serviço de
+                retirada de chaves.
+              </small>
+              <br />
+              <FormGroup row>
+                <FormControlLabel
+                  label="Filmagem e/ou uso de Drone"
+                  control={
+                    <Checkbox
+                      checked={drone}
+                      onChange={event => {
+                        setDrone(!drone);
+                      }}
+                      value={drone}
+                    />
+                  }
+                />
+              </FormGroup>
+              <small style={{ float: "left", fontStyle: "italic" }}>
+                Para serviços de filmagem interna ou serviços com drone
+              </small>
+              {(drone || parcial) && (
+                <>
+                  <br />
+                  <br />
+                  <small
+                    style={{
+                      float: "left",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    O agendamento será confirmado pelo administrador
+                    posteriormente, selecionando um horário adequeado para a
+                    sessão
+                  </small>
+                </>
+              )}
+            </Grid>
+            <Grid item xs={12}>
               <Button
                 type="submit"
                 fullWidth
@@ -384,19 +495,41 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         <div className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField
-                type="date"
-                onChange={event => {
-                  verifyDate(event.target.value);
-                }}
-                value={date}
-                label="Data da Sessão"
-                variant="outlined"
-                fullWidth
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  autoOk
+                  value={date ? new Date(+new Date(date) + 86400000) : date}
+                  inputVariant="outlined"
+                  fullWidth
+                  label="Data da Sessão"
+                  disabled={!photographer_id}
+                  onChange={date => {
+                    if (date) {
+                      const year = date.getFullYear(),
+                        month = ("0" + (date.getMonth() + 1)).slice(-2),
+                        day = ("0" + date.getDate()).slice(-2);
+
+                      if (date.getDay() == 0) {
+                        enqueueSnackbar(
+                          "A data informada é domingo! Por favor, selecione outra data.",
+                          {
+                            variant: "error",
+                            autoHideDuration: 2500,
+                            anchorOrigin: {
+                              vertical: "top",
+                              horizontal: "center"
+                            }
+                          }
+                        );
+                      } else {
+                        verifyDate(`${year}-${month}-${day}`);
+                      }
+                    }
+                  }}
+                  minDate={new Date()}
+                  format="dd/MM/yyyy"
+                />
+              </MuiPickersUtilsProvider>
             </Grid>
             <Grid item xs={12}>
               <FormControl variant="outlined" fullWidth>
@@ -420,6 +553,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
                     if (!date_horary) {
                       return;
+                    }
+
+                    if (new Date(date_horary).getDay() == 6 && !item.sabado) {
+                      validHorary = false;
                     }
 
                     events.map(event => {
@@ -454,22 +591,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   })}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Cliente estará presente na sessão?"
-                  control={
-                    <Checkbox
-                      checked={accompanies}
-                      onChange={event => {
-                        setAccompanies(!accompanies);
-                      }}
-                      value={accompanies}
-                    />
-                  }
-                />
-              </FormGroup>
             </Grid>
             <Grid item xs={4}>
               <Button
@@ -566,22 +687,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   readOnly: true
                 }}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Cliente estará presente na sessão"
-                  control={
-                    <Checkbox
-                      checked={accompanies}
-                      value={accompanies}
-                      InputProps={{
-                        readOnly: true
-                      }}
-                    />
-                  }
-                />
-              </FormGroup>
             </Grid>
             <Grid item xs={4}>
               <Button

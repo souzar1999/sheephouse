@@ -73,7 +73,8 @@ class Maps extends Component {
             <ReactGooglePlacesSuggest
               googleMaps={googleMaps}
               autocompletionRequest={{
-                input: search
+                input: search,
+                componentRestrictions: { country: "br" }
               }}
               onNoResult={this.handleNoResult}
               onSelectSuggest={this.handleSelectSuggest}

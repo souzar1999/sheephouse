@@ -1,8 +1,9 @@
 'use strict'
 
-const Client = use('App/Models/Client')
-const User = use('App/Models/User')
-const Broker = use('App/Models/Broker')
+const Client = use('App/Models/Client'),
+  User = use('App/Models/User'),
+  Broker = use('App/Models/Broker'),
+  Mail = use('Mail')
 
 class ClientController {
   async index({ request, response, view }) {
@@ -55,7 +56,24 @@ class ClientController {
       'actived'
     ])
 
-    return await Client.create(data)
+    const user = await User.findOrFail(data.user_id),
+      admin = await User.findByOrFail('admin', true)
+
+    return await Client.create(data).then(async res => {
+      await Mail.send(
+        'emails.addClient',
+        {
+          client: res.$attributes,
+          user
+        },
+        message => {
+          message
+            .to(admin.email)
+            .from('noreply@sheephouse.com.br', 'Sheephouse')
+            .subject('Sheephouse - Cliente cadastrado')
+        }
+      )
+    })
   }
 
   async update({ params, request, response }) {
@@ -67,11 +85,36 @@ class ClientController {
       'actived'
     ])
 
-    const client = await Client.findOrFail(params.id)
+    const client = await Client.findOrFail(params.id),
+      user = await User.findOrFail(client.user_id),
+      admin = await User.findByOrFail('admin', true)
+
+    let enviarEmail = false
+
+    if (!client.$attributes.actived && data.actived) {
+      enviarEmail = true
+    }
 
     client.merge(data)
 
-    await client.save()
+    await client.save().then(async res => {
+      if (enviarEmail) {
+        await Mail.send(
+          'emails.activeClient',
+          {
+            client,
+            admin
+          },
+          message => {
+            message
+              .to(user.email)
+              .cc(admin.email)
+              .from('noreply@sheephouse.com.br', 'Sheephouse')
+              .subject('Sheephouse - Cadastro ativado')
+          }
+        )
+      }
+    })
 
     return client
   }

@@ -35,7 +35,7 @@ class SchedulingController {
     const scheduling = Scheduling.query()
       .where('date', '>=', params.dateIni)
       .where('date', '<=', params.dateEnd)
-      //.where('completed', true)
+      .where('completed', true)
       .fetch()
 
     return scheduling
@@ -45,7 +45,7 @@ class SchedulingController {
     const count = Scheduling.query()
       .where('date', '>=', params.dateIni)
       .where('date', '<=', params.dateEnd)
-      //.where('active', false)
+      .where('active', false)
       .getCount()
 
     return count
@@ -79,7 +79,9 @@ class SchedulingController {
       'address',
       'complement',
       'accompanies',
+      'comments',
       'drone',
+      'actived',
       'region_id',
       'city_id',
       'district_id',
@@ -87,13 +89,6 @@ class SchedulingController {
       'horary_id',
       'client_id'
     ])
-
-    const city = await City.findOrFail(data.city_id)
-    const district = await District.findOrFail(data.district_id)
-    const region = await Region.findOrFail(data.region_id)
-    const horary = await Horary.findOrFail(data.horary_id)
-    const client = await Client.findOrFail(data.client_id)
-    const photographer = await Photographer.findOrFail(data.photographer_id)
 
     const scheduling = await Scheduling.create(data)
 
@@ -108,6 +103,7 @@ class SchedulingController {
       'longitude',
       'address',
       'complement',
+      'comments',
       'accompanies',
       'drone',
       'region_id',
@@ -118,27 +114,9 @@ class SchedulingController {
       'client_id',
       'actived',
       'changed',
-      'completed'
+      'completed',
+      'date_cancel'
     ])
-
-    if (data.city_id) {
-      const city = await City.findOrFail(data.city_id)
-    }
-    if (data.district_id) {
-      const district = await District.findOrFail(data.district_id)
-    }
-    if (data.region_id) {
-      const region = await Region.findOrFail(data.region_id)
-    }
-    if (data.horary_id) {
-      const horary = await Horary.findOrFail(data.horary_id)
-    }
-    if (data.client_id) {
-      const client = await Client.findOrFail(data.client_id)
-    }
-    if (data.photographer_id) {
-      const photographer = await Photographer.findByOrFail(data.photographer_id)
-    }
 
     scheduling.merge(data)
 

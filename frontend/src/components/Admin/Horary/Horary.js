@@ -8,6 +8,7 @@ function Horary({ enqueueSnackbar }) {
   const [horaries, setHoraries] = useState([]);
   const columns = [
     { title: "Horário", field: "time", defaultSort: "asc" },
+    { title: "Sábado", field: "sabado", type: "boolean" },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
 
@@ -22,7 +23,7 @@ function Horary({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { time, active } = newData;
+    const { time, sabado, active } = newData;
 
     if (!time) {
       enqueueSnackbar("Informe o horário!", {
@@ -37,7 +38,7 @@ function Horary({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/horary`, { time, active })
+      .post(`/horary`, { time, sabado, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
@@ -63,7 +64,7 @@ function Horary({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { time, id, active } = newData;
+    const { time, id, sabado, active } = newData;
 
     if (!time) {
       enqueueSnackbar("Informe o horário!", {
@@ -78,7 +79,7 @@ function Horary({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/horary/${id}`, { time, active })
+      .put(`/horary/${id}`, { time, sabado, active })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",

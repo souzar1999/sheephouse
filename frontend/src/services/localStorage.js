@@ -12,6 +12,11 @@ const LocalStorage = (function() {
   function _setToken(tokenObj) {
     localStorage.setItem("userToken", tokenObj.token);
     localStorage.setItem("refreshToken", tokenObj.refreshToken);
+    localStorage.setItem("dateToken", new Date());
+  }
+
+  function _getDateToken() {
+    return localStorage.getItem("dateToken");
   }
 
   function _getAccessToken() {
@@ -25,6 +30,7 @@ const LocalStorage = (function() {
   function _clearToken() {
     localStorage.removeItem("userToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("dateToken");
   }
 
   return {
@@ -32,6 +38,7 @@ const LocalStorage = (function() {
     setToken: _setToken,
     getAccessToken: _getAccessToken,
     getRefreshToken: _getRefreshToken,
+    getDateToken: _getDateToken,
     clearToken: _clearToken
   };
 })();

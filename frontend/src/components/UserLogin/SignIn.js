@@ -127,7 +127,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
                 }
               } else {
                 enqueueSnackbar(
-                  "Seu usuário está desativado, entre em contato com o administrador para verificar a situação!",
+                  "Seu usuário está desativado, entre em contato pelo e-mail sheeephouse@gmail.com para verificar a situação!",
                   {
                     variant: "error",
                     autoHideDuration: 2500,

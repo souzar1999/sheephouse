@@ -9,6 +9,10 @@ class HorarySchema extends Schema {
       table.increments()
       table.time('time', { precision: 6 })
       table
+        .boolean('sabado')
+        .notNullable()
+        .defaultTo(true)
+      table
         .boolean('active')
         .notNullable()
         .defaultTo(true)
