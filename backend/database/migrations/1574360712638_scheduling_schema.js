@@ -17,6 +17,7 @@ class SchedulingSchema extends Schema {
       table.string('google_event_id')
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
+      table.uuid('file_manager_uuid').notNullable()
       table
         .boolean('actived')
         .notNullable()

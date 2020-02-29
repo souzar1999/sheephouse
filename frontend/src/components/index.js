@@ -33,7 +33,7 @@ import AdminReports from "./Admin/Reports/Reports";
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
 import GlobalFileManager from "./Global/FileManager/FileManager";
-//import GlobalFileUploader from "./Global/FileManager/FileUploader";
+import GlobalFileUploader from "./Global/FileManager/FileUploader";
 
 export {
   SidebarLayout,
@@ -60,8 +60,7 @@ export {
   GlobalScheduling,
   GlobalRescheduling,
   GlobalFileManager,
-  //GlobalFileUploader,
-  //UserClient,
+  GlobalFileUploader,
   UserHome,
   UserScheduling,
   UserProfile,

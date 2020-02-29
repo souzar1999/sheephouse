@@ -106,13 +106,20 @@ Route.get(
   'storages/storage/:storageType/folder/:folderName',
   'StorageController.getAllFilesFromFolder'
 ).middleware('auth')
+
 Route.get(
   'storages/storage/:storageType/folder/:folderName/:fileName/upload',
   'StorageController.getPutPreSignedUrl'
 ).middleware('auth')
+
 Route.get(
   'storages/storage/:storageType/folder/:folderName/:fileName/download',
   'StorageController.getDownloadPreSignedUrl'
+).middleware('auth')
+
+Route.get(
+  'storages/storage/:storageType/folder/:folderName/download',
+  'StorageController.downloadZipFolder'
 ).middleware('auth')
 
 Route.post('/resetPassword', 'ResetPasswordController.store')

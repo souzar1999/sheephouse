@@ -64,6 +64,54 @@ class StorageController {
 
     return response.status(200).send({ result: Url })
   }
+
+  async deleteObject({ params, request, response, view }) {
+
+    const { storageType: StorageType, folderName: FolderName, fileName: FileName } = params
+
+    const S3BucketName = Env.get('S3_BUCKET')
+
+    var S3params = {
+      Bucket: S3BucketName,
+      Key: StorageType + '/' + FolderName + '/' + FileName
+    };
+
+    s3.deleteObject(S3params, function(err, data) {
+      if (err){ 
+        console.log(err, err.stack);
+      }
+      else{
+        console.log(data);  
+      }           
+    });
+
+    return response.status(200).send({ result: "Objeto removido com sucesso" })
+  }
+
+  async downloadZipFolder({ params, request, response, view }) {
+
+    const { storageType: StorageType, folderName: FolderName, fileName: FileName } = params
+
+    const S3BucketName = Env.get('S3_BUCKET')
+
+    var S3params = {
+      Bucket: S3BucketName,
+      Key: StorageType + '/' + FolderName + '/' + FileName
+    };
+
+    s3.deleteObject(S3params, function(err, data) {
+      if (err){ 
+        console.log(err, err.stack);
+      }
+      else{
+        console.log(data);  
+      }           
+    });
+
+    return response.status(200).send({ result: "Objeto removido com sucesso" })
+  }
+
+
 }
 
 module.exports = StorageController

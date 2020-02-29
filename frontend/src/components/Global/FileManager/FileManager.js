@@ -2,11 +2,17 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
 import { useParams } from "react-router-dom";
+import axios from 'axios';
+import { compose } from "redux";
+
+import { connect } from "react-redux";
 
 import api from "../../../services/api";
 import history from "../../../history";
 
-function FileDownloader({ clientCode }) {
+
+function FileDownloader({ enqueueSnackbar, clientCode }) {
+    const FileDownload = require('js-file-download');
     const { uploadType, folderName } = useParams();
     const [files, setFiles] = useState([]);
     const columns = [
@@ -30,8 +36,32 @@ function FileDownloader({ clientCode }) {
             window.open(response.data.result, "_blank")
         });
     }
+
     async function downloadFile(filename) {
-        alert("You want to delete")
+        await api.get("/storages/storage/" + uploadType + "/folder/" + folderName + "/" + filename + "/download").then(response => {
+            axios.get(response.data.result).then((response) => {
+                 FileDownload(response.data, filename);
+            });
+            
+        });
+    }
+
+    async function deleteFile(rowData) {
+        await api.delete("/storages/storage/" + uploadType + "/folder/" + folderName + "/" + rowData.Key + "/delete").then(response => {
+            enqueueSnackbar("Arquivo Removido com sucesso!", {
+                variant: "success",
+                autoHideDuration: 2500,
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center"
+                }
+              });
+              const index = files.indexOf(rowData);
+              if (index > -1) {
+                files.splice(index, 1);
+              }
+              setFiles(files);
+        });
     }
 
     return (
@@ -43,20 +73,19 @@ function FileDownloader({ clientCode }) {
                 onClick: (event, rowData) => {
                     viewFile(rowData.Key)
                 }
-
             }),
             rowData => ({
-                icon: "cloud_download';",
+                icon: "cloud_download",
                 tooltip: "Baixar",
                 onClick: (event, rowData) => {
                     downloadFile(rowData.Key)
                 }
             }),
             rowData => ({
-                icon: "delete';",
+                icon: "delete",
                 tooltip: "Excluir",
                 onClick: (event, rowData) => {
-                    downloadFile(rowData.Key)
+                    deleteFile(rowData)
                 },
                 hidden: clientCode
             }),
@@ -64,10 +93,18 @@ function FileDownloader({ clientCode }) {
                 icon: "cloud_upload",
                 tooltip: "Upload",
                 isFreeAction: true,
-                onClick: (event, rowData) => {
+                onClick: () => {
                     history.push("/fileuploader/" + uploadType + "/" + folderName);
                 },
                 hidden: clientCode
+            },
+            {
+                icon: "cloud_download",
+                tooltip: "Baixar todos os arquivos",
+                isFreeAction: true,
+                onClick: () => {
+                    history.push("/fileuploader/" + uploadType + "/" + folderName);
+                }
             }
             ]}
             columns={columns}
@@ -110,5 +147,7 @@ function FileDownloader({ clientCode }) {
 const mapStateToProps = state => ({
     clientCode: state.clientCode
   });
+  
+  const withConnect = connect(mapStateToProps, {});
 
-export default withSnackbar(FileDownloader);
+export default compose(withSnackbar, withConnect)(FileDownloader);
