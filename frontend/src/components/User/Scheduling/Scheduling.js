@@ -67,6 +67,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [region_id, setRegionId] = useState(""),
     [city_id, setCityId] = useState(""),
     [district_id, setDistrictId] = useState(""),
+    [photographer, setPhotographer] = useState([]),
+    [photographer_sabado, setPhotographerSabado] = useState([]),
     [photographer_id, setPhotographerId] = useState(""),
     [horary_id, setHoraryId] = useState(""),
     client_id = clientCode,
@@ -81,11 +83,18 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       getHoraries();
       setLabelWidth(inputLabel.current.offsetWidth);
     }
+    getPhotographerSabado();
   }, [enqueueSnackbar, step]);
 
   async function getHoraries() {
     await api.get("/horary/active").then(response => {
       setHoraries(response.data);
+    });
+  }
+
+  async function getPhotographerSabado() {
+    await api.get("/photographer/sabado").then(response => {
+      setPhotographerSabado(response.data[0]);
     });
   }
 
@@ -110,6 +119,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               region_id: response.data[0].region_id
             })
             .then(async response => {
+              setPhotographer(response.data[0]);
               setPhotographerId(response.data[0].id);
             });
         })
@@ -158,7 +168,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
   async function getCalendarEvents(date) {
     await api
-      .post(`/calendar/event/list`, { photographer_id, date })
+      .post(`/calendar/event/list`, {
+        photographer_id:
+          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6
+            ? photographer_sabado.id
+            : photographer.id,
+        date
+      })
       .then(response => {
         setEvents(response.data);
         setHoraryDisable(false);
@@ -296,7 +312,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       !latitude ||
       !longitude ||
       !address ||
-      !complement ||
       !region_id ||
       !city_id ||
       !district_id ||
@@ -522,6 +537,11 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                           }
                         );
                       } else {
+                        if (date.getDay() == 6) {
+                          setPhotographerId(photographer_sabado.id);
+                        } else {
+                          setPhotographerId(photographer.id);
+                        }
                         verifyDate(`${year}-${month}-${day}`);
                       }
                     }

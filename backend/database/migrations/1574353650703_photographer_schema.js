@@ -15,6 +15,11 @@ class PhotographerSchema extends Schema {
         .notNullable()
         .defaultTo(false)
       table
+        .boolean('sabado')
+        .notNullable()
+        .defaultTo(false)
+      table
+      table
         .boolean('active')
         .notNullable()
         .defaultTo(true)

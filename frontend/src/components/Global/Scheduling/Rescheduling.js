@@ -48,6 +48,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     [events, setEvents] = useState([]),
     [date, setDate] = useState(null),
     [photographer_id, setPhotographerId] = useState(""),
+    [photographer, setPhotographer] = useState([]),
+    [photographer_sabado, setPhotographerSabado] = useState([]),
     [scheduling_id, setSchedulingId] = useState(""),
     [scheduling, setScheduling] = useState([]),
     [labelWidth, setLabelWidth] = useState(0),
@@ -59,6 +61,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       setSchedulingId(id);
       getScheduling();
       getHoraries();
+      getPhotographerSabado();
       setLabelWidth(inputLabel.current.offsetWidth);
     }
   }, [horaries, id]);
@@ -75,6 +78,12 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     });
   }
 
+  async function getPhotographerSabado() {
+    await api.get("/photographer/sabado").then(response => {
+      setPhotographerSabado(response.data[0]);
+    });
+  }
+
   async function getScheduling() {
     await api.get(`/scheduling/${id}`).then(response => {
       if (
@@ -85,6 +94,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       }
       setPhotographerId(response.data[0].photographer_id);
       setScheduling(response.data[0]);
+      setPhotographer(response.data.[0].photographer);
 
       if (!response.data[0].date) {
         getPhotographers();
@@ -113,7 +123,13 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
   async function getCalendarEvents(date) {
     await api
-      .post(`/calendar/event/list`, { photographer_id, date })
+      .post(`/calendar/event/list`, {
+        photographer_id:
+          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6 && clientCode
+            ? photographer_sabado.id
+            : photographer.id,
+        date
+      })
       .then(response => {
         setEvents(response.data);
         setHoraryDisable(false);
@@ -338,6 +354,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     await api
       .put(`/scheduling/${scheduling_id}`, {
         date,
+        photographer_id,
         horary_id,
         changed: true
       })
@@ -570,6 +587,11 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                             }
                           );
                         } else {
+                          if (date.getDay() == 6) {
+                            setPhotographerId(photographer_sabado.id);
+                          } else {
+                            setPhotographerId(photographer.id);
+                          }
                           verifyDate(`${year}-${month}-${day}`);
                         }
                       }

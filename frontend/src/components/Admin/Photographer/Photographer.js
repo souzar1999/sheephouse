@@ -11,6 +11,7 @@ function Photographer({ enqueueSnackbar }) {
     { title: "Nome", field: "name", defaultSort: "asc" },
     { title: "E-mail", field: "email" },
     { title: "Região", field: "region_id", lookup: { ...regions } },
+    { title: "Sábado", field: "sabado", type: "boolean" },
     { title: "Drone", field: "drone", type: "boolean" },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
   ];
@@ -81,7 +82,7 @@ function Photographer({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { name, email, drone, region_id, active } = newData;
+    const { name, email, sabado, drone, region_id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do fotógrafo!", {
@@ -120,7 +121,7 @@ function Photographer({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/photographer`, { name, email, drone, region_id, active })
+      .post(`/photographer`, { name, email, sabado, drone, region_id, active })
       .then(response => {
         enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
@@ -148,7 +149,7 @@ function Photographer({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, email, drone, region_id, id, active } = newData;
+    const { name, email, sabado, drone, region_id, id, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do fotógrafo!", {
@@ -187,7 +188,14 @@ function Photographer({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/photographer/${id}`, { name, email, drone, region_id, active })
+      .put(`/photographer/${id}`, {
+        name,
+        email,
+        sabado,
+        drone,
+        region_id,
+        active
+      })
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",

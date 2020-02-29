@@ -44,8 +44,19 @@ class PhotographerController {
     return photographer
   }
 
+  async showPhotographerSabado({ params, request, response }) {
+    const data = request.only(['region_id'])
+
+    const photographer = await Photographer.query()
+      .where('sabado', true)
+      .where('active', true)
+      .fetch()
+
+    return photographer
+  }
+
   async store({ request, response }) {
-    const data = request.only(['name', 'email', 'drone', 'region_id'])
+    const data = request.only(['name', 'email', 'drone', 'sabado', 'region_id'])
 
     const region = await Region.findOrFail(data.region_id)
 
@@ -62,6 +73,7 @@ class PhotographerController {
       'name',
       'email',
       'drone',
+      'sabado',
       'active',
       'region_id',
       'tokens'

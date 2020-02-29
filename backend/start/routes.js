@@ -44,6 +44,10 @@ Route.post(
   '/photographer/byRegion',
   'PhotographerController.showPhotographer'
 ).middleware('auth')
+Route.get(
+  '/photographer/sabado',
+  'PhotographerController.showPhotographerSabado'
+).middleware('auth')
 
 Route.get(
   '/scheduling/byClient/:client_id',
