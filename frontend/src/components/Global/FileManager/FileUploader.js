@@ -2,7 +2,7 @@ import React from 'react';
 import Upload from "./FileUploader/FileUploader";
 import { useParams } from "react-router-dom";
 
-function Contact() {
+function FileUploader() {
   const { uploadType, folderName } = useParams();
 
   return (
@@ -10,4 +10,4 @@ function Contact() {
   );
 }
 
-export default Contact;
+export default FileUploader;

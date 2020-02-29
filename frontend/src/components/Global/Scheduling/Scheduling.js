@@ -107,7 +107,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           1: "Ativo"
         }
       },
-      { title: "Finalizado", field: "completed", type: "boolean" }
+      { title: "Finalizado", field: "completed", type: "boolean" },
+      { title: "UUID", field: "file_manager_uuid", type: "text" , hidden: true}
     ];
 
   useEffect(() => {
@@ -249,7 +250,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           icon: "photo_library",
           tooltip: "Fotos",
           onClick: (event, rowData) => {
-            history.push(`filemanager/Scheduling/${rowData.id}`);
+            history.push(`filemanager/Scheduling/${rowData.file_manager_uuid}`);
           },
           hidden:
             (clientCode && !rowData.completed) ||
