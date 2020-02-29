@@ -94,7 +94,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       }
       setPhotographerId(response.data[0].photographer_id);
       setScheduling(response.data[0]);
-      setPhotographer(response.data.[0].photographer);
+      setPhotographer(response.data[0].photographer);
 
       if (!response.data[0].date) {
         getPhotographers();
@@ -125,7 +125,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     await api
       .post(`/calendar/event/list`, {
         photographer_id:
-          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6 && clientCode
+          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6 &&
+          clientCode
             ? photographer_sabado.id
             : photographer.id,
         date
