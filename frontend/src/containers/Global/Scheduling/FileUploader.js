@@ -1,4 +1,4 @@
-/*import React from "react";
+import React from "react";
 
 import { GlobalFileUploader } from "../../../components";
 
@@ -9,4 +9,3 @@ const FileUploader = () => (
 );
 
 export default FileUploader;
-*/

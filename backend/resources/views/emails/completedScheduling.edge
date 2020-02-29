@@ -1,0 +1,26 @@
+<div style="background-color:#eef1f2;color:#fff;">
+  <div style="width:95%;display:block;margin:0 auto;background-color:#fff">
+    <div style="padding:50px;margin-bottom:30px;background-color:#FFF">
+      <a style="background: white;" href="https://www.sheephouse.com.br" target="_blank">
+        <img style="background: white;display:inline-block;vertical-align:middle;width:100px" 
+        src="https://app.sheephouse.com.br/assets/logo.png">
+      </a>
+    </div>
+    <div style="padding:20px 50px;background-color: #6DCCA3;">
+      Olá {{ client.name }}!
+      <br/><br/>
+      Sua sessão do dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ horary.time }} horas, 
+      onde foi realizado o serviço de {{ (scheduling.drone ? 'Filmagem/Drone':'Fotografia Imobiliária') }} no seguinte endereço {{ scheduling.address }} {{ scheduling.complement }} 
+      pelo fotógrafo: {{ photographer.name }} (<a href="mailto:{{ photographer.email }}">{{ photographer.email }}</a>)
+      <br/><br/>
+      Foi concluída e os arquivos já estão disponiveis para download <a href="https://app.sheephouse.com.br/filemanager/Scheduling/{{scheduling.file_manager_uuid}}">aqui</a>.
+      <br/><br/>
+      Ficamos a disposição para tirar dúvidas no pelo e-mail <a href="mailto:{{ admin.email }}">{{ admin.email }}</a>.
+      <br/>
+      Agradecemos a preferência!
+      <div style="margin:0 auto;margin:30px 50px;border-top:solid 2px #fff;padding:20px 0">
+        <a style="color:#fff;" href="https://g.page/sheephouse/review?rc" target="_blank">Avalie a Sheephouse no google!</a>
+      </div>
+    </div>
+  </div>
+</div>
