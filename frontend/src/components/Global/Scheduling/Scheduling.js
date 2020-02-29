@@ -37,20 +37,19 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       {
         title: "Mês",
         field: "month",
-        defaultSort: "asc",
         lookup: {
-          "01": "Janeiro",
-          "02": "Fevereiro",
-          "03": "Março",
-          "04": "Abril",
-          "05": "Maio",
-          "06": "Junho",
-          "07": "Julho",
-          "08": "Agosto",
-          "09": "Setembro",
-          "10": "Outubro",
-          "11": "Novembro",
-          "12": "Dezembro",
+          1: "Janeiro",
+          2: "Fevereiro",
+          3: "Março",
+          4: "Abril",
+          5: "Maio",
+          6: "Junho",
+          7: "Julho",
+          8: "Agosto",
+          9: "Setembro",
+          10: "Outubro",
+          11: "Novembro",
+          12: "Dezembro",
           "": "Administrador irá agendar"
         }
       },
@@ -124,9 +123,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         response.data.forEach(item => {
           if (item.date) {
             const date = item.date.split("-");
-            item.day = date[2];
-            item.month = date[1];
-            item.year = date[0];
+            item.day = parseInt(date[2]);
+            item.month = parseInt(date[1]);
+            item.year = parseInt(date[0]);
           } else {
             item.day = "";
             item.month = "";
@@ -144,9 +143,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         response.data.forEach(item => {
           if (item.date) {
             const date = item.date.split("-");
-            item.day = date[2];
-            item.month = date[1];
-            item.year = date[0];
+            item.day = parseInt(date[2]);
+            item.month = parseInt(date[1]);
+            item.year = parseInt(date[0]);
           } else {
             item.day = "";
             item.month = "";
