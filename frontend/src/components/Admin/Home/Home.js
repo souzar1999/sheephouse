@@ -57,10 +57,6 @@ function Home({ enqueueSnackbar }) {
         title: "Fotografo",
         field: "photographer_id",
         defaultSort: "asc",
-        render: rowData => {
-          const name = rowData.photographer.name.split(" ");
-          return name[0];
-        },
         lookup: { ...Photographers }
       }
     ];
