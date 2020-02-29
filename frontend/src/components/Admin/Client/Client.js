@@ -59,7 +59,7 @@ function Client({ enqueueSnackbar }) {
     }
 
     if (!broker_id) {
-      enqueueSnackbar("Informe a região!", {
+      enqueueSnackbar("Informe a imobiliária!", {
         variant: "error",
         autoHideDuration: 2500,
         anchorOrigin: {

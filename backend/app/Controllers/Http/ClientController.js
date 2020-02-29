@@ -77,7 +77,7 @@ class ClientController {
   }
 
   async update({ params, request, response }) {
-    const data = request.only(['name', 'phone', 'actived'])
+    const data = request.only(['name', 'phone', 'broker_id', 'actived'])
 
     const dataUser = request.only(['email'])
 
