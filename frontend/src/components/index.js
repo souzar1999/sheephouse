@@ -17,6 +17,7 @@ import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
 import UserReports from "./User/Reports/Reports";
+import UserProfile from "./User/Profile/Profile";
 
 import AdminCity from "./Admin/City/City";
 import AdminRegion from "./Admin/Region/Region";
@@ -32,7 +33,7 @@ import AdminReports from "./Admin/Reports/Reports";
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
 import GlobalFileManager from "./Global/FileManager/FileManager";
-import GlobalFileUploader from "./Global/FileManager/FileUploader";
+//import GlobalFileUploader from "./Global/FileManager/FileUploader";
 
 export {
   SidebarLayout,
@@ -59,10 +60,11 @@ export {
   GlobalScheduling,
   GlobalRescheduling,
   GlobalFileManager,
-  GlobalFileUploader,
-  UserClient,
+  //GlobalFileUploader,
+  //UserClient,
   UserHome,
   UserScheduling,
+  UserProfile,
   UserContact,
   UserReports,
   ResetPassword

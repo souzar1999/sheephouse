@@ -77,13 +77,9 @@ class ClientController {
   }
 
   async update({ params, request, response }) {
-    const data = request.only([
-      'broker_id',
-      'user_id',
-      'name',
-      'phone',
-      'actived'
-    ])
+    const data = request.only(['name', 'phone', 'actived'])
+
+    const dataUser = request.only(['email'])
 
     const client = await Client.findOrFail(params.id),
       user = await User.findOrFail(client.user_id),
@@ -93,6 +89,11 @@ class ClientController {
 
     if (!client.$attributes.actived && data.actived) {
       enviarEmail = true
+    }
+
+    if (user.$attributes.email !== dataUser.email) {
+      user.merge(dataUser)
+      await user.save()
     }
 
     client.merge(data)

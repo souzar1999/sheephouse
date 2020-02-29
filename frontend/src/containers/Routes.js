@@ -21,6 +21,7 @@ import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
 import UserReports from "./User/Reports/Reports";
+import UserProfile from "./User/Profile/Profile";
 
 import AdminHome from "./Admin/Home/Home";
 import AdminDistrict from "./Admin/District/District";
@@ -49,11 +50,9 @@ export default function Routes() {
         <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
 
         <ClientRequeredRoute path="/home" component={UserHome} />
-        <ClientRequeredRoute path="/calendar" component={UserHome} />
-        <ClientRequeredRoute path="/sessions" component={UserHome} />
         <ClientRequeredRoute path="/reports" component={UserReports} />
         <ClientRequeredRoute path="/contacts" component={UserContact} />
-        <ClientRequeredRoute path="/profile" component={UserHome} />
+        <ClientRequeredRoute path="/profile" component={UserProfile} />
         <ClientRequeredRoute
           path="/scheduling/photo"
           component={UserScheduling}

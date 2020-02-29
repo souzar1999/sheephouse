@@ -72,18 +72,6 @@ function SignUp({ enqueueSnackbar }) {
       return;
     }
 
-    if (!email) {
-      enqueueSnackbar("Informe o email para prosseguir!", {
-        variant: "error",
-        autoHideDuration: 2500,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-      return;
-    }
-
     if (!phone) {
       enqueueSnackbar("Informe o telefone!", {
         variant: "error",
