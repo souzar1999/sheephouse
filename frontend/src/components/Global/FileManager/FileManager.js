@@ -64,6 +64,10 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         });
     }
 
+    async function downlaodZipFile() {
+        
+    }
+
     return (
         <MaterialTable
             title="Gerenciador de arquivos"
@@ -103,8 +107,9 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
                 tooltip: "Baixar todos os arquivos",
                 isFreeAction: true,
                 onClick: () => {
-                    history.push("/fileuploader/" + uploadType + "/" + folderName);
-                }
+                    downlaodZipFile()
+                },
+                hidden: true
             }
             ]}
             columns={columns}

@@ -1,11 +1,21 @@
 'use strict'
 
+const S3Zipper = require('aws-s3-zipper');
 const AWS = require('aws-sdk');
 const Env = use('Env')
 const s3 = new AWS.S3({
   accessKeyId: Env.get('S3_KEY'),
   secretAccessKey: Env.get('S3_SECRET')
 });
+
+const ZipS3config = {
+  accessKeyId: Env.get('S3_KEY'),
+  secretAccessKey: Env.get('S3_SECRET'),
+  region: Env.get('S3_REGION'),
+  bucket: Env.get('S3_BUCKET')
+};
+
+const zipper = new S3Zipper(ZipS3config);
 
 class StorageController {
   async getAllFilesFromFolder({ params, request, response, view }) {
@@ -23,7 +33,7 @@ class StorageController {
       s3ObjectList.Contents.forEach(file => {
         var stringResult = file.Key;
         var result = stringResult.split('/');
-        file.Key = result[result.length-1];
+        file.Key = result[result.length - 1];
       });
 
       return response.status(200).send({ result: s3ObjectList.Contents })
@@ -76,13 +86,13 @@ class StorageController {
       Key: StorageType + '/' + FolderName + '/' + FileName
     };
 
-    s3.deleteObject(S3params, function(err, data) {
-      if (err){ 
+    s3.deleteObject(S3params, function (err, data) {
+      if (err) {
         console.log(err, err.stack);
       }
-      else{
-        console.log(data);  
-      }           
+      else {
+        console.log(data);
+      }
     });
 
     return response.status(200).send({ result: "Objeto removido com sucesso" })
@@ -90,25 +100,24 @@ class StorageController {
 
   async downloadZipFolder({ params, request, response, view }) {
 
-    const { storageType: StorageType, folderName: FolderName, fileName: FileName } = params
+    const { storageType: StorageType, folderName: FolderName } = params
 
-    const S3BucketName = Env.get('S3_BUCKET')
-
-    var S3params = {
-      Bucket: S3BucketName,
-      Key: StorageType + '/' + FolderName + '/' + FileName
-    };
-
-    s3.deleteObject(S3params, function(err, data) {
-      if (err){ 
-        console.log(err, err.stack);
-      }
-      else{
-        console.log(data);  
-      }           
-    });
-
-    return response.status(200).send({ result: "Objeto removido com sucesso" })
+    //const myStream = getWritableStreamSomehow();
+    //response.set('content-type', 'application/zip') // optional
+    response.implicitEnd = false
+    zipper.streamZipDataTo({
+        pipe: response.response
+        , folderName: StorageType + "/"+ FolderName
+        , recursive: true
+        }
+        ,function (err, result) {
+            if(err)
+                console.error(err);
+            else{
+                console.log(result)
+            }
+        })
+    return response.status(200)
   }
 
 
