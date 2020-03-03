@@ -184,7 +184,7 @@ function Home({ enqueueSnackbar }) {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item sm={6} xs={12}>
           <Paper className={classes.paper}>
             <MaterialTable
               title={`Agendamentos de hoje (${dateToday})`}
@@ -220,7 +220,7 @@ function Home({ enqueueSnackbar }) {
             />
           </Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item sm={6} xs={12}>
           <Paper className={classes.paper}>
             <MaterialTable
               title={`Agendamentos de amanhã (${dateTomorrow})`}

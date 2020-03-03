@@ -51,7 +51,7 @@ function SignUp({ enqueueSnackbar }) {
     if (!name) {
       enqueueSnackbar("Informe o nome!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -63,7 +63,7 @@ function SignUp({ enqueueSnackbar }) {
     if (!email) {
       enqueueSnackbar("Informe o email para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -75,7 +75,7 @@ function SignUp({ enqueueSnackbar }) {
     if (!phone) {
       enqueueSnackbar("Informe o telefone!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -87,7 +87,7 @@ function SignUp({ enqueueSnackbar }) {
     if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       enqueueSnackbar("Informe um email válido para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -99,7 +99,7 @@ function SignUp({ enqueueSnackbar }) {
     if (!password) {
       enqueueSnackbar("Informe a senha para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -111,7 +111,7 @@ function SignUp({ enqueueSnackbar }) {
     if (!password2) {
       enqueueSnackbar("Informe a senha novamente para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -123,7 +123,7 @@ function SignUp({ enqueueSnackbar }) {
     if (password !== password2) {
       enqueueSnackbar("As senhas não conferem!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -135,7 +135,7 @@ function SignUp({ enqueueSnackbar }) {
     if (!termsOfUse) {
       enqueueSnackbar("Aceite os termos de uso para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -154,7 +154,7 @@ function SignUp({ enqueueSnackbar }) {
           .then(response => {
             enqueueSnackbar("Usuário cadastrado!", {
               variant: "success",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -163,7 +163,7 @@ function SignUp({ enqueueSnackbar }) {
 
             enqueueSnackbar("Aguarde a aprovação do administrador!", {
               variant: "success",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -176,7 +176,7 @@ function SignUp({ enqueueSnackbar }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao cadastrar usuário!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -189,7 +189,7 @@ function SignUp({ enqueueSnackbar }) {
     <Container component="main" maxWidth="xs">
       <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
-          <img src="./assets/logo.webp" alt="Sheephouse" height={100} />
+          <img src="./assets/logo.png" alt="Sheephouse" height={100} />
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <Grid container spacing={2}>
@@ -276,6 +276,12 @@ function SignUp({ enqueueSnackbar }) {
                 }
                 label="Eu li e concordo com os termos de uso"
               />
+              <small style={{ float: "left", fontStyle: "italic" }}>
+                Clique aqui para ver os{" "}
+                <a target="_blank" href="./assets/termos-de-uso-sheephouse.pdf">
+                  termos
+                </a>
+              </small>
             </Grid>
           </Grid>
           <Button

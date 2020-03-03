@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable, { MTableCell } from "material-table";
-import Grid from "@material-ui/core/Grid";
-
+import Container from "@material-ui/core/Container";
+import { makeStyles } from "@material-ui/core/styles";
 import api from "../../../services/api";
+
 import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
@@ -10,7 +11,17 @@ import { connect } from "react-redux";
 
 import history from "../../../history";
 
+const useStyles = makeStyles(theme => ({
+  main: {
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: 375,
+      marginTop: theme.spacing(8)
+    }
+  }
+}));
+
 function Reports({ enqueueSnackbar, clientCode }) {
+  const classes = useStyles();
   const [Schedulings, setScheduling] = useState([]),
     [Photographers, setPhotographers] = useState([]),
     columns = [
@@ -153,81 +164,79 @@ function Reports({ enqueueSnackbar, clientCode }) {
   }
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <MaterialTable
-          title="Relatório de sessões"
-          columns={columns}
-          data={Schedulings}
-          detailPanel={[
-            {
-              tooltip: "Show Name",
-              render: rowData => {
-                return (
-                  <div style={{ margin: "0 50px" }}>
+    <div className={classes.main}>
+      <MaterialTable
+        title="Relatório de sessões"
+        columns={columns}
+        data={Schedulings}
+        detailPanel={[
+          {
+            tooltip: "Show Name",
+            render: rowData => {
+              return (
+                <div style={{ margin: "0 50px" }}>
+                  <p>
+                    <strong>Endereço:</strong> {rowData.address}
+                  </p>
+                  <p>
+                    <strong>Complemento:</strong> {rowData.complement}
+                  </p>
+                  <p>
+                    <strong>Observações:</strong> {rowData.comments}
+                  </p>
+                  {rowData.date_cancel && (
                     <p>
-                      <strong>Endereço:</strong> {rowData.address}
+                      <strong>Cancelamento:</strong>
+                      {" " +
+                        new Date(rowData.date_cancel)
+                          .toISOString()
+                          .split("T")[0]
+                          .split("-")[2] +
+                        "/" +
+                        new Date(rowData.date_cancel)
+                          .toISOString()
+                          .split("T")[0]
+                          .split("-")[1] +
+                        "/" +
+                        new Date(rowData.date_cancel)
+                          .toISOString()
+                          .split("T")[0]
+                          .split("-")[0] +
+                        " " +
+                        new Date(rowData.date_cancel)
+                          .toTimeString()
+                          .split(" ")[0]}
                     </p>
-                    <p>
-                      <strong>Complemento:</strong> {rowData.complement}
-                    </p>
-                    <p>
-                      <strong>Observações:</strong> {rowData.comments}
-                    </p>
-                    {rowData.date_cancel && (
-                      <p>
-                        <strong>Cancelamento:</strong>
-                        {" " +
-                          new Date(rowData.date_cancel)
-                            .toISOString()
-                            .split("T")[0]
-                            .split("-")[2] +
-                          "/" +
-                          new Date(rowData.date_cancel)
-                            .toISOString()
-                            .split("T")[0]
-                            .split("-")[1] +
-                          "/" +
-                          new Date(rowData.date_cancel)
-                            .toISOString()
-                            .split("T")[0]
-                            .split("-")[0] +
-                          " " +
-                          new Date(rowData.date_cancel)
-                            .toTimeString()
-                            .split(" ")[0]}
-                      </p>
-                    )}
-                  </div>
-                );
-              }
+                  )}
+                </div>
+              );
             }
-          ]}
-          localization={{
-            body: {
-              filterRow: {
-                filterTooltip: "Filtro"
-              },
-              emptyDataSourceMessage: "Sem registros para mostrar"
+          }
+        ]}
+        localization={{
+          body: {
+            filterRow: {
+              filterTooltip: "Filtro"
             },
-            header: {
-              actions: "Ações"
-            },
-            toolbar: {
-              exportTitle: "Exportar",
-              exportAriaLabel: "Exportar",
-              exportName: "Exportar Excel"
-            }
-          }}
-          options={{
-            search: false,
-            exportButton: true,
-            filtering: true,
-            paging: false
-          }}
-        />
-      </Grid>
-    </Grid>
+            emptyDataSourceMessage: "Sem registros para mostrar"
+          },
+          header: {
+            actions: "Ações"
+          },
+          toolbar: {
+            exportTitle: "Exportar",
+            exportAriaLabel: "Exportar",
+            exportName: "Exportar Excel"
+          }
+        }}
+        options={{
+          search: false,
+          exportButton: true,
+          filtering: true,
+          paging: false
+        }}
+      />
+    </div>
   );
 }
 

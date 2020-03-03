@@ -44,7 +44,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     if (!email) {
       enqueueSnackbar("Informe o email!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -56,7 +56,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       enqueueSnackbar("Informe um email válido para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -68,7 +68,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     if (!password) {
       enqueueSnackbar("Informe a senha!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -94,7 +94,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
 
               enqueueSnackbar("Seja bem vindo!", {
                 variant: "success",
-                autoHideDuration: 2500,
+                autoHideDuration: 5000,
                 anchorOrigin: {
                   vertical: "top",
                   horizontal: "center"
@@ -114,7 +114,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
 
                   enqueueSnackbar("Seja bem vindo!", {
                     variant: "success",
-                    autoHideDuration: 2500,
+                    autoHideDuration: 5000,
                     anchorOrigin: {
                       vertical: "top",
                       horizontal: "center"
@@ -130,7 +130,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
                   "Seu usuário está desativado, entre em contato pelo e-mail sheeephouse@gmail.com para verificar a situação!",
                   {
                     variant: "error",
-                    autoHideDuration: 2500,
+                    autoHideDuration: 5000,
                     anchorOrigin: {
                       vertical: "top",
                       horizontal: "center"
@@ -146,7 +146,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
           "Email e senha informados não correspondem a nenhum usuário!",
           {
             variant: "error",
-            autoHideDuration: 2500,
+            autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
               horizontal: "center"
@@ -160,7 +160,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     if (!email) {
       enqueueSnackbar("Informe o email!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -172,7 +172,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       enqueueSnackbar("Informe um email válido para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -186,7 +186,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
       .then(async response => {
         enqueueSnackbar("Acesse seu email para conseguir trocar a senha!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -196,7 +196,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao enviar email de troca de senha!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -209,7 +209,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     <Container component="main" maxWidth="xs">
       <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
-          <img src="./assets/logo.webp" alt="Sheephouse" height={100} />
+          <img src="./assets/logo.png" alt="Sheephouse" height={100} />
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField

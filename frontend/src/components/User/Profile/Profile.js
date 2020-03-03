@@ -10,11 +10,13 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { withSnackbar } from "notistack";
+import { userLogout } from "../../../store/actions";
 import { compose } from "redux";
 
 import { connect } from "react-redux";
 
 import api from "../../../services/api";
+import history from "../../../history";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -24,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     alignItems: "center",
     [theme.breakpoints.down("sm")]: {
-      marginTop: theme.spacing(1)
+      marginTop: theme.spacing(6)
     }
   },
   title: {
@@ -32,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Profile({ enqueueSnackbar, clientCode }) {
+function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
   const classes = useStyles();
 
   const [name, setName] = useState(""),
@@ -59,17 +61,20 @@ function Profile({ enqueueSnackbar, clientCode }) {
       .then(async response => {
         enqueueSnackbar("Acesse seu email para trocar a senha!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
           }
         });
+
+        onUserLogout();
+        history.push("/");
       })
       .catch(error => {
         enqueueSnackbar("Problemas ao enviar email de troca de senha!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -84,7 +89,7 @@ function Profile({ enqueueSnackbar, clientCode }) {
     if (!name) {
       enqueueSnackbar("Informe o nome!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -96,7 +101,7 @@ function Profile({ enqueueSnackbar, clientCode }) {
     if (!email) {
       enqueueSnackbar("Informe o email para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -108,7 +113,7 @@ function Profile({ enqueueSnackbar, clientCode }) {
     if (!phone) {
       enqueueSnackbar("Informe o telefone!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -120,7 +125,7 @@ function Profile({ enqueueSnackbar, clientCode }) {
     if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       enqueueSnackbar("Informe um email válido para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -134,7 +139,7 @@ function Profile({ enqueueSnackbar, clientCode }) {
       .then(response => {
         enqueueSnackbar("Informações alteradas com sucesso!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -144,7 +149,7 @@ function Profile({ enqueueSnackbar, clientCode }) {
       .catch(error => {
         enqueueSnackbar("Problemas alterar informações!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -233,6 +238,14 @@ const mapStateToProps = state => ({
   clientCode: state.clientCode
 });
 
-const withConnect = connect(mapStateToProps, {});
+const mapDispatchToProps = dispatch => {
+  return {
+    onUserLogout: () => {
+      dispatch(userLogout());
+    }
+  };
+};
+
+const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
 export default compose(withSnackbar, withConnect)(Profile);

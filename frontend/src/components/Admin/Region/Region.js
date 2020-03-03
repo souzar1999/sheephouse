@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
+import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 
+const useStyles = makeStyles(theme => ({
+  main: {
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: 375,
+      marginTop: theme.spacing(8)
+    }
+  }
+}));
+
 function Region({ enqueueSnackbar }) {
+  const classes = useStyles();
   const [regions, setRegions] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
@@ -27,7 +38,7 @@ function Region({ enqueueSnackbar }) {
     if (!name) {
       enqueueSnackbar("Informe o nome da região!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -41,7 +52,7 @@ function Region({ enqueueSnackbar }) {
       .then(response => {
         enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -53,7 +64,7 @@ function Region({ enqueueSnackbar }) {
       .catch(error => {
         enqueueSnackbar("Erro ao cadastrar registro!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -68,7 +79,7 @@ function Region({ enqueueSnackbar }) {
     if (!name) {
       enqueueSnackbar("Informe o nome da região!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -82,7 +93,7 @@ function Region({ enqueueSnackbar }) {
       .then(response => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -94,7 +105,7 @@ function Region({ enqueueSnackbar }) {
       .catch(error => {
         enqueueSnackbar("Erro ao atualizar registro!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -104,62 +115,64 @@ function Region({ enqueueSnackbar }) {
   }
 
   return (
-    <MaterialTable
-      title="Regiões"
-      columns={columns}
-      data={regions}
-      editable={{
-        onRowAdd: newData =>
-          new Promise(resolve => {
-            resolve();
-            handleAdd(newData);
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise(resolve => {
-            resolve();
-            handleUpdate(newData, oldData);
-          })
-      }}
-      localization={{
-        body: {
-          editRow: {
-            saveTooltip: "Salvar",
-            cancelTooltip: "Cancelar",
-            deleteText: "Deseja excluir este registro?"
+    <div className={classes.main}>
+      <MaterialTable
+        title="Regiões"
+        columns={columns}
+        data={regions}
+        editable={{
+          onRowAdd: newData =>
+            new Promise(resolve => {
+              resolve();
+              handleAdd(newData);
+            }),
+          onRowUpdate: (newData, oldData) =>
+            new Promise(resolve => {
+              resolve();
+              handleUpdate(newData, oldData);
+            })
+        }}
+        localization={{
+          body: {
+            editRow: {
+              saveTooltip: "Salvar",
+              cancelTooltip: "Cancelar",
+              deleteText: "Deseja excluir este registro?"
+            },
+            filterRow: {
+              filterTooltip: "Filtro"
+            },
+            addTooltip: "Adicionar",
+            deleteTooltip: "Deletar",
+            editTooltip: "Editar",
+            emptyDataSourceMessage: "Sem registros para mostrar"
           },
-          filterRow: {
-            filterTooltip: "Filtro"
+          header: {
+            actions: "Ações"
           },
-          addTooltip: "Adicionar",
-          deleteTooltip: "Deletar",
-          editTooltip: "Editar",
-          emptyDataSourceMessage: "Sem registros para mostrar"
-        },
-        header: {
-          actions: "Ações"
-        },
-        toolbar: {
-          searchTooltip: "Pesquisar",
-          searchPlaceholder: "Pesquisar"
-        },
-        pagination: {
-          labelRowsSelect: "Registros",
-          labelRowsPerPage: "Registros por página",
-          firstAriaLabel: "Primeira Página",
-          firstTooltip: "Primeira Página",
-          previousAriaLabel: "Página Anterior",
-          previousTooltip: "Página Anterior",
-          nextAriaLabel: "Página Seguinte",
-          nextTooltip: "Página Seguinte",
-          lastAriaLabel: "Última Página",
-          lastTooltip: "Última Página"
-        }
-      }}
-      options={{
-        search: false,
-        filtering: true
-      }}
-    />
+          toolbar: {
+            searchTooltip: "Pesquisar",
+            searchPlaceholder: "Pesquisar"
+          },
+          pagination: {
+            labelRowsSelect: "Registros",
+            labelRowsPerPage: "Registros por página",
+            firstAriaLabel: "Primeira Página",
+            firstTooltip: "Primeira Página",
+            previousAriaLabel: "Página Anterior",
+            previousTooltip: "Página Anterior",
+            nextAriaLabel: "Página Seguinte",
+            nextTooltip: "Página Seguinte",
+            lastAriaLabel: "Última Página",
+            lastTooltip: "Última Página"
+          }
+        }}
+        options={{
+          search: false,
+          filtering: true
+        }}
+      />
+    </div>
   );
 }
 

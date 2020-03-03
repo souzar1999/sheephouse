@@ -11,7 +11,7 @@ function Logout({ enqueueSnackbar, onUserLogout }) {
   useEffect(() => {
     enqueueSnackbar("Por favor, acesse novamente!", {
       variant: "info",
-      autoHideDuration: 2500,
+      autoHideDuration: 5000,
       anchorOrigin: {
         vertical: "top",
         horizontal: "center"

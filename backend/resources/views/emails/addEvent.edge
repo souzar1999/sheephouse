@@ -1,12 +1,12 @@
-<div style="background-color:#eef1f2;color:#fff;">
+<div style="background-color:#eef1f2;color:#444;">
   <div style="width:95%;display:block;margin:0 auto;background-color:#fff">
-    <div style="padding:50px;margin-bottom:30px;background-color:#FFF">
+    <div style="text-align:center;margin-bottom:30px;background-color:#FFF">
       <a style="background: white;" href="https://www.sheephouse.com.br" target="_blank">
-        <img style="background: white;display:inline-block;vertical-align:middle;width:100px" 
+        <img style="background: white;display:inline-block;vertical-align:middle;width:250px" 
         src="https://app.sheephouse.com.br/assets/logo.png">
       </a>
     </div>
-    <div style="padding:20px 50px;background-color: #6DCCA3;">
+    <div style="padding:20px 50px;background-color: #fff;color:#444;">
       Olá {{ client.name }}!
       <br/><br/>
       Sua sessão foi agendada para o dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ horary.time }} horas.
@@ -15,14 +15,14 @@
       
       Endereço: {{ scheduling.address }}<br/>
       Complemento: {{ scheduling.complement }}<br/><br/>
-      Fotógrafo: {{ photographer.name }} (<a href="mailto:{{ photographer.email }}">{{ photographer.email }}</a>)
+      Fotógrafo: {{ photographer.name }} (<a style="color:#444;" href="mailto:{{ photographer.email }}">{{ photographer.email }}</a>)
       <br/><br/>
-      Para reagendar/cancelar a sessão de fotos clique <a href="https://app.sheephouse.com.br/scheduling/{{scheduling.id}}">aqui</a>.
+      Para reagendar/cancelar a sessão de fotos clique <a style="color:#444;" href="https://app.sheephouse.com.br/scheduling/{{scheduling.id}}">aqui</a>.
       <br/><br/>
-      Ficamos a disposição para tirar dúvidas no pelo e-mail <a href="mailto:{{ admin.email }}">{{ admin.email }}</a>.
+      Ficamos a disposição para tirar dúvidas pelo e-mail <a style="color:#444;" href="mailto:{{ admin.email }}">{{ admin.email }}</a>.
       <br/>
       Agradecemos a preferência!
-      <div style="margin:0 auto;margin:30px 50px;border-top:solid 2px #fff;padding:20px 0">
+      <div style="background-color: #6DCCA3;margin:0 auto;margin:30px 50px;border-top:solid 2px #fff;padding:20px 0">
         <a style="color:#fff;" href="https://g.page/sheephouse/review?rc" target="_blank">Avalie a Sheephouse no google!</a>
       </div>
     </div>

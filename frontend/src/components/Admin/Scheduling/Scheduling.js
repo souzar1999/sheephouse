@@ -120,7 +120,7 @@ function Scheduling({ enqueueSnackbar }) {
 
       enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
         variant: "success",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -142,7 +142,7 @@ function Scheduling({ enqueueSnackbar }) {
 
         enqueueSnackbar("Horários definidos!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -152,7 +152,7 @@ function Scheduling({ enqueueSnackbar }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao definir os horários!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -181,7 +181,7 @@ function Scheduling({ enqueueSnackbar }) {
           "Problemas com endereço informado! Entre em contato pelo e-mail sheeephouse@gmail.com.",
           {
             variant: "error",
-            autoHideDuration: 2500,
+            autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
               horizontal: "center"
@@ -209,7 +209,7 @@ function Scheduling({ enqueueSnackbar }) {
         "Informações estão faltando para dar sequência ao processo!",
         {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -252,7 +252,7 @@ function Scheduling({ enqueueSnackbar }) {
           .then(() => {
             enqueueSnackbar("Registro cadastrado com sucesso!", {
               variant: "success",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -265,7 +265,7 @@ function Scheduling({ enqueueSnackbar }) {
       .catch(error => {
         enqueueSnackbar("Erro ao cadastrar registro!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"

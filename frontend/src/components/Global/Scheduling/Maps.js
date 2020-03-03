@@ -38,7 +38,7 @@ class Maps extends Component {
 
         this.props.enqueueSnackbar("Endereço completo encontrado", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -48,7 +48,7 @@ class Maps extends Component {
           "Por favor, outras informações no campo 'Complemento'",
           {
             variant: "success",
-            autoHideDuration: 2500,
+            autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
               horizontal: "center"

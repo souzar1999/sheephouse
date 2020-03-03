@@ -67,7 +67,7 @@ const Navbar = ({
 
                 enqueueSnackbar("Usuário desconectado!", {
                   variant: "success",
-                  autoHideDuration: 2500,
+                  autoHideDuration: 5000,
                   anchorOrigin: {
                     vertical: "top",
                     horizontal: "center"

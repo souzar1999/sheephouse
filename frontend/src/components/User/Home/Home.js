@@ -64,10 +64,10 @@ function Home() {
 
   return (
     <Paper className={classes.paper}>
-      <Typography className={classes.title} component="h1" variant="h3">
+      <Typography className={classes.title} component="h1" variant="h4">
         Clique aqui para agendar a sessão
       </Typography>
-      <Grid container className={classes.root} spacing={5}>
+      <Grid container className={classes.root}>
         <Grid item sm={12} xs={12}>
           <Paper
             component={Link}

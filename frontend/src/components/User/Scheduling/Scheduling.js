@@ -128,7 +128,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             "Problemas com endereço informado! Entre em contato pelo email sheeephouse@gmail.com relatando o acontecimento.",
             {
               variant: "error",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -149,7 +149,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
       enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
         variant: "success",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -181,7 +181,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
         enqueueSnackbar("Horários definidos!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -191,7 +191,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao definir os horários!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -204,7 +204,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     if (!address) {
       enqueueSnackbar("Necessário informar endereço para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -233,7 +233,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         .then(async response => {
           enqueueSnackbar("Sessão cadastrada com sucesso!", {
             variant: "success",
-            autoHideDuration: 2500,
+            autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
               horizontal: "center"
@@ -245,7 +245,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         .catch(error => {
           enqueueSnackbar("Erro ao cadastrar sessão!", {
             variant: "error",
-            autoHideDuration: 2500,
+            autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
               horizontal: "center"
@@ -255,7 +255,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     } else {
       enqueueSnackbar("Fotográfo foi selecionado pelo endereço informado!", {
         variant: "success",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -266,7 +266,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         "Informe a data da sessão para carregar os horários livres!",
         {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -282,7 +282,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     if (!date) {
       enqueueSnackbar("Necessário informar data da sessão para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -294,7 +294,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     if (!horary_id) {
       enqueueSnackbar("Necessário informar horário da sessão para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -323,7 +323,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         "Informações estão faltando para dar sequência ao processo!",
         {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -366,7 +366,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           .then(() => {
             enqueueSnackbar("Registro cadastrado com sucesso!", {
               variant: "success",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -379,7 +379,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       .catch(error => {
         enqueueSnackbar("Erro ao cadastrar registro!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -445,6 +445,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 retirada de chaves.
               </small>
               <br />
+            </Grid>
+            <Grid item xs={12}>
               <FormGroup row>
                 <FormControlLabel
                   label="Filmagem e/ou uso de Drone"
@@ -529,7 +531,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                           "A data informada é domingo! Por favor, selecione outra data.",
                           {
                             variant: "error",
-                            autoHideDuration: 2500,
+                            autoHideDuration: 5000,
                             anchorOrigin: {
                               vertical: "top",
                               horizontal: "center"

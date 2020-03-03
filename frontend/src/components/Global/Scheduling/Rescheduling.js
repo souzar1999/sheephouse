@@ -112,7 +112,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
       enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
         variant: "success",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -137,7 +137,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
         enqueueSnackbar("Horários definidos!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -147,7 +147,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao definir os horários!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -162,7 +162,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         "Informações estão faltando para dar sequência ao processo!",
         {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -196,7 +196,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           .then(response => {
             enqueueSnackbar("Sessão cancelada com sucesso!", {
               variant: "success",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -208,7 +208,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao cancelar sessão!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -221,7 +221,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     if (!photographer_id) {
       enqueueSnackbar("Necessário informar fotógrafo para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -233,7 +233,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     if (!date) {
       enqueueSnackbar("Necessário informar data da sessão para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -245,7 +245,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     if (!horary_id) {
       enqueueSnackbar("Necessário informar horário da sessão para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -259,7 +259,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         "Informações estão faltando para dar sequência ao processo!",
         {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -291,7 +291,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           .then(response => {
             enqueueSnackbar("Sessão agendada com sucesso!", {
               variant: "success",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -304,7 +304,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao reagendar sessão!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -317,7 +317,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     if (!date) {
       enqueueSnackbar("Necessário informar data da sessão para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -329,7 +329,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     if (!horary_id) {
       enqueueSnackbar("Necessário informar horário da sessão para prosseguir", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -343,7 +343,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         "Informações estão faltando para dar sequência ao processo!",
         {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -374,7 +374,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           .then(response => {
             enqueueSnackbar("Sessão reagendada com sucesso!", {
               variant: "success",
-              autoHideDuration: 2500,
+              autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
                 horizontal: "center"
@@ -387,7 +387,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       .catch(error => {
         enqueueSnackbar("Problemas ao reagendar sessão!", {
           variant: "error",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -580,7 +580,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                             "A data informada é domingo! Por favor, selecione outra data.",
                             {
                               variant: "error",
-                              autoHideDuration: 2500,
+                              autoHideDuration: 5000,
                               anchorOrigin: {
                                 vertical: "top",
                                 horizontal: "center"

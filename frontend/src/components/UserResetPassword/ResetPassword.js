@@ -42,7 +42,7 @@ function ResetPassword({ enqueueSnackbar }) {
     if (!email) {
       enqueueSnackbar("Informe o email!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -54,7 +54,7 @@ function ResetPassword({ enqueueSnackbar }) {
     if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       enqueueSnackbar("Informe um email válido para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -66,7 +66,7 @@ function ResetPassword({ enqueueSnackbar }) {
     if (!password) {
       enqueueSnackbar("Informe a senha para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -78,7 +78,7 @@ function ResetPassword({ enqueueSnackbar }) {
     if (!password2) {
       enqueueSnackbar("Informe a senha novamente para prosseguir!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -90,7 +90,7 @@ function ResetPassword({ enqueueSnackbar }) {
     if (password !== password2) {
       enqueueSnackbar("As senhas não conferem!", {
         variant: "error",
-        autoHideDuration: 2500,
+        autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
@@ -104,7 +104,7 @@ function ResetPassword({ enqueueSnackbar }) {
       .then(async response => {
         enqueueSnackbar("Senha alterada com sucesso!", {
           variant: "success",
-          autoHideDuration: 2500,
+          autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
             horizontal: "center"
@@ -118,7 +118,7 @@ function ResetPassword({ enqueueSnackbar }) {
           "Problemas ao trocar a senha, solicite um novo email para troca!",
           {
             variant: "error",
-            autoHideDuration: 2500,
+            autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
               horizontal: "center"
@@ -132,7 +132,7 @@ function ResetPassword({ enqueueSnackbar }) {
     <Container component="main" maxWidth="xs">
       <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
-          <img src="./assets/logo.webp" alt="Sheephouse" height={100} />
+          <img src="./assets/logo.png" alt="Sheephouse" height={100} />
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField
