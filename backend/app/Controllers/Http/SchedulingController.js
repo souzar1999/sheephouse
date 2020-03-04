@@ -11,7 +11,6 @@ const Photographer = use('App/Models/Photographer')
 const Scheduling = use('App/Models/Scheduling')
 const User = use('App/Models/User')
 
-
 class SchedulingController {
   async index({ request, response, view }) {
     const scheduling = Scheduling.query()
@@ -48,7 +47,7 @@ class SchedulingController {
     const count = Scheduling.query()
       .where('date', '>=', params.dateIni)
       .where('date', '<=', params.dateEnd)
-      .where('active', false)
+      .where('actived', false)
       .getCount()
 
     return count
@@ -137,16 +136,20 @@ class SchedulingController {
   }
 
   async completeAndSendEmail({ params, request, response, view }) {
-    const scheduling = await Scheduling.query().where('file_manager_uuid', params.fileManagerId).first()
+    const scheduling = await Scheduling.query()
+      .where('file_manager_uuid', params.fileManagerId)
+      .first()
     if (scheduling.completed == false) {
-      const photographer = await Photographer.findOrFail(scheduling.photographer_id)
+      const photographer = await Photographer.findOrFail(
+        scheduling.photographer_id
+      )
       const client = await Client.findOrFail(scheduling.client_id)
       const user = await User.findOrFail(client.user_id)
       const horary = await Horary.findOrFail(scheduling.horary_id)
       const admin = await User.findByOrFail('admin', true)
 
-      scheduling.completed = true;
-      await scheduling.save();
+      scheduling.completed = true
+      await scheduling.save()
 
       await Mail.send(
         'emails.completedScheduling',
@@ -165,9 +168,8 @@ class SchedulingController {
             .subject('Sheephouse - Sessão Concluída')
         }
       )
-
     }
-    return response.status(200).send({ result: "Agendamento concluido" })
+    return response.status(200).send({ result: 'Agendamento concluido' })
   }
 }
 
