@@ -63,8 +63,8 @@ export {
   GlobalFileUploader,
   UserHome,
   UserScheduling,
-  UserProfile,
   UserContact,
   UserReports,
+  UserProfile,
   ResetPassword
 };

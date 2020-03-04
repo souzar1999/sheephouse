@@ -1,5 +1,6 @@
 'use strict'
 
+const Mail = use('Mail')
 const Database = use('Database')
 const Horary = use('App/Models/Horary')
 const Client = use('App/Models/Client')
@@ -8,6 +9,8 @@ const City = use('App/Models/City')
 const District = use('App/Models/District')
 const Photographer = use('App/Models/Photographer')
 const Scheduling = use('App/Models/Scheduling')
+const User = use('App/Models/User')
+
 
 class SchedulingController {
   async index({ request, response, view }) {
@@ -131,6 +134,40 @@ class SchedulingController {
     const scheduling = await Scheduling.findOrFail(params.id)
 
     await scheduling.delete()
+  }
+
+  async completeAndSendEmail({ params, request, response, view }) {
+    const scheduling = await Scheduling.query().where('file_manager_uuid', params.fileManagerId).first()
+    if (scheduling.completed == false) {
+      const photographer = await Photographer.findOrFail(scheduling.photographer_id)
+      const client = await Client.findOrFail(scheduling.client_id)
+      const user = await User.findOrFail(client.user_id)
+      const horary = await Horary.findOrFail(scheduling.horary_id)
+      const admin = await User.findByOrFail('admin', true)
+
+      scheduling.completed = true;
+      await scheduling.save();
+
+      await Mail.send(
+        'emails.completedScheduling',
+        {
+          client,
+          scheduling,
+          photographer,
+          horary,
+          admin
+        },
+        message => {
+          message
+            .to(user.email)
+            .cc(admin.email)
+            .from('noreply@sheephouse.com.br', 'Sheephouse')
+            .subject('Sheephouse - Sessão Concluída')
+        }
+      )
+
+    }
+    return response.status(200).send({ result: "Agendamento concluido" })
   }
 }
 

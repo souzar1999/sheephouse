@@ -103,87 +103,115 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         setFiles(files);
       });
   }
+  async function deleteFile(rowData) {
+    await api
+      .delete(
+        "/storages/storage/" +
+          uploadType +
+          "/folder/" +
+          folderName +
+          "/" +
+          rowData.Key +
+          "/delete"
+      )
+      .then(response => {
+        enqueueSnackbar("Arquivo Removido com sucesso!", {
+          variant: "success",
+          autoHideDuration: 2500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+        const index = files.indexOf(rowData);
+        if (index > -1) {
+          files.splice(index, 1);
+        }
+        setFiles(files);
+      });
+  }
+
+  async function downlaodZipFile() {}
 
   return (
-    <div className={classes.main}>
-      <MaterialTable
-        title="Gerenciador de arquivos"
-        actions={[
-          rowData => ({
-            icon: "photo_library",
-            tooltip: "Visualizar",
-            onClick: (event, rowData) => {
-              viewFile(rowData.Key);
-            }
-          }),
-          rowData => ({
-            icon: "cloud_download",
-            tooltip: "Baixar",
-            onClick: (event, rowData) => {
-              downloadFile(rowData.Key);
-            }
-          }),
-          rowData => ({
-            icon: "delete",
-            tooltip: "Excluir",
-            onClick: (event, rowData) => {
-              deleteFile(rowData);
-            },
-            hidden: clientCode
-          }),
-          {
-            icon: "cloud_upload",
-            tooltip: "Upload",
-            isFreeAction: true,
-            onClick: () => {
-              history.push("/fileuploader/" + uploadType + "/" + folderName);
-            },
-            hidden: clientCode
-          },
-          {
-            icon: "cloud_download",
-            tooltip: "Baixar todos os arquivos",
-            isFreeAction: true,
-            onClick: () => {
-              history.push("/fileuploader/" + uploadType + "/" + folderName);
-            }
+    <MaterialTable
+      title="Gerenciador de arquivos"
+      actions={[
+        rowData => ({
+          icon: "photo_library",
+          tooltip: "Visualizar",
+          onClick: (event, rowData) => {
+            viewFile(rowData.Key);
           }
-        ]}
-        columns={columns}
-        data={files}
-        localization={{
-          body: {
-            filterRow: {
-              filterTooltip: "Filtro"
-            },
-            emptyDataSourceMessage: "Sem registros para mostrar"
-          },
-          header: {
-            actions: "Ações"
-          },
-          toolbar: {
-            searchTooltip: "Pesquisar",
-            searchPlaceholder: "Pesquisar"
-          },
-          pagination: {
-            labelRowsSelect: "Registros",
-            labelRowsPerPage: "Registros por página",
-            firstAriaLabel: "Primeira Página",
-            firstTooltip: "Primeira Página",
-            previousAriaLabel: "Página Anterior",
-            previousTooltip: "Página Anterior",
-            nextAriaLabel: "Página Seguinte",
-            nextTooltip: "Página Seguinte",
-            lastAriaLabel: "Última Página",
-            lastTooltip: "Última Página"
+        }),
+        rowData => ({
+          icon: "cloud_download",
+          tooltip: "Baixar",
+          onClick: (event, rowData) => {
+            downloadFile(rowData.Key);
           }
-        }}
-        options={{
-          search: false,
-          filtering: true
-        }}
-      />
-    </div>
+        }),
+        rowData => ({
+          icon: "delete",
+          tooltip: "Excluir",
+          onClick: (event, rowData) => {
+            deleteFile(rowData);
+          },
+          hidden: clientCode
+        }),
+        {
+          icon: "cloud_upload",
+          tooltip: "Upload",
+          isFreeAction: true,
+          onClick: () => {
+            history.push("/fileuploader/" + uploadType + "/" + folderName);
+          },
+          hidden: clientCode
+        },
+        {
+          icon: "cloud_download",
+          tooltip: "Baixar todos os arquivos",
+          isFreeAction: true,
+          onClick: () => {
+            downlaodZipFile();
+          },
+          hidden: true
+        }
+      ]}
+      columns={columns}
+      data={files}
+      localization={{
+        body: {
+          filterRow: {
+            filterTooltip: "Filtro"
+          },
+          emptyDataSourceMessage: "Sem registros para mostrar"
+        },
+        header: {
+          actions: "Ações"
+        },
+        toolbar: {
+          searchTooltip: "Pesquisar",
+          searchPlaceholder: "Pesquisar"
+        },
+        pagination: {
+          labelRowsSelect: "Registros",
+          labelRowsPerPage: "Registros por página",
+          firstAriaLabel: "Primeira Página",
+          firstTooltip: "Primeira Página",
+          previousAriaLabel: "Página Anterior",
+          previousTooltip: "Página Anterior",
+          nextAriaLabel: "Página Seguinte",
+          nextTooltip: "Página Seguinte",
+          lastAriaLabel: "Última Página",
+          lastTooltip: "Última Página"
+        }
+      }}
+      options={{
+        search: false,
+        filtering: true
+      }}
+    />
   );
 }
 

@@ -5,6 +5,7 @@ import Progress from "../Progress/Progress";
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from "@material-ui/core/Button";
 import api from "../../../../../services/api";
+import history from "../../../../../history";
 import axios from 'axios';
 
 class Upload extends Component {
@@ -21,6 +22,8 @@ class Upload extends Component {
     this.uploadFiles = this.uploadFiles.bind(this);
     this.sendRequest = this.sendRequest.bind(this);
     this.renderActions = this.renderActions.bind(this);
+    this.backFileManager = this.backFileManager.bind(this);
+    this.CompleteScheduling = this.CompleteScheduling.bind(this);
   }
 
   onFilesAdded(files) {
@@ -57,6 +60,20 @@ class Upload extends Component {
     } catch (e) {
       this.setState({ successfullUploaded: true, uploading: false });
     }
+  }
+
+  async backFileManager() {
+    var folderName = this.props.folderName;
+    var uploadType = this.props.uploadType;
+    history.push(`/filemanager/${uploadType}/${folderName}`);
+  }
+
+  async CompleteScheduling() {
+
+    var folderName = this.props.folderName;
+    await api.get("/scheduling/" +folderName +"/complete")
+
+    await this.backFileManager();
   }
 
   sendRequest(file, url) {
@@ -119,7 +136,7 @@ class Upload extends Component {
     if (this.state.successfullUploaded) {
       return (
         <ButtonGroup color="primary" aria-label="outlined primary button group">
-          <Button size="small" > Concluir Agendamento</Button>
+          <Button size="small" onClick={this.CompleteScheduling} disabled={ this.props.uploadType != "Scheduling"}>Concluir Agendamento</Button>
           <Button size="small" onClick={() => this.setState({ files: [], successfullUploaded: false }) }>Limpar Arquivos</Button>
         </ButtonGroup>
       );
@@ -127,7 +144,7 @@ class Upload extends Component {
       return (
         <ButtonGroup color="primary" aria-label="outlined primary button group">
           <Button size="small" disabled={this.state.files.length < 0 || this.state.uploading} onClick={this.uploadFiles}> Upload</Button>
-          <Button size="small" >Voltar</Button>
+          <Button size="small" onClick={this.backFileManager}>Voltar</Button>
         </ButtonGroup>
       );
     }
