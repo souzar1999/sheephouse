@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -35,11 +35,16 @@ const useStyles = makeStyles(theme => ({
 
 function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
   const classes = useStyles(),
-    [email, setEmail] = useState(""),
-    [password, setPassword] = useState("");
+    [email, setEmail] = useState(localStorage.getItem("userEmail")),
+    [password, setPassword] = useState(localStorage.getItem("userPass"));
+  useEffect(() => {
+    if (email && password) {
+      // handleSubmit();
+    }
+  }, []);
 
   async function handleSubmit(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
 
     if (!email) {
       enqueueSnackbar("Informe o email!", {
@@ -100,6 +105,9 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
                   horizontal: "center"
                 }
               });
+
+              localStorage.setItem("userEmail", email);
+              localStorage.setItem("userPass", password);
 
               history.push("/admin/home");
 

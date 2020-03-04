@@ -63,8 +63,8 @@ const Navbar = ({
                 onUserLogout();
                 localStorage.removeItem("userToken");
                 localStorage.removeItem("refreshToken");
-                history.push("/");
-
+                localStorage.removeItem("userEmail");
+                localStorage.removeItem("userPass");
                 enqueueSnackbar("Usuário desconectado!", {
                   variant: "success",
                   autoHideDuration: 5000,

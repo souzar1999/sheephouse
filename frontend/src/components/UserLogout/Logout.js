@@ -10,7 +10,10 @@ import history from "../../history";
 function Logout({ enqueueSnackbar, onUserLogout }) {
   useEffect(() => {
     onUserLogout();
-    history.push("/");
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userPass");
   }, [enqueueSnackbar, onUserLogout]);
 
   return <div></div>;
