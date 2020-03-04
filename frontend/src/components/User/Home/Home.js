@@ -51,11 +51,6 @@ const useStyles = makeStyles(theme => ({
       height: 250,
       width: 250
     }
-  },
-  title: {
-    [theme.breakpoints.down("xs")]: {
-      display: "none"
-    }
   }
 }));
 
@@ -63,10 +58,7 @@ function Home() {
   const classes = useStyles();
 
   return (
-    <Paper className={classes.paper}>
-      <Typography className={classes.title} component="h1" variant="h4">
-        Clique aqui para agendar a sessão
-      </Typography>
+    <div className={classes.paper}>
       <Grid container className={classes.root}>
         <Grid item sm={12} xs={12}>
           <Paper
@@ -76,7 +68,7 @@ function Home() {
           ></Paper>
         </Grid>
       </Grid>
-    </Paper>
+    </div>
   );
 }
 
