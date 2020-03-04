@@ -15,6 +15,8 @@ const api = axios.create({
 api.interceptors.request.use(config => {
   const token = localStorage.getAccessToken();
 
+  document.body.classList.add("loading-indicator");
+
   if (token) {
     config.headers["Authorization"] = "Bearer " + token;
   }
@@ -23,10 +25,12 @@ api.interceptors.request.use(config => {
 
 api.interceptors.response.use(
   response => {
+    document.body.classList.remove("loading-indicator");
     return response;
   },
   function(error) {
     const originalRequest = error.config;
+    document.body.classList.remove("loading-indicator");
 
     if (
       error.response.status === 401 &&
