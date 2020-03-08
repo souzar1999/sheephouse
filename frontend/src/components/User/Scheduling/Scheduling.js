@@ -578,24 +578,26 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                     }
 
                     events.map(event => {
-                      const eventStart = event.start.date
-                        ? `${event.start.date} 00:00:00`
-                        : event.start.dateTime;
-                      const eventEnd = event.end.date
-                        ? `${event.end.date} 23:59:59`
-                        : event.end.dateTime;
+                      if (event.status == "confirmed") {
+                        const eventStart = event.start.date
+                          ? `${event.start.date} 00:00:00`
+                          : event.start.dateTime;
+                        const eventEnd = event.end.date
+                          ? `${event.end.date} 23:59:59`
+                          : event.end.dateTime;
 
-                      if (
-                        (Date.parse(date_horary) + 1 >=
-                          Date.parse(eventStart) &&
-                          Date.parse(date_horary) + 1 <=
-                            Date.parse(eventEnd)) ||
-                        (Date.parse(date_horary) + 4499999 >=
-                          Date.parse(eventStart) &&
-                          Date.parse(date_horary) + 4499999 <=
-                            Date.parse(eventEnd))
-                      ) {
-                        validHorary = false;
+                        if (
+                          (Date.parse(date_horary) + 1 >=
+                            Date.parse(eventStart) &&
+                            Date.parse(date_horary) + 1 <=
+                              Date.parse(eventEnd)) ||
+                          (Date.parse(date_horary) + 4499999 >=
+                            Date.parse(eventStart) &&
+                            Date.parse(date_horary) + 4499999 <=
+                              Date.parse(eventEnd))
+                        ) {
+                          validHorary = false;
+                        }
                       }
                     });
 
