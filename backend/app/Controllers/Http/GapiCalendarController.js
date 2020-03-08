@@ -29,11 +29,15 @@ class GapiCalendarController {
   }
 
   async insertEvent({ request, response }) {
-    const { scheduling_id, dateTimeEnd, dateTimeStart } = request.only([
+    const { scheduling_id, horary, date } = request.only([
         'scheduling_id',
-        'dateTimeEnd',
-        'dateTimeStart'
+        'horary',
+        'date'
       ]),
+      numTime = Date.parse(`1970-01-01T${horary}Z`),
+      numDate = Date.parse(`${date}T00:00:00Z`),
+      dateTimeStart = new Date(numDate + numTime).toISOString(),
+      dateTimeEnd = new Date(numDate + numTime + 4500000).toISOString(),
       oauth2Client = new google.auth.OAuth2(
         Env.get('GCLIENT_ID'),
         Env.get('GCLIENT_SECRET')
@@ -43,7 +47,7 @@ class GapiCalendarController {
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
-      horary = await Horary.findOrFail(scheduling.horary_id),
+      horaryItem = await Horary.findOrFail(scheduling.horary_id),
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       title = scheduling.drone ? 'Filmagem Aérea' : 'Fotografia Imobiliária',
@@ -75,7 +79,7 @@ class GapiCalendarController {
           client,
           scheduling,
           photographer,
-          horary,
+          horaryItem,
           admin
         },
         message => {
@@ -94,11 +98,15 @@ class GapiCalendarController {
   }
 
   async editEvent({ request, response }) {
-    const { scheduling_id, dateTimeEnd, dateTimeStart } = request.only([
+    const { scheduling_id, horary, date } = request.only([
         'scheduling_id',
-        'dateTimeEnd',
-        'dateTimeStart'
+        'horary',
+        'date'
       ]),
+      numTime = Date.parse(`1970-01-01T${horary}Z`),
+      numDate = Date.parse(`${date}T00:00:00Z`),
+      dateTimeStart = new Date(numDate + numTime).toISOString(),
+      dateTimeEnd = new Date(numDate + numTime + 4500000).toISOString(),
       oauth2Client = new google.auth.OAuth2(
         Env.get('GCLIENT_ID'),
         Env.get('GCLIENT_SECRET')
@@ -108,7 +116,7 @@ class GapiCalendarController {
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
-      horary = await Horary.findOrFail(scheduling.horary_id),
+      horaryItem = await Horary.findOrFail(scheduling.horary_id),
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
@@ -137,7 +145,7 @@ class GapiCalendarController {
           client,
           scheduling,
           photographer,
-          horary,
+          horaryItem,
           admin
         },
         message => {

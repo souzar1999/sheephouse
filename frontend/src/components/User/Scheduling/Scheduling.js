@@ -351,17 +351,12 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         client_id
       })
       .then(async response => {
-        const scheduling_id = response.data.id,
-          numTime = Date.parse(`1970-01-01T${horary}Z`),
-          numDate = Date.parse(`${date}T00:00:00Z`),
-          dateTimeStart = new Date(numDate + numTime),
-          dateTimeEnd = new Date(numDate + numTime + 4500000);
-
+        const scheduling_id = response.data.id;
         await api
           .post(`/google/event/insertEvent`, {
             scheduling_id,
-            dateTimeEnd,
-            dateTimeStart
+            horary,
+            date
           })
           .then(() => {
             enqueueSnackbar("Registro cadastrado com sucesso!", {
@@ -570,7 +565,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 >
                   <MenuItem value="">-- Selecione --</MenuItem>
                   {horaries.map(item => {
-                    const date_horary = `${date} ${item.time}`;
+                    const date_horary = new Date(`${date}T${item.time}-03:00`);
+
                     let validHorary = true;
 
                     if (!date_horary) {
