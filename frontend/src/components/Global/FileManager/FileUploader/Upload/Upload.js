@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import Dropzone from "../Dropzone/Dropzone";
 import "./Upload.css";
 import Progress from "../Progress/Progress";
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Button from "@material-ui/core/Button";
 import api from "../../../../../services/api";
 import history from "../../../../../history";
-import axios from 'axios';
+import axios from "axios";
 
 class Upload extends Component {
   constructor(props) {
@@ -40,20 +40,29 @@ class Upload extends Component {
     var folderName = this.props.folderName;
     var uploadType = this.props.uploadType;
     this.state.files.forEach(file => {
-      promisesUrl.push(api.get("storages/storage/"+ uploadType +"/folder/"+ folderName +"/" + file.name + "/upload?contentType="+ file.type));
+      promisesUrl.push(
+        api.get(
+          "storages/storage/" +
+            uploadType +
+            "/folder/" +
+            folderName +
+            "/" +
+            file.name +
+            "/upload?contentType=" +
+            file.type
+        )
+      );
     });
 
     const resultado = await Promise.all(promisesUrl);
-    console.log(resultado[0]);
     var contador = 0;
     this.state.files.forEach(file => {
       var url = resultado[contador].data.result;
       contador++;
-      promises.push(this.sendRequest(file,url));
+      promises.push(this.sendRequest(file, url));
     });
 
     try {
-      
       await Promise.all(promises);
 
       this.setState({ successfullUploaded: true, uploading: false });
@@ -69,17 +78,14 @@ class Upload extends Component {
   }
 
   async CompleteScheduling() {
-
     var folderName = this.props.folderName;
-    await api.get("/scheduling/" +folderName +"/complete")
+    await api.get("/scheduling/" + folderName + "/complete");
 
     await this.backFileManager();
   }
 
   sendRequest(file, url) {
     return new Promise((resolve, reject) => {
-      console.log(file);
-
       var folderName = this.props.folderName;
       var uploadType = this.props.uploadType;
 
@@ -88,27 +94,31 @@ class Upload extends Component {
           const copy = { ...this.state.uploadProgress };
           copy[file.name] = {
             state: "pending",
-            percentage: Math.floor((progressEvent.loaded * 100) / progressEvent.total)
+            percentage: Math.floor(
+              (progressEvent.loaded * 100) / progressEvent.total
+            )
           };
           this.setState({ uploadProgress: copy });
         },
         headers: {
-          'key' : uploadType + '/' + folderName + '/' + file.name,
-          'Content-Type': file.type
+          key: uploadType + "/" + folderName + "/" + file.name,
+          "Content-Type": file.type
         }
       };
-      axios.put(url,file,options).then(response => {
-        const copy = { ...this.state.uploadProgress };
-        copy[file.name] = { state: "done", percentage: 100 };
-        this.setState({ uploadProgress: copy });
-        resolve(response);
-      }).catch(error => {
-        const copy = { ...this.state.uploadProgress };
-        copy[file.name] = { state: "error", percentage: 0 };
-        this.setState({ uploadProgress: copy });
-        reject(error);
-      });
-      
+      axios
+        .put(url, file, options)
+        .then(response => {
+          const copy = { ...this.state.uploadProgress };
+          copy[file.name] = { state: "done", percentage: 100 };
+          this.setState({ uploadProgress: copy });
+          resolve(response);
+        })
+        .catch(error => {
+          const copy = { ...this.state.uploadProgress };
+          copy[file.name] = { state: "error", percentage: 0 };
+          this.setState({ uploadProgress: copy });
+          reject(error);
+        });
     });
   }
 
@@ -136,15 +146,37 @@ class Upload extends Component {
     if (this.state.successfullUploaded) {
       return (
         <ButtonGroup color="primary" aria-label="outlined primary button group">
-          <Button size="small" onClick={this.CompleteScheduling} disabled={ this.props.uploadType != "Scheduling"}>Concluir Agendamento</Button>
-          <Button size="small" onClick={() => this.setState({ files: [], successfullUploaded: false }) }>Limpar Arquivos</Button>
+          <Button
+            size="small"
+            onClick={this.CompleteScheduling}
+            disabled={this.props.uploadType != "Scheduling"}
+          >
+            Concluir Agendamento
+          </Button>
+          <Button
+            size="small"
+            onClick={() =>
+              this.setState({ files: [], successfullUploaded: false })
+            }
+          >
+            Limpar Arquivos
+          </Button>
         </ButtonGroup>
       );
     } else {
       return (
         <ButtonGroup color="primary" aria-label="outlined primary button group">
-          <Button size="small" disabled={this.state.files.length < 0 || this.state.uploading} onClick={this.uploadFiles}> Upload</Button>
-          <Button size="small" onClick={this.backFileManager}>Voltar</Button>
+          <Button
+            size="small"
+            disabled={this.state.files.length < 0 || this.state.uploading}
+            onClick={this.uploadFiles}
+          >
+            {" "}
+            Upload
+          </Button>
+          <Button size="small" onClick={this.backFileManager}>
+            Voltar
+          </Button>
         </ButtonGroup>
       );
     }

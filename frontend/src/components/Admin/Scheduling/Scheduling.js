@@ -197,7 +197,6 @@ function Scheduling({ enqueueSnackbar }) {
       !latitude ||
       !longitude ||
       !address ||
-      !complement ||
       !region_id ||
       !city_id ||
       !district_id ||

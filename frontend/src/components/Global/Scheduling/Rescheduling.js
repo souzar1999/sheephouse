@@ -125,8 +125,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     await api
       .post(`/calendar/event/list`, {
         photographer_id:
-          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6 &&
-          clientCode
+          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6
             ? photographer_sabado.id
             : photographer.id,
         date
@@ -171,12 +170,6 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       );
       return;
     }
-
-    console.log(
-      `${new Date().toISOString().split("T")[0]} ${
-        new Date().toTimeString().split(" ")[0]
-      }`
-    );
 
     await api
       .put(`/scheduling/${scheduling_id}`, {
@@ -437,7 +430,26 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                           month = ("0" + (date.getMonth() + 1)).slice(-2),
                           day = ("0" + date.getDate()).slice(-2);
 
-                        verifyDate(`${year}-${month}-${day}`);
+                        if (date.getDay() == 0) {
+                          enqueueSnackbar(
+                            "A data informada é domingo! Por favor, selecione outra data.",
+                            {
+                              variant: "error",
+                              autoHideDuration: 5000,
+                              anchorOrigin: {
+                                vertical: "top",
+                                horizontal: "center"
+                              }
+                            }
+                          );
+                        } else {
+                          if (date.getDay() == 6) {
+                            setPhotographerId(photographer_sabado.id);
+                          } else {
+                            setPhotographerId(photographer.id);
+                          }
+                          verifyDate(`${year}-${month}-${day}`);
+                        }
                       }
                     }}
                     minDate={new Date()}
@@ -571,7 +583,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                           month = ("0" + (date.getMonth() + 1)).slice(-2),
                           day = ("0" + date.getDate()).slice(-2);
 
-                        if (date.getDay() == 0 && clientCode) {
+                        if (date.getDay() == 0) {
                           enqueueSnackbar(
                             "A data informada é domingo! Por favor, selecione outra data.",
                             {
