@@ -560,7 +560,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   disabled={horaryDisable}
                   onChange={event => {
                     setHoraryId(event.target.value);
-                    setHorary(event.nativeEvent.srcElement.innerText);
+                    setHorary(event.nativeEvent.target.id);
+                    console.log(event);
                   }}
                 >
                   <MenuItem value="">-- Selecione --</MenuItem>

@@ -469,7 +469,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     disabled={horaryDisable}
                     onChange={event => {
                       setHoraryId(event.target.value);
-                      setHorary(event.nativeEvent.srcElement.innerText);
+                      setHorary(event.nativeEvent.target.id);
                     }}
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
@@ -622,7 +622,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     disabled={horaryDisable}
                     onChange={event => {
                       setHoraryId(event.target.value);
-                      setHorary(event.nativeEvent.srcElement.innerText);
+                      setHorary(event.nativeEvent.target.id);
                     }}
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>

@@ -364,7 +364,7 @@ function Scheduling({ enqueueSnackbar }) {
                 disabled={horaryDisable || dateDisable}
                 onChange={event => {
                   setHoraryId(event.target.value);
-                  setHorary(event.nativeEvent.srcElement.innerText);
+                  setHorary(event.nativeEvent.target.id);
                 }}
               >
                 <MenuItem value="">-- Selecione --</MenuItem>
