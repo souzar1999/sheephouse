@@ -44,9 +44,9 @@ function Contact() {
                 className={classes.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                href="mailto:sheeephouse@gmail.com.br"
+                href="mailto:sheeephouse@gmail.com"
               >
-                sheeephouse@gmail.com.br
+                sheeephouse@gmail.com
               </a>
             </strong>
           </p>
