@@ -169,6 +169,7 @@ function Broker({ enqueueSnackbar }) {
         }}
         options={{
           search: false,
+          pageSize: 20,
           filtering: true
         }}
       />

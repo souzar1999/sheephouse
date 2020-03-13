@@ -7,6 +7,9 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
 import { useParams } from "react-router-dom";
 import DateFnsUtils from "@date-io/date-fns";
@@ -45,6 +48,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     [horary, setHorary] = useState(""),
     [horary_id, setHoraryId] = useState(""),
     [horaryDisable, setHoraryDisable] = useState(true),
+    [insertEvent, setInsertEvent] = useState(false),
     [events, setEvents] = useState([]),
     [date, setDate] = useState(null),
     [photographer_id, setPhotographerId] = useState(""),
@@ -107,17 +111,21 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     setHoraryDisable(true);
     setHoraryId();
 
-    if (Date.parse(value) > Date.now() - 43200000) {
-      getCalendarEvents(value);
+    if (!insertEvent) {
+      if (Date.parse(value)) {
+        getCalendarEvents(value);
 
-      enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
-        variant: "success",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
+        enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
+          variant: "success",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
+      }
+    } else {
+      setHoraryDisable(false);
     }
   }
 
@@ -270,28 +278,41 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         actived: true
       })
       .then(async response => {
-        const scheduling_id = response.data.id;
-        await api
-          .post(`/google/event/insertEvent`, {
-            scheduling_id,
-            horary,
-            date
-          })
-          .then(response => {
-            enqueueSnackbar("Sessão agendada com sucesso!", {
-              variant: "success",
-              autoHideDuration: 5000,
-              anchorOrigin: {
-                vertical: "top",
-                horizontal: "center"
-              }
-            });
+        if (!insertEvent) {
+          const scheduling_id = response.data.id;
+          await api
+            .post(`/google/event/insertEvent`, {
+              scheduling_id,
+              horary,
+              date
+            })
+            .then(response => {
+              enqueueSnackbar("Sessão agendada com sucesso!", {
+                variant: "success",
+                autoHideDuration: 5000,
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center"
+                }
+              });
 
-            history.push(`/scheduling`);
+              history.push(`/scheduling`);
+            });
+        } else {
+          enqueueSnackbar("Registro cadastrado com sucesso!", {
+            variant: "success",
+            autoHideDuration: 5000,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center"
+            }
           });
+
+          history.push(`/scheduling`);
+        }
       })
       .catch(error => {
-        enqueueSnackbar("Problemas ao reagendar sessão!", {
+        enqueueSnackbar("Erro ao agendar sessão!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
@@ -414,6 +435,26 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     })}
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormGroup row>
+                  <FormControlLabel
+                    label="Agendamento sem integração com agenda?"
+                    control={
+                      <Checkbox
+                        checked={insertEvent}
+                        onChange={event => {
+                          setInsertEvent(!insertEvent);
+                          setEvents([]);
+                          setDate();
+                          setHoraryDisable(true);
+                          setHoraryId();
+                        }}
+                        value={insertEvent}
+                      />
+                    }
+                  />
+                </FormGroup>
               </Grid>
               <Grid item xs={12}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>

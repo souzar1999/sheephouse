@@ -209,6 +209,7 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
       }}
       options={{
         search: false,
+        pageSize: 20,
         filtering: true
       }}
     />

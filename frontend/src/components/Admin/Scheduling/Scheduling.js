@@ -62,6 +62,7 @@ function Scheduling({ enqueueSnackbar }) {
     [complement, setComplement] = useState(""),
     [comments, setComments] = useState(""),
     [accompanies, setAccompanies] = useState(false),
+    [insertEvent, setInsertEvent] = useState(false),
     [drone, setDrone] = useState(false),
     [region_id, setRegionId] = useState(""),
     [city_id, setCityId] = useState(""),
@@ -115,21 +116,25 @@ function Scheduling({ enqueueSnackbar }) {
     setHoraryDisable(true);
     setHoraryId();
 
-    if (Date.parse(value) > Date.now() - 43200000) {
-      getCalendarEvents(value);
+    if (!insertEvent) {
+      if (Date.parse(value)) {
+        getCalendarEvents(value);
 
-      enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
-        variant: "success",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
+        enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
+          variant: "success",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        });
 
-      setFormatDate(
-        value.slice(8, 10) + "/" + value.slice(5, 7) + "/" + value.slice(0, 4)
-      );
+        setFormatDate(
+          value.slice(8, 10) + "/" + value.slice(5, 7) + "/" + value.slice(0, 4)
+        );
+      }
+    } else {
+      setHoraryDisable(false);
     }
   }
 
@@ -236,28 +241,41 @@ function Scheduling({ enqueueSnackbar }) {
         client_id
       })
       .then(async response => {
-        const scheduling_id = response.data.id;
-        await api
-          .post(`/google/event/insertEvent`, {
-            scheduling_id,
-            horary,
-            date
-          })
-          .then(() => {
-            enqueueSnackbar("Registro cadastrado com sucesso!", {
-              variant: "success",
-              autoHideDuration: 5000,
-              anchorOrigin: {
-                vertical: "top",
-                horizontal: "center"
-              }
-            });
+        if (!insertEvent) {
+          const scheduling_id = response.data.id;
+          await api
+            .post(`/google/event/insertEvent`, {
+              scheduling_id,
+              horary,
+              date
+            })
+            .then(() => {
+              enqueueSnackbar("Sessão agendada com sucesso!", {
+                variant: "success",
+                autoHideDuration: 5000,
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center"
+                }
+              });
 
-            history.push(`/scheduling`);
+              history.push(`/scheduling`);
+            });
+        } else {
+          enqueueSnackbar("Sessão agendada com sucesso!", {
+            variant: "success",
+            autoHideDuration: 5000,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center"
+            }
           });
+
+          history.push(`/scheduling`);
+        }
       })
       .catch(error => {
-        enqueueSnackbar("Erro ao cadastrar registro!", {
+        enqueueSnackbar("Erro ao agendar sessão!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
@@ -330,6 +348,26 @@ function Scheduling({ enqueueSnackbar }) {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
+            <FormGroup row>
+              <FormControlLabel
+                label="Agendamento sem integração com agenda?"
+                control={
+                  <Checkbox
+                    checked={insertEvent}
+                    onChange={event => {
+                      setInsertEvent(!insertEvent);
+                      setEvents([]);
+                      setDate();
+                      setHoraryDisable(true);
+                      setHoraryId();
+                    }}
+                    value={insertEvent}
+                  />
+                }
+              />
+            </FormGroup>
+          </Grid>
+          <Grid item xs={12}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
                 autoOk
@@ -347,7 +385,6 @@ function Scheduling({ enqueueSnackbar }) {
                     verifyDate(`${year}-${month}-${day}`);
                   }
                 }}
-                minDate={new Date()}
                 format="dd/MM/yyyy"
               />
             </MuiPickersUtilsProvider>

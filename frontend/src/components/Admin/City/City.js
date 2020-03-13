@@ -169,6 +169,7 @@ function City({ enqueueSnackbar }) {
         }}
         options={{
           search: false,
+          pageSize: 20,
           filtering: true
         }}
       />

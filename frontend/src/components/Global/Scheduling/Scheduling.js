@@ -343,6 +343,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         }}
         options={{
           search: false,
+          pageSize: 20,
           filtering: true
         }}
       />

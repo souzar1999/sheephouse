@@ -366,6 +366,7 @@ function Reports({ enqueueSnackbar }) {
           }}
           options={{
             search: false,
+            pageSize: 20,
             exportButton: true,
             filtering: true,
             paging: false
@@ -439,6 +440,7 @@ function Reports({ enqueueSnackbar }) {
           }}
           options={{
             search: false,
+            pageSize: 20,
             exportButton: true,
             filtering: true,
             paging: false

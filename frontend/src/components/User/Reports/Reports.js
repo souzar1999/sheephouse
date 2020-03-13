@@ -231,6 +231,7 @@ function Reports({ enqueueSnackbar, clientCode }) {
         }}
         options={{
           search: false,
+          pageSize: 20,
           exportButton: true,
           filtering: true,
           paging: false

@@ -286,6 +286,7 @@ function Photographer({ enqueueSnackbar }) {
         }}
         options={{
           search: false,
+          pageSize: 20,
           filtering: true
         }}
       />
