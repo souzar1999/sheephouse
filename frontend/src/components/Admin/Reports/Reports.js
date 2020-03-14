@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import MaterialTable, { MTableCell } from "material-table";
 import Grid from "@material-ui/core/Grid";
 
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+
 import api from "../../../services/api";
 import { withSnackbar } from "notistack";
 
@@ -369,7 +372,70 @@ function Reports({ enqueueSnackbar }) {
             pageSize: 20,
             exportButton: true,
             filtering: true,
-            paging: false
+            paging: false,
+            exportCsv: (columns, dataTable) => {
+              let data = [];
+
+              dataTable.forEach(async item => {
+                let brokerName = await api
+                  .get(`/broker/${item.client.broker_id}`)
+                  .then(response => {
+                    return response.data[0].name;
+                  });
+
+                data.push({
+                  Serviço: item.drone ? "Filmagem/Drone" : "Fotografia",
+                  Imobiliária: brokerName,
+                  Dia: item.day,
+                  Mês: item.month,
+                  Ano: item.year,
+                  Fotógrafo: item.photographer.name,
+                  Status: item.actived ? "Ativo" : "Cancelado",
+                  Cancelamento: item.date_cancel
+                    ? new Date(item.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[2] +
+                      "/" +
+                      new Date(item.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[1] +
+                      "/" +
+                      new Date(item.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[0] +
+                      " " +
+                      new Date(item.date_cancel).toTimeString().split(" ")[0]
+                    : "",
+                  Finalizado: item.completed ? "Finalizado" : "",
+                  Endereço: item.address,
+                  Complemento: item.complement
+                });
+              });
+
+              setTimeout(() => {
+                const fileType =
+                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+                const fileExtension = ".xlsx";
+
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = {
+                  Sheets: { Relatório: ws },
+                  SheetNames: ["Relatório"]
+                };
+                const excelBuffer = XLSX.write(wb, {
+                  bookType: "xlsx",
+                  type: "array"
+                });
+                const dataExport = new Blob([excelBuffer], { type: fileType });
+                FileSaver.saveAs(
+                  dataExport,
+                  "Relatório-Imobiliária-Sheephouse" + fileExtension
+                );
+              }, 5000);
+            }
           }}
         />
       </Grid>
@@ -443,7 +509,70 @@ function Reports({ enqueueSnackbar }) {
             pageSize: 20,
             exportButton: true,
             filtering: true,
-            paging: false
+            paging: false,
+            exportCsv: (columns, dataTable) => {
+              let data = [];
+
+              dataTable.forEach(async item => {
+                let brokerName = await api
+                  .get(`/broker/${item.client.broker_id}`)
+                  .then(response => {
+                    return response.data[0].name;
+                  });
+
+                data.push({
+                  Serviço: item.drone ? "Filmagem/Drone" : "Fotografia",
+                  Cliente: item.client.name(brokerName),
+                  Dia: item.day,
+                  Mês: item.month,
+                  Ano: item.year,
+                  Fotógrafo: item.photographer.name,
+                  Status: item.actived ? "Ativo" : "Cancelado",
+                  Cancelamento: item.date_cancel
+                    ? new Date(item.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[2] +
+                      "/" +
+                      new Date(item.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[1] +
+                      "/" +
+                      new Date(item.date_cancel)
+                        .toISOString()
+                        .split("T")[0]
+                        .split("-")[0] +
+                      " " +
+                      new Date(item.date_cancel).toTimeString().split(" ")[0]
+                    : "",
+                  Finalizado: item.completed ? "Finalizado" : "",
+                  Endereço: item.address,
+                  Complemento: item.complement
+                });
+              });
+
+              setTimeout(() => {
+                const fileType =
+                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+                const fileExtension = ".xlsx";
+
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = {
+                  Sheets: { Relatório: ws },
+                  SheetNames: ["Relatório"]
+                };
+                const excelBuffer = XLSX.write(wb, {
+                  bookType: "xlsx",
+                  type: "array"
+                });
+                const dataExport = new Blob([excelBuffer], { type: fileType });
+                FileSaver.saveAs(
+                  dataExport,
+                  "Relatório-Corretor-Sheephouse" + fileExtension
+                );
+              }, 5000);
+            }
           }}
         />
       </Grid>

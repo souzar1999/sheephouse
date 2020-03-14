@@ -234,7 +234,45 @@ function Reports({ enqueueSnackbar, clientCode }) {
           pageSize: 20,
           exportButton: true,
           filtering: true,
-          paging: false
+          paging: false,
+          exportCsv: (columns, dataTable) => {
+            let data = [];
+
+            dataTable.forEach(async item => {
+              data.push({
+                Serviço: item.drone ? "Filmagem/Drone" : "Fotografia",
+                Dia: item.day,
+                Mês: item.month,
+                Ano: item.year,
+                Fotógrafo: item.photographer.name,
+                Status: item.actived ? "Ativo" : "Cancelado",
+                Finalizado: item.completed ? "Finalizado" : "",
+                Endereço: item.address,
+                Complemento: item.complement
+              });
+            });
+
+            setTimeout(() => {
+              const fileType =
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+              const fileExtension = ".xlsx";
+
+              const ws = XLSX.utils.json_to_sheet(data);
+              const wb = {
+                Sheets: { Relatório: ws },
+                SheetNames: ["Relatório"]
+              };
+              const excelBuffer = XLSX.write(wb, {
+                bookType: "xlsx",
+                type: "array"
+              });
+              const dataExport = new Blob([excelBuffer], { type: fileType });
+              FileSaver.saveAs(
+                dataExport,
+                "Relatório-Imobiliária-Sheephouse" + fileExtension
+              );
+            }, 5000);
+          }
         }}
       />
     </div>
