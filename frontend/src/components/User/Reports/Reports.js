@@ -4,6 +4,9 @@ import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import api from "../../../services/api";
 
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+
 import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
@@ -269,7 +272,7 @@ function Reports({ enqueueSnackbar, clientCode }) {
               const dataExport = new Blob([excelBuffer], { type: fileType });
               FileSaver.saveAs(
                 dataExport,
-                "Relatório-Imobiliária-Sheephouse" + fileExtension
+                "Relatório-Sheephouse" + fileExtension
               );
             }, 5000);
           }
