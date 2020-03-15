@@ -98,26 +98,51 @@ class StorageController {
     return response.status(200).send({ result: "Objeto removido com sucesso" })
   }
 
-  async downloadZipFolder({ params, request, response, view }) {
+  async zipFolder({ params, request, response, view }) {
 
     const { storageType: StorageType, folderName: FolderName } = params
+    zipper.zipToS3File({
+      s3FolderName: StorageType + '/' + FolderName
+      , s3ZipFileName: 'Zip/' + request.body.fileName
+    }, function (err, result) {
+      if (err){
+        console.error(err);
+      }
+    });
 
-    //const myStream = getWritableStreamSomehow();
-    //response.set('content-type', 'application/zip') // optional
-    response.implicitEnd = false
-    zipper.streamZipDataTo({
-        pipe: response.response
-        , folderName: StorageType + "/"+ FolderName
-        , recursive: true
-        }
-        ,function (err, result) {
-            if(err)
-                console.error(err);
-            else{
-                console.log(result)
-            }
-        })
-    return response.status(200)
+
+    return response.status(200).send({ result: "Gerando zip" })
+  }
+
+
+  async downloadZipFolder({ params, request, response, view }) {
+
+    const {fileName: FileName } = params
+    const S3BucketName = Env.get('S3_BUCKET');
+
+    var S3params = {
+      Bucket: S3BucketName,
+      Key: 'Zip/'+ FileName,
+      Expires: 7200000
+    };
+    var S3paramsHead = {
+      Bucket: S3BucketName,
+      Key: 'Zip/' + FileName
+    };
+
+    while (true) {
+      try {
+        await s3.headObject(S3paramsHead).promise()
+        break;
+      } catch (err) {
+        //console.log(err)
+        //return response.status(200).send({ exists: false })
+      }
+    }
+
+
+    const Url = await s3.getSignedUrlPromise('getObject', S3params)
+    return response.status(200).send({ exists: true, url: Url })
   }
 
 

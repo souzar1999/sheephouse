@@ -119,8 +119,13 @@ Route.get(
   'StorageController.getDownloadPreSignedUrl'
 ).middleware('auth')
 
+Route.post(
+  'storages/storage/:storageType/folder/:folderName/zip',
+  'StorageController.zipFolder'
+).middleware('auth')
+
 Route.get(
-  'storages/storage/:storageType/folder/:folderName/download',
+  '/storages/zip/filename/:fileName/download',
   'StorageController.downloadZipFolder'
 ).middleware('auth')
 
