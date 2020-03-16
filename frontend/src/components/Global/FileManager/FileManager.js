@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { compose } from "redux";
+import { v4 as uuidv4 } from 'uuid';
 
 import { connect } from "react-redux";
 
@@ -46,12 +47,12 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
     await api
       .get(
         "/storages/storage/" +
-          uploadType +
-          "/folder/" +
-          folderName +
-          "/" +
-          filename +
-          "/download"
+        uploadType +
+        "/folder/" +
+        folderName +
+        "/" +
+        filename +
+        "/download"
       )
       .then(response => {
         window.open(response.data.result, "_blank");
@@ -62,16 +63,21 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
     await api
       .get(
         "/storages/storage/" +
-          uploadType +
-          "/folder/" +
-          folderName +
-          "/" +
-          filename +
-          "/download"
+        uploadType +
+        "/folder/" +
+        folderName +
+        "/" +
+        filename +
+        "/download"
       )
       .then(response => {
-        axios.get(response.data.result).then(response => {
-          FileDownload(response.data, filename);
+        axios({ url: response.data.result, method: 'GET', responseType: 'blob', }).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', filename);
+          document.body.appendChild(link);
+          link.click();
         });
       });
   }
@@ -80,12 +86,12 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
     await api
       .delete(
         "/storages/storage/" +
-          uploadType +
-          "/folder/" +
-          folderName +
-          "/" +
-          rowData.Key +
-          "/delete"
+        uploadType +
+        "/folder/" +
+        folderName +
+        "/" +
+        rowData.Key +
+        "/delete"
       )
       .then(response => {
         enqueueSnackbar("Arquivo Removido com sucesso!", {
@@ -107,12 +113,12 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
     await api
       .delete(
         "/storages/storage/" +
-          uploadType +
-          "/folder/" +
-          folderName +
-          "/" +
-          rowData.Key +
-          "/delete"
+        uploadType +
+        "/folder/" +
+        folderName +
+        "/" +
+        rowData.Key +
+        "/delete"
       )
       .then(response => {
         enqueueSnackbar("Arquivo Removido com sucesso!", {
@@ -131,7 +137,35 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
       });
   }
 
-  async function downlaodZipFile() {}
+  async function downlaodZipFile() {
+    var fileName = uuidv4() + '.zip' 
+    await api.post("/storages/storage/" + uploadType + "/folder/" + folderName + "/zip", { fileName: fileName }).then(response => {
+      enqueueSnackbar("Gerando arquivo ZIP \n este processo leva em media 15 segundos.", {
+        variant: "success",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+    });
+
+    while (true) {
+
+      var responseDonwloadURL = await api.get("/storages/zip/filename/" + fileName + "/download")
+      if (responseDonwloadURL.data.exists == true) {
+        axios({ url: responseDonwloadURL.data.url, method: 'GET', responseType: 'blob', }).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+        });
+        break;
+      }
+    }
+  }
 
   return (
     <MaterialTable
@@ -175,7 +209,7 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
           onClick: () => {
             downlaodZipFile();
           },
-          hidden: true
+          hidden: false
         }
       ]}
       columns={columns}
