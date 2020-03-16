@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable, { MTableCell } from "material-table";
 import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
 
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -10,7 +11,18 @@ import { withSnackbar } from "notistack";
 
 import history from "../../../history";
 
+const useStyles = makeStyles(theme => ({
+  main: {
+    marginBottom: theme.spacing(4),
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: 375,
+      marginTop: theme.spacing(8)
+    }
+  }
+}));
+
 function Reports({ enqueueSnackbar }) {
+  const classes = useStyles();
   const [Schedulings, setScheduling] = useState([]),
     [Clients, setClients] = useState([]),
     [Brokers, setBrokers] = useState([]),
@@ -301,8 +313,8 @@ function Reports({ enqueueSnackbar }) {
   }
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
+    <>
+      <div className={classes.main}>
         <MaterialTable
           title="Relatório por imobiliária"
           columns={columnsBroker}
@@ -438,8 +450,8 @@ function Reports({ enqueueSnackbar }) {
             }
           }}
         />
-      </Grid>
-      <Grid item xs={12}>
+      </div>
+      <div className={classes.main}>
         <MaterialTable
           title="Relatório por cliente"
           columns={columnsClients}
@@ -575,8 +587,8 @@ function Reports({ enqueueSnackbar }) {
             }
           }}
         />
-      </Grid>
-    </Grid>
+      </div>
+    </>
   );
 }
 
