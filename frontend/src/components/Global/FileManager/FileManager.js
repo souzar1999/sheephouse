@@ -170,7 +170,7 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         axios({
           url: responseDonwloadURL.data.url,
           method: "GET",
-      xxxxxxxxxxxx    responseType: "blob"
+          responseType: "blob"
         }).then(response => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
