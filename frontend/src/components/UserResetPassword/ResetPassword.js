@@ -132,7 +132,7 @@ function ResetPassword({ enqueueSnackbar }) {
     <Container component="main" maxWidth="xs">
       <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
-          <img src="./assets/logo.png" alt="Sheephouse" height={100} />
+          <img src="./assets/logo.png" alt="Sheep House" height={100} />
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField

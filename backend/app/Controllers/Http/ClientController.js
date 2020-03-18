@@ -69,8 +69,8 @@ class ClientController {
         message => {
           message
             .to(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheephouse')
-            .subject('Sheephouse - Cliente cadastrado')
+            .from('noreply@sheephouse.com.br', 'Sheep House')
+            .subject('Sheep House - Cliente cadastrado')
         }
       )
     })
@@ -110,8 +110,8 @@ class ClientController {
             message
               .to(user.email)
               .cc(admin.email)
-              .from('noreply@sheephouse.com.br', 'Sheephouse')
-              .subject('Sheephouse - Cadastro ativado')
+              .from('noreply@sheephouse.com.br', 'Sheep House')
+              .subject('Sheep House - Cadastro ativado')
           }
         )
       }

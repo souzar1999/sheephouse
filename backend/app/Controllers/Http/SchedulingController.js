@@ -164,8 +164,8 @@ class SchedulingController {
           message
             .to(user.email)
             .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheephouse')
-            .subject('Sheephouse - Sessão Concluída')
+            .from('noreply@sheephouse.com.br', 'Sheep House')
+            .subject('Sheep House - Sessão Concluída')
         }
       )
     }

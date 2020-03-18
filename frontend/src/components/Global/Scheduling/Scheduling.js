@@ -43,8 +43,22 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         title: "Dia",
         field: "day",
         defaultSort: "asc",
-        filtering: false,
-        type: "numeric"
+        type: "numeric",
+        cellStyle: {
+          width: 400,
+          maxWidth: 400,
+          textAlign: "left"
+        },
+        filterCellStyle: {
+          paddingTop: 15,
+          paddingBottom: 15,
+          paddingLeft: 2,
+          paddingRight: 2
+        },
+        headerStyle: {
+          width: 400,
+          maxWidth: 400
+        }
       },
       {
         title: "Mês",
@@ -292,10 +306,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             icon: "add",
             tooltip: "Agendar",
             isFreeAction: true,
-            onClick: event =>
-              clientCode
-                ? history.push(`/scheduling/photo`)
-                : history.push(`/admin/scheduling/`)
+            onClick: event => history.push(`/admin/scheduling/`),
+            hidden: clientCode
           }
         ]}
         components={{

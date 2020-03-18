@@ -53,7 +53,7 @@ const Navbar = ({
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Sheephouse
+              Sheep House
             </Typography>
             <IconButton
               edge="start"

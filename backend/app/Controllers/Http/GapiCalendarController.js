@@ -86,8 +86,8 @@ class GapiCalendarController {
           message
             .to(user.email)
             .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheephouse')
-            .subject('Sheephouse - Sessão agendada')
+            .from('noreply@sheephouse.com.br', 'Sheep House')
+            .subject('Sheep House - Sessão agendada')
         }
       )
 
@@ -152,8 +152,8 @@ class GapiCalendarController {
           message
             .to(user.email)
             .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheephouse')
-            .subject('Sheephouse - Sessão reagendada')
+            .from('noreply@sheephouse.com.br', 'Sheep House')
+            .subject('Sheep House - Sessão reagendada')
         }
       )
 
@@ -198,8 +198,8 @@ class GapiCalendarController {
           message
             .to(user.email)
             .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheephouse')
-            .subject('Sheephouse - Sessão cancelada')
+            .from('noreply@sheephouse.com.br', 'Sheep House')
+            .subject('Sheep House - Sessão cancelada')
         }
       )
 

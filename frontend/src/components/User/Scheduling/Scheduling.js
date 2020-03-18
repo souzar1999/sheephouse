@@ -387,7 +387,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     return (
       <Paper className={classes.paper}>
         <Typography component="h2" variant="h4">
-          Onde será a sessão de fotos
+          Insira os dados da sua sessão
         </Typography>
 
         <div className={classes.form}>
