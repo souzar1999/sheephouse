@@ -68,7 +68,15 @@ Route.get('/scheduling/day/:date', 'SchedulingController.indexDay').middleware(
   'auth'
 )
 
-Route.get('/scheduling/:fileManagerId/complete', 'SchedulingController.completeAndSendEmail').middleware('auth')
+Route.get(
+  '/scheduling/:fileManagerId/complete',
+  'SchedulingController.completeAndSendEmail'
+).middleware('auth')
+
+Route.get(
+  '/scheduling/:id/downloaded',
+  'SchedulingController.downloaded'
+).middleware('auth')
 
 Route.resource('broker', 'BrokerController')
   .apiOnly()

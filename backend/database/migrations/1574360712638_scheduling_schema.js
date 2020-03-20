@@ -14,6 +14,7 @@ class SchedulingSchema extends Schema {
       table.string('address').notNullable()
       table.string('complement')
       table.string('comments')
+      table.string('reason')
       table.string('google_event_id')
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
@@ -28,6 +29,10 @@ class SchedulingSchema extends Schema {
         .defaultTo(false)
       table
         .boolean('completed')
+        .notNullable()
+        .defaultTo(false)
+      table
+        .boolean('downloaded')
         .notNullable()
         .defaultTo(false)
       table

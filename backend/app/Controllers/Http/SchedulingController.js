@@ -118,6 +118,7 @@ class SchedulingController {
       'actived',
       'changed',
       'completed',
+      'reason',
       'date_cancel',
       'file_manager_uuid'
     ])
@@ -170,6 +171,25 @@ class SchedulingController {
       )
     }
     return response.status(200).send({ result: 'Agendamento concluido' })
+  }
+
+  async downloaded({ params, request, response, view }) {
+    const scheduling = await Scheduling.query()
+      .where('id', params.id)
+      .first()
+    if (scheduling.completed == false) {
+      const photographer = await Photographer.findOrFail(
+        scheduling.photographer_id
+      )
+      const client = await Client.findOrFail(scheduling.client_id)
+      const user = await User.findOrFail(client.user_id)
+      const horary = await Horary.findOrFail(scheduling.horary_id)
+      const admin = await User.findByOrFail('admin', true)
+
+      scheduling.downloaded = true
+      await scheduling.save()
+
+    return response.status(200).send({ result: 'Imagens baixadas' })
   }
 }
 
