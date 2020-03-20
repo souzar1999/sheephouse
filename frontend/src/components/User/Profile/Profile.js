@@ -59,14 +59,17 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
     await api
       .post("/forgotPassword", { email: client.user.email })
       .then(async response => {
-        enqueueSnackbar("Acesse seu email para trocar a senha!", {
-          variant: "success",
-          autoHideDuration: 5000,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
+        enqueueSnackbar(
+          "Acesse seu email para trocar a senha!\nVerifique a caixa de SPAM.",
+          {
+            variant: "success",
+            autoHideDuration: 5000,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center"
+            }
           }
-        });
+        );
 
         onUserLogout();
         history.push("/");

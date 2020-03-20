@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { compose } from "redux";
@@ -26,15 +30,28 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       backgroundColor: "green"
     }
+  },
+  imgDialog: {
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(8)
+    }
   }
 }));
 
 function FileDownloader({ enqueueSnackbar, clientCode }) {
   const classes = useStyles();
+
+  const theme = useTheme();
   const FileDownload = require("js-file-download");
   const { uploadType, folderName } = useParams();
   const [files, setFiles] = useState([]);
+  const [open, setOpen] = useState(false);
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const columns = [{ title: "Nome", field: "Key", defaultSort: "asc" }];
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     handleLoad();
@@ -97,6 +114,8 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         );
       });
 
+    setOpen(true);
+
     while (true) {
       var responseDonwloadURL = await api.get(
         "/storages/zip/filename/" + fileName + "/download"
@@ -120,85 +139,107 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   }
 
   return (
-    <div className={classes.main}>
-      <MaterialTable
-        title="Gerenciador de arquivos"
-        actions={[
-          rowData => ({
-            icon: "delete",
-            tooltip: "Excluir",
-            onClick: (event, rowData) => {
-              deleteFile(rowData);
+    <>
+      <div className={classes.main}>
+        <MaterialTable
+          title="Gerenciador de arquivos"
+          actions={[
+            rowData => ({
+              icon: "delete",
+              tooltip: "Excluir",
+              onClick: (event, rowData) => {
+                deleteFile(rowData);
+              },
+              hidden: clientCode
+            }),
+            {
+              icon: "cloud_upload",
+              tooltip: "Upload",
+              isFreeAction: true,
+              onClick: () => {
+                history.push("/fileuploader/" + uploadType + "/" + folderName);
+              },
+              hidden: clientCode
             },
-            hidden: clientCode
-          }),
-          {
-            icon: "cloud_upload",
-            tooltip: "Upload",
-            isFreeAction: true,
-            onClick: () => {
-              history.push("/fileuploader/" + uploadType + "/" + folderName);
+            {
+              icon: () => (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => {
+                    downlaodZipFile();
+                  }}
+                >
+                  Baixar imagens
+                </Button>
+              ),
+              tooltip: "Baixar todos os arquivos",
+              isFreeAction: true,
+              onClick: () => {
+                downlaodZipFile();
+              },
+              hidden: false
+            }
+          ]}
+          columns={columns}
+          data={files}
+          localization={{
+            body: {
+              filterRow: {
+                filterTooltip: "Filtro"
+              },
+              emptyDataSourceMessage: "Sem registros para mostrar"
             },
-            hidden: clientCode
-          },
-          {
-            icon: () => (
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                onClick={() => {
-                  downlaodZipFile();
-                }}
-              >
-                Baixar imagens
-              </Button>
-            ),
-            tooltip: "Baixar todos os arquivos",
-            isFreeAction: true,
-            onClick: () => {
-              downlaodZipFile();
+            header: {
+              actions: "Ações"
             },
-            hidden: false
-          }
-        ]}
-        columns={columns}
-        data={files}
-        localization={{
-          body: {
-            filterRow: {
-              filterTooltip: "Filtro"
+            toolbar: {
+              searchTooltip: "Pesquisar",
+              searchPlaceholder: "Pesquisar"
             },
-            emptyDataSourceMessage: "Sem registros para mostrar"
-          },
-          header: {
-            actions: "Ações"
-          },
-          toolbar: {
-            searchTooltip: "Pesquisar",
-            searchPlaceholder: "Pesquisar"
-          },
-          pagination: {
-            labelRowsSelect: "Registros",
-            labelRowsPerPage: "Registros por página",
-            firstAriaLabel: "Primeira Página",
-            firstTooltip: "Primeira Página",
-            previousAriaLabel: "Página Anterior",
-            previousTooltip: "Página Anterior",
-            nextAriaLabel: "Página Seguinte",
-            nextTooltip: "Página Seguinte",
-            lastAriaLabel: "Última Página",
-            lastTooltip: "Última Página"
-          }
-        }}
-        options={{
-          search: false,
-          pageSize: 5,
-          filtering: true
-        }}
-      />
-    </div>
+            pagination: {
+              labelRowsSelect: "Registros",
+              labelRowsPerPage: "Registros por página",
+              firstAriaLabel: "Primeira Página",
+              firstTooltip: "Primeira Página",
+              previousAriaLabel: "Página Anterior",
+              previousTooltip: "Página Anterior",
+              nextAriaLabel: "Página Seguinte",
+              nextTooltip: "Página Seguinte",
+              lastAriaLabel: "Última Página",
+              lastTooltip: "Última Página"
+            }
+          }}
+          options={{
+            search: false,
+            pageSize: 5,
+            filtering: true
+          }}
+        />
+      </div>
+      <Dialog
+        fullScreen={fullScreen}
+        fullWidth={true}
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogContent>
+          <img
+            src="../../assets/dicas_descompactar_sheephouse.jpg"
+            alt="Sheep House"
+            width={"100%"}
+            className={classes.imgDialog}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
 

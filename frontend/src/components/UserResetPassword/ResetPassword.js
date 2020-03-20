@@ -114,17 +114,14 @@ function ResetPassword({ enqueueSnackbar }) {
         history.push("/");
       })
       .catch(error => {
-        enqueueSnackbar(
-          "Problemas ao trocar a senha, solicite um novo email para troca!",
-          {
-            variant: "error",
-            autoHideDuration: 5000,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center"
-            }
+        enqueueSnackbar("Problemas ao trocar a senha!", {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
           }
-        );
+        });
       });
   }
 

@@ -39,7 +39,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     [password, setPassword] = useState(localStorage.getItem("userPass"));
   useEffect(() => {
     if (email && password) {
-      // handleSubmit();
+      handleSubmit();
     }
   }, []);
 
@@ -192,14 +192,17 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     await api
       .post("/forgotPassword", { email })
       .then(async response => {
-        enqueueSnackbar("Acesse seu email para conseguir trocar a senha!", {
-          variant: "success",
-          autoHideDuration: 5000,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center"
+        enqueueSnackbar(
+          "Acesse seu email para trocar a senha!\nVerifique a caixa de SPAM.",
+          {
+            variant: "success",
+            autoHideDuration: 5000,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center"
+            }
           }
-        });
+        );
       })
       .catch(error => {
         enqueueSnackbar("Problemas ao enviar email de troca de senha!", {

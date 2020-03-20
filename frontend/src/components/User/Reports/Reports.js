@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable, { MTableCell } from "material-table";
 import Container from "@material-ui/core/Container";
+import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import api from "../../../services/api";
 
@@ -19,6 +20,13 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down("sm")]: {
       maxWidth: 375,
       marginTop: theme.spacing(8)
+    }
+  },
+  button: {
+    backgroundColor: "#43a047",
+    color: "white",
+    "&:hover": {
+      backgroundColor: "green"
     }
   }
 }));
@@ -231,6 +239,18 @@ function Reports({ enqueueSnackbar, clientCode }) {
             exportAriaLabel: "Exportar",
             exportName: "Exportar Excel"
           }
+        }}
+        icons={{
+          Export: () => (
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              className={classes.button}
+            >
+              Exportar
+            </Button>
+          )
         }}
         options={{
           search: false,
