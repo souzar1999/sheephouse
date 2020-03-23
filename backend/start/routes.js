@@ -72,6 +72,10 @@ Route.get(
   '/scheduling/:fileManagerId/complete',
   'SchedulingController.completeAndSendEmail'
 ).middleware('auth')
+Route.get(
+  '/scheduling/:id/resend',
+  'SchedulingController.resendEmail'
+).middleware('auth')
 
 Route.get(
   '/scheduling/:id/downloaded',

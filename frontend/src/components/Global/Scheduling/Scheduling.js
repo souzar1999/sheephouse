@@ -222,6 +222,19 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     });
   }
 
+  async function resendEmail(id) {
+    await api.get(`/scheduling/${id}/resend`).then(response => {
+      enqueueSnackbar("Email reenviado!", {
+        variant: "success",
+        autoHideDuration: 2500,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+    });
+  }
+
   return (
     <div className={classes.main}>
       <MaterialTable
@@ -274,6 +287,18 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         ]}
         actions={[
           rowData => ({
+            icon: "send",
+            tooltip: "Reenviar email",
+            onClick: (event, rowData) => {
+              resendEmail(rowData.id);
+            },
+            hidden:
+              clientCode ||
+              !rowData.completed ||
+              !rowData.actived ||
+              !rowData.date
+          }),
+          rowData => ({
             icon: "photo_library",
             tooltip: "Fotos",
             onClick: (event, rowData) => {
@@ -317,12 +342,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 style={{
                   background: !props.rowData.date
                     ? "#ddd"
+                    : props.rowData.downloaded
+                    ? "#eeeefe"
                     : props.rowData.completed
                     ? "#eefeee"
                     : !props.rowData.actived
                     ? "#feeeee"
                     : props.rowData.changed
-                    ? "#eeeefe"
+                    ? "#fefecc"
                     : "inherit"
                 }}
                 {...props}

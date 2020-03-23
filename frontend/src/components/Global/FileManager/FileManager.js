@@ -114,8 +114,6 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         );
       });
 
-    setOpen(true);
-
     while (true) {
       var responseDonwloadURL = await api.get(
         "/storages/zip/filename/" + fileName + "/download"
@@ -136,6 +134,8 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         break;
       }
     }
+
+    setOpen(true);
   }
 
   return (
@@ -168,9 +168,6 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
                   variant="contained"
                   color="primary"
                   className={classes.button}
-                  onClick={() => {
-                    downlaodZipFile();
-                  }}
                 >
                   Baixar imagens
                 </Button>

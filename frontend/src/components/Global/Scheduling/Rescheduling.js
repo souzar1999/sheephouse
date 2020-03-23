@@ -54,6 +54,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     [photographer_id, setPhotographerId] = useState(""),
     [photographer, setPhotographer] = useState([]),
     [photographer_sabado, setPhotographerSabado] = useState([]),
+    [reason, setReason] = useState(null),
     [scheduling_id, setSchedulingId] = useState(""),
     [scheduling, setScheduling] = useState([]),
     [labelWidth, setLabelWidth] = useState(0),
@@ -179,6 +180,18 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       return;
     }
 
+    if (clientCode && !reason) {
+      enqueueSnackbar("Necessário informar um motivo para cancelar a sessão!", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+      return;
+    }
+
     await api
       .put(`/scheduling/${scheduling_id}`, {
         changed: true,
@@ -187,7 +200,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           ? `${new Date().toISOString().split("T")[0]} ${
               new Date().toTimeString().split(" ")[0]
             }`
-          : null
+          : null,
+        reason: clientCode ? reason : null
       })
       .then(async response => {
         await api
@@ -348,6 +362,21 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       return;
     }
 
+    if (clientCode && !reason) {
+      enqueueSnackbar(
+        "Necessário informar um motivo para reagendar a sessão!",
+        {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        }
+      );
+      return;
+    }
+
     if (!date || !horary_id || !scheduling_id) {
       enqueueSnackbar(
         "Informações estão faltando para dar sequência ao processo!",
@@ -367,7 +396,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         date,
         photographer_id,
         horary_id,
-        changed: true
+        changed: true,
+        reason: clientCode ? reason : null
       })
       .then(async response => {
         const scheduling_id = response.data.id;
@@ -723,6 +753,18 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     })}
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  onChange={event => {
+                    setReason(event.target.value);
+                  }}
+                  value={reason}
+                  label="Motivo"
+                  variant="outlined"
+                  fullWidth
+                />
               </Grid>
               <Grid item xs={6}>
                 <Button

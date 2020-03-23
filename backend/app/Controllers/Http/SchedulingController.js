@@ -173,11 +173,11 @@ class SchedulingController {
     return response.status(200).send({ result: 'Agendamento concluido' })
   }
 
-  async downloaded({ params, request, response, view }) {
+  async resendEmail({ params, request, response, view }) {
     const scheduling = await Scheduling.query()
       .where('id', params.id)
       .first()
-    if (scheduling.completed == false) {
+    if (scheduling.completed == true && scheduling.downloaded == false) {
       const photographer = await Photographer.findOrFail(
         scheduling.photographer_id
       )
@@ -186,8 +186,35 @@ class SchedulingController {
       const horary = await Horary.findOrFail(scheduling.horary_id)
       const admin = await User.findByOrFail('admin', true)
 
+      await Mail.send(
+        'emails.completedScheduling',
+        {
+          client,
+          scheduling,
+          photographer,
+          horary,
+          admin
+        },
+        message => {
+          message
+            .to(user.email)
+            .cc(admin.email)
+            .from('noreply@sheephouse.com.br', 'Sheep House')
+            .subject('Sheep House - Sessão Concluída')
+        }
+      )
+    }
+    return response.status(200).send({ result: 'Agendamento concluido' })
+  }
+
+  async downloaded({ params, request, response, view }) {
+    const scheduling = await Scheduling.query()
+      .where('id', params.id)
+      .first()
+    if (scheduling.downloaded == false) {
       scheduling.downloaded = true
       await scheduling.save()
+    }
 
     return response.status(200).send({ result: 'Imagens baixadas' })
   }
