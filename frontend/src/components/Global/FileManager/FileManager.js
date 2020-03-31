@@ -43,7 +43,7 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
 
   const theme = useTheme();
   const FileDownload = require("js-file-download");
-  const { uploadType, folderName } = useParams();
+  const { uploadType, folderName, dbCode } = useParams();
   const [files, setFiles] = useState([]);
   const [open, setOpen] = useState(false);
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -94,7 +94,9 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   }
 
   async function downlaodZipFile() {
-    var fileName = "SheepHouse-Fotos-Imóvel.zip";
+
+
+    var fileName = "SheepHouse-Fotos-Imovel"+ Math.floor(Math.random() * 10000) + 1 + ".zip";
     await api
       .post(
         "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",

@@ -3,6 +3,7 @@ import MaterialTable, { MTableCell } from "material-table";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 
+import axios from "axios";
 import api from "../../../services/api";
 import { withSnackbar } from "notistack";
 import { compose } from "redux";
@@ -141,6 +142,53 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     handleLoad();
     handleLoadLookup();
   }, []);
+
+  async function downlaodZipFile(uploadType,folderName) {
+
+
+    var fileName = "SheepHouse-Fotos-Imovel"+ Math.floor(Math.random() * 10000) + 1 + ".zip";
+    await api
+      .post(
+        "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
+        { fileName: fileName }
+      )
+      .then(response => {
+        enqueueSnackbar(
+          "Gerando arquivo ZIP \n este processo leva em media 15 segundos.",
+          {
+            variant: "success",
+            autoHideDuration: 5000,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center"
+            }
+          }
+        );
+      });
+
+    while (true) {
+      var responseDonwloadURL = await api.get(
+        "/storages/zip/filename/" + fileName + "/download"
+      );
+      if (responseDonwloadURL.data.exists == true) {
+        axios({
+          url: responseDonwloadURL.data.url,
+          method: "GET",
+          responseType: "blob"
+        }).then(response => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", fileName);
+          document.body.appendChild(link);
+          link.click();
+        });
+        break;
+      }
+    }
+
+    //setOpen(true);
+  }
 
   async function handleLoad() {
     if (clientCode) {
@@ -302,9 +350,15 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             icon: "photo_library",
             tooltip: "Fotos",
             onClick: (event, rowData) => {
-              history.push(
-                `filemanager/Scheduling/${rowData.file_manager_uuid}`
-              );
+              if (clientCode){
+                downlaodZipFile("Scheduling",rowData.file_manager_uuid)
+              }
+              else
+              { 
+                history.push(
+                  `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
+                );
+              }
             },
             hidden:
               (clientCode && !rowData.completed) ||
@@ -397,3 +451,4 @@ const mapStateToProps = state => ({
 const withConnect = connect(mapStateToProps, {});
 
 export default compose(withSnackbar, withConnect)(Scheduling);
+//"start": "serve -s build -l 3000",

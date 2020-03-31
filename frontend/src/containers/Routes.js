@@ -87,7 +87,7 @@ export default function Routes() {
         />
         <LoginRequeredRoute
           exact
-          path="/filemanager/:uploadType/:folderName"
+          path="/filemanager/:uploadType/:folderName/:dbcode"
           component={GlobalFileManager}
         />
         <LoginRequeredRoute
