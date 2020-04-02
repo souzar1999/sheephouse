@@ -248,7 +248,7 @@ function Reports({ enqueueSnackbar, clientCode }) {
               color="primary"
               className={classes.button}
             >
-              Exportar
+              Relatório
             </Button>
           )
         }}

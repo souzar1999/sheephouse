@@ -118,6 +118,7 @@ class SchedulingController {
       'actived',
       'changed',
       'completed',
+      'downloaded',
       'reason',
       'date_cancel',
       'file_manager_uuid'

@@ -359,14 +359,17 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             date
           })
           .then(() => {
-            enqueueSnackbar("Registro cadastrado com sucesso!", {
-              variant: "success",
-              autoHideDuration: 5000,
-              anchorOrigin: {
-                vertical: "top",
-                horizontal: "center"
+            enqueueSnackbar(
+              "Agendamento concluído com sucesso.\n\nA Sheep House agradece a preferência!",
+              {
+                variant: "success",
+                autoHideDuration: 5000,
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center"
+                }
               }
-            });
+            );
 
             history.push(`/scheduling`);
           });

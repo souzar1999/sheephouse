@@ -30,11 +30,6 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       backgroundColor: "green"
     }
-  },
-  imgDialog: {
-    [theme.breakpoints.down("sm")]: {
-      paddingTop: theme.spacing(8)
-    }
   }
 }));
 
@@ -45,13 +40,8 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   const FileDownload = require("js-file-download");
   const { uploadType, folderName, dbCode } = useParams();
   const [files, setFiles] = useState([]);
-  const [open, setOpen] = useState(false);
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const columns = [{ title: "Nome", field: "Key", defaultSort: "asc" }];
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   useEffect(() => {
     handleLoad();
@@ -94,9 +84,11 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   }
 
   async function downlaodZipFile() {
-
-
-    var fileName = "SheepHouse-Fotos-Imovel"+ Math.floor(Math.random() * 10000) + 1 + ".zip";
+    var fileName =
+      "SheepHouse-Fotos-Imovel" +
+      Math.floor(Math.random() * 10000) +
+      1 +
+      ".zip";
     await api
       .post(
         "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
@@ -136,8 +128,6 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         break;
       }
     }
-
-    setOpen(true);
   }
 
   return (
@@ -218,26 +208,6 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
           }}
         />
       </div>
-      <Dialog
-        fullScreen={fullScreen}
-        fullWidth={true}
-        open={open}
-        onClose={handleClose}
-      >
-        <DialogContent>
-          <img
-            src="../../assets/dicas_descompactar_sheephouse.jpg"
-            alt="Sheep House"
-            width={"100%"}
-            className={classes.imgDialog}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 }

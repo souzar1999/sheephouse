@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable, { MTableCell } from "material-table";
 import Container from "@material-ui/core/Container";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import axios from "axios";
 import api from "../../../services/api";
@@ -18,11 +23,19 @@ const useStyles = makeStyles(theme => ({
       maxWidth: 375,
       marginTop: theme.spacing(8)
     }
+  },
+  imgDialog: {
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(8)
+    }
   }
 }));
 
 function Scheduling({ enqueueSnackbar, clientCode }) {
   const classes = useStyles();
+  const theme = useTheme();
+  const [open, setOpen] = useState(false);
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [Schedulings, setScheduling] = useState([]),
     [Clients, setClients] = useState([]),
     [Photographers, setPhotographers] = useState([]),
@@ -143,10 +156,20 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     handleLoadLookup();
   }, []);
 
-  async function downlaodZipFile(uploadType,folderName) {
+  const handleClose = () => {
+    setOpen(false);
+  };
 
+  async function downlaodZipFile(uploadType, folderName, SchedulingId) {
+    var fileName =
+      "SheepHouse-Fotos-Imovel" +
+      Math.floor(Math.random() * 10000) +
+      1 +
+      ".zip";
 
-    var fileName = "SheepHouse-Fotos-Imovel"+ Math.floor(Math.random() * 10000) + 1 + ".zip";
+    setOpen(true);
+
+    await api.put(`/scheduling/${SchedulingId}`, { downloaded: 1 });
     await api
       .post(
         "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
@@ -186,8 +209,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         break;
       }
     }
-
-    //setOpen(true);
   }
 
   async function handleLoad() {
@@ -284,163 +305,194 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }
 
   return (
-    <div className={classes.main}>
-      <MaterialTable
-        title="Agendamentos"
-        columns={columns}
-        data={Schedulings}
-        detailPanel={[
-          {
-            tooltip: "Show Name",
-            render: rowData => {
-              return (
-                <div style={{ margin: "0 50px" }}>
-                  <p>
-                    <strong>Endereço:</strong> {rowData.address}
-                  </p>
-                  <p>
-                    <strong>Complemento:</strong> {rowData.complement}
-                  </p>
-                  <p>
-                    <strong>Observações:</strong> {rowData.comments}
-                  </p>
-                  {rowData.date_cancel && (
+    <>
+      <div className={classes.main}>
+        <MaterialTable
+          title="Agendamentos"
+          columns={columns}
+          data={Schedulings}
+          detailPanel={[
+            {
+              tooltip: "Show Name",
+              render: rowData => {
+                return (
+                  <div style={{ margin: "0 50px" }}>
                     <p>
-                      <strong>Cancelamento:</strong>
-                      {" " +
-                        new Date(rowData.date_cancel)
-                          .toISOString()
-                          .split("T")[0]
-                          .split("-")[2] +
-                        "/" +
-                        new Date(rowData.date_cancel)
-                          .toISOString()
-                          .split("T")[0]
-                          .split("-")[1] +
-                        "/" +
-                        new Date(rowData.date_cancel)
-                          .toISOString()
-                          .split("T")[0]
-                          .split("-")[0] +
-                        " " +
-                        new Date(rowData.date_cancel)
-                          .toTimeString()
-                          .split(" ")[0]}
+                      <strong>Endereço:</strong> {rowData.address}
                     </p>
-                  )}
-                </div>
-              );
-            }
-          }
-        ]}
-        actions={[
-          rowData => ({
-            icon: "send",
-            tooltip: "Reenviar email",
-            onClick: (event, rowData) => {
-              resendEmail(rowData.id);
-            },
-            hidden:
-              clientCode ||
-              !rowData.completed ||
-              !rowData.actived ||
-              !rowData.date
-          }),
-          rowData => ({
-            icon: "photo_library",
-            tooltip: "Fotos",
-            onClick: (event, rowData) => {
-              if (clientCode){
-                downlaodZipFile("Scheduling",rowData.file_manager_uuid)
-              }
-              else
-              { 
-                history.push(
-                  `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
+                    <p>
+                      <strong>Complemento:</strong> {rowData.complement}
+                    </p>
+                    <p>
+                      <strong>Observações:</strong> {rowData.comments}
+                    </p>
+                    {rowData.date_cancel && (
+                      <p>
+                        <strong>Cancelamento:</strong>
+                        {" " +
+                          new Date(rowData.date_cancel)
+                            .toISOString()
+                            .split("T")[0]
+                            .split("-")[2] +
+                          "/" +
+                          new Date(rowData.date_cancel)
+                            .toISOString()
+                            .split("T")[0]
+                            .split("-")[1] +
+                          "/" +
+                          new Date(rowData.date_cancel)
+                            .toISOString()
+                            .split("T")[0]
+                            .split("-")[0] +
+                          " " +
+                          new Date(rowData.date_cancel)
+                            .toTimeString()
+                            .split(" ")[0]}
+                      </p>
+                    )}
+                    {rowData.reason && !clientCode && (
+                      <p>
+                        <strong>Motivo reagendamento:</strong>
+                        {" " + rowData.reason}
+                      </p>
+                    )}
+                  </div>
                 );
               }
+            }
+          ]}
+          actions={[
+            rowData => ({
+              icon: "send",
+              tooltip: "Reenviar email",
+              onClick: (event, rowData) => {
+                resendEmail(rowData.id);
+              },
+              hidden:
+                clientCode ||
+                !rowData.completed ||
+                !rowData.actived ||
+                !rowData.date ||
+                rowData.downloaded
+            }),
+            rowData => ({
+              icon: "photo_library",
+              tooltip: "Fotos",
+              onClick: (event, rowData) => {
+                if (clientCode) {
+                  downlaodZipFile(
+                    "Scheduling",
+                    rowData.file_manager_uuid,
+                    rowData.id
+                  );
+                } else {
+                  history.push(
+                    `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
+                  );
+                }
+              },
+              hidden:
+                (clientCode && !rowData.completed) ||
+                !rowData.actived ||
+                !rowData.date
+            }),
+            rowData => ({
+              icon: "event",
+              tooltip: "Reagendar/Cancelar",
+              onClick: (event, rowData) => {
+                history.push(`/scheduling/${rowData.id}`);
+              },
+              hidden: rowData.completed || !rowData.actived || !rowData.date
+            }),
+            rowData => ({
+              icon: "event",
+              tooltip: "Agendar",
+              onClick: (event, rowData) => {
+                history.push(`/scheduling/${rowData.id}`);
+              },
+              hidden: rowData.date || clientCode
+            }),
+            {
+              icon: "add",
+              tooltip: "Agendar",
+              isFreeAction: true,
+              onClick: event => history.push(`/admin/scheduling/`),
+              hidden: clientCode
+            }
+          ]}
+          components={{
+            Cell: props => {
+              return (
+                <MTableCell
+                  style={{
+                    background: !props.rowData.date
+                      ? "#ddd"
+                      : props.rowData.downloaded
+                      ? "#ddddff"
+                      : props.rowData.completed
+                      ? "#ddffdd"
+                      : !props.rowData.actived
+                      ? "#ffdddd"
+                      : props.rowData.changed
+                      ? "#ffffbb"
+                      : "inherit"
+                  }}
+                  {...props}
+                />
+              );
+            }
+          }}
+          localization={{
+            body: {
+              filterRow: {
+                filterTooltip: "Filtro"
+              },
+              emptyDataSourceMessage: "Sem registros para mostrar"
             },
-            hidden:
-              (clientCode && !rowData.completed) ||
-              !rowData.actived ||
-              !rowData.date
-          }),
-          rowData => ({
-            icon: "event",
-            tooltip: "Reagendar/Cancelar",
-            onClick: (event, rowData) => {
-              history.push(`/scheduling/${rowData.id}`);
+            header: {
+              actions: "Ações"
             },
-            hidden: rowData.completed || !rowData.actived || !rowData.date
-          }),
-          rowData => ({
-            icon: "event",
-            tooltip: "Agendar",
-            onClick: (event, rowData) => {
-              history.push(`/scheduling/${rowData.id}`);
-            },
-            hidden: rowData.date || clientCode
-          }),
-          {
-            icon: "add",
-            tooltip: "Agendar",
-            isFreeAction: true,
-            onClick: event => history.push(`/admin/scheduling/`),
-            hidden: clientCode
-          }
-        ]}
-        components={{
-          Cell: props => {
-            return (
-              <MTableCell
-                style={{
-                  background: !props.rowData.date
-                    ? "#ddd"
-                    : props.rowData.downloaded
-                    ? "#eeeefe"
-                    : props.rowData.completed
-                    ? "#eefeee"
-                    : !props.rowData.actived
-                    ? "#feeeee"
-                    : props.rowData.changed
-                    ? "#fefecc"
-                    : "inherit"
-                }}
-                {...props}
-              />
-            );
-          }
-        }}
-        localization={{
-          body: {
-            filterRow: {
-              filterTooltip: "Filtro"
-            },
-            emptyDataSourceMessage: "Sem registros para mostrar"
-          },
-          header: {
-            actions: "Ações"
-          },
-          pagination: {
-            labelRowsSelect: "Registros",
-            labelRowsPerPage: "Registros por página",
-            firstAriaLabel: "Primeira Página",
-            firstTooltip: "Primeira Página",
-            previousAriaLabel: "Página Anterior",
-            previousTooltip: "Página Anterior",
-            nextAriaLabel: "Página Seguinte",
-            nextTooltip: "Página Seguinte",
-            lastAriaLabel: "Última Página",
-            lastTooltip: "Última Página"
-          }
-        }}
-        options={{
-          search: false,
-          pageSize: 20,
-          filtering: true
-        }}
-      />
-    </div>
+            pagination: {
+              labelRowsSelect: "Registros",
+              labelRowsPerPage: "Registros por página",
+              firstAriaLabel: "Primeira Página",
+              firstTooltip: "Primeira Página",
+              previousAriaLabel: "Página Anterior",
+              previousTooltip: "Página Anterior",
+              nextAriaLabel: "Página Seguinte",
+              nextTooltip: "Página Seguinte",
+              lastAriaLabel: "Última Página",
+              lastTooltip: "Última Página"
+            }
+          }}
+          options={{
+            search: false,
+            pageSize: 20,
+            filtering: true
+          }}
+        />
+      </div>
+      <Dialog
+        fullScreen={fullScreen}
+        fullWidth={true}
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogContent>
+          <img
+            src="../../assets/dicas_descompactar_sheephouse.jpg"
+            alt="Sheep House"
+            width={"100%"}
+            className={classes.imgDialog}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
 
