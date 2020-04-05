@@ -5,13 +5,13 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     [theme.breakpoints.down("sm")]: {
       maxWidth: 375,
-      marginTop: theme.spacing(8)
-    }
-  }
+      marginTop: theme.spacing(8),
+    },
+  },
 }));
 
 function District({ enqueueSnackbar }) {
@@ -24,7 +24,7 @@ function District({ enqueueSnackbar }) {
     { title: "Nome", field: "name", defaultSort: "asc" },
     { title: "Cidade", field: "city_id", lookup: { ...cities } },
     { title: "Região", field: "region_id", lookup: { ...regions } },
-    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
+    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" },
   ];
 
   useEffect(() => {
@@ -33,20 +33,20 @@ function District({ enqueueSnackbar }) {
   }, []);
 
   async function handleLoadLookup() {
-    await api.get("/region").then(response => {
+    await api.get("/region").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = item.name);
       });
 
       setRegions(data);
     });
 
-    await api.get("/city").then(response => {
+    await api.get("/city").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = item.name);
       });
 
@@ -55,7 +55,7 @@ function District({ enqueueSnackbar }) {
   }
 
   async function handleLoad() {
-    await api.get("/district").then(response => {
+    await api.get("/district").then((response) => {
       setDistricts(response.data);
     });
   }
@@ -69,8 +69,8 @@ function District({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -81,8 +81,8 @@ function District({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -93,34 +93,34 @@ function District({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .post(`/district`, { name, region_id, city_id, active })
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
 
         handleLoad();
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Erro ao cadastrar registro!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -134,8 +134,8 @@ function District({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -146,8 +146,8 @@ function District({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -158,34 +158,34 @@ function District({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .put(`/district/${id}`, { name, region_id, city_id, active })
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
 
         handleLoad();
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Erro ao atualizar registro!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -197,38 +197,38 @@ function District({ enqueueSnackbar }) {
         columns={columns}
         data={districts}
         editable={{
-          onRowAdd: newData =>
-            new Promise(resolve => {
+          onRowAdd: (newData) =>
+            new Promise((resolve) => {
               resolve();
               handleAdd(newData);
             }),
           onRowUpdate: (newData, oldData) =>
-            new Promise(resolve => {
+            new Promise((resolve) => {
               resolve();
               handleUpdate(newData, oldData);
-            })
+            }),
         }}
         localization={{
           body: {
             editRow: {
               saveTooltip: "Salvar",
               cancelTooltip: "Cancelar",
-              deleteText: "Deseja excluir este registro?"
+              deleteText: "Deseja excluir este registro?",
             },
             filterRow: {
-              filterTooltip: "Filtro"
+              filterTooltip: "Filtro",
             },
             addTooltip: "Adicionar",
             deleteTooltip: "Deletar",
             editTooltip: "Editar",
-            emptyDataSourceMessage: "Sem registros para mostrar"
+            emptyDataSourceMessage: "Sem registros para mostrar",
           },
           header: {
-            actions: "Ações"
+            actions: "",
           },
           toolbar: {
             searchTooltip: "Pesquisar",
-            searchPlaceholder: "Pesquisar"
+            searchPlaceholder: "Pesquisar",
           },
           pagination: {
             labelRowsSelect: "Registros",
@@ -240,13 +240,13 @@ function District({ enqueueSnackbar }) {
             nextAriaLabel: "Página Seguinte",
             nextTooltip: "Página Seguinte",
             lastAriaLabel: "Última Página",
-            lastTooltip: "Última Página"
-          }
+            lastTooltip: "Última Página",
+          },
         }}
         options={{
           search: false,
           pageSize: 20,
-          filtering: true
+          filtering: true,
         }}
       />
     </div>

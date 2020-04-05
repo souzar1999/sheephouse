@@ -14,7 +14,7 @@ import Typography from "@material-ui/core/Typography";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -29,20 +29,20 @@ import history from "../../../history";
 
 import Maps from "../../Global/Scheduling/Maps";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%",
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
   },
   paper: {
     marginTop: theme.spacing(8),
     padding: theme.spacing(4),
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 function Scheduling({ enqueueSnackbar, clientCode }) {
@@ -64,6 +64,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [comments, setComments] = useState(""),
     [accompanies, setAccompanies] = useState(false),
     [drone, setDrone] = useState(false),
+    [tour360, setTour360] = useState(false),
     [region_id, setRegionId] = useState(""),
     [city_id, setCityId] = useState(""),
     [district_id, setDistrictId] = useState(""),
@@ -87,13 +88,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }, [enqueueSnackbar, step]);
 
   async function getHoraries() {
-    await api.get("/horary/active").then(response => {
+    await api.get("/horary/active").then((response) => {
       setHoraries(response.data);
     });
   }
 
   async function getPhotographerSabado() {
-    await api.get("/photographer/sabado").then(response => {
+    await api.get("/photographer/sabado").then((response) => {
       setPhotographerSabado(response.data[0]);
     });
   }
@@ -104,26 +105,26 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setDistrict(district);
     setLat(lat);
     setLng(lng);
-    await api.post(`/city/byName`, { city }).then(async response => {
+    await api.post(`/city/byName`, { city }).then(async (response) => {
       setCityId(response.data[0].id);
       await api
         .post(`/district/byName`, {
           district,
-          city_id: response.data[0].id
+          city_id: response.data[0].id,
         })
-        .then(async response => {
+        .then(async (response) => {
           setDistrictId(response.data[0].id);
           setRegionId(response.data[0].region_id);
           await api
             .post(`/photographer/byRegion`, {
-              region_id: response.data[0].region_id
+              region_id: response.data[0].region_id,
             })
-            .then(async response => {
+            .then(async (response) => {
               setPhotographer(response.data[0]);
               setPhotographerId(response.data[0].id);
             });
         })
-        .catch(error => {
+        .catch((error) => {
           enqueueSnackbar(
             "Problemas com endereço informado! Entre em contato pelo email sheeephouse@gmail.com relatando o acontecimento.",
             {
@@ -131,8 +132,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
-                horizontal: "center"
-              }
+                horizontal: "center",
+              },
             }
           );
         });
@@ -152,8 +153,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
 
       setFormatDate(
@@ -173,9 +174,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           new Date(new Date(+new Date(date) + 86400000)).getDay() == 6
             ? photographer_sabado.id
             : photographer.id,
-        date
+        date,
       })
-      .then(response => {
+      .then((response) => {
         setEvents(response.data);
         setHoraryDisable(false);
 
@@ -184,18 +185,18 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao definir os horários!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -207,8 +208,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -228,28 +229,28 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           photographer_id,
           client_id,
           accompanies,
-          actived: false
+          actived: false,
         })
-        .then(async response => {
+        .then(async (response) => {
           enqueueSnackbar("Sessão cadastrada com sucesso!", {
             variant: "success",
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           });
 
           history.push(`/scheduling`);
         })
-        .catch(error => {
+        .catch((error) => {
           enqueueSnackbar("Erro ao cadastrar sessão!", {
             variant: "error",
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           });
         });
     } else {
@@ -258,8 +259,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
 
       enqueueSnackbar(
@@ -269,8 +270,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         }
       );
 
@@ -285,8 +286,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -297,8 +298,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -326,8 +327,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         }
       );
       return;
@@ -343,20 +344,21 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         comments,
         accompanies,
         drone,
+        tour360,
         region_id,
         city_id,
         district_id,
         photographer_id,
         horary_id,
-        client_id
+        client_id,
       })
-      .then(async response => {
+      .then(async (response) => {
         const scheduling_id = response.data.id;
         await api
           .post(`/google/event/insertEvent`, {
             scheduling_id,
             horary,
-            date
+            date,
           })
           .then(() => {
             enqueueSnackbar(
@@ -366,22 +368,22 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 autoHideDuration: 5000,
                 anchorOrigin: {
                   vertical: "top",
-                  horizontal: "center"
-                }
+                  horizontal: "center",
+                },
               }
             );
 
             history.push(`/scheduling`);
           });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Erro ao cadastrar registro!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -401,7 +403,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             <Grid item xs={12}>
               <TextField
                 type="text"
-                onChange={event => {
+                onChange={(event) => {
                   setComplement(event.target.value);
                 }}
                 value={complement}
@@ -412,7 +414,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                onChange={event => {
+                onChange={(event) => {
                   setComments(event.target.value);
                 }}
                 value={comments}
@@ -426,11 +428,27 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             <Grid item xs={12}>
               <FormGroup row>
                 <FormControlLabel
+                  label="Tour Virtual 360°?"
+                  control={
+                    <Checkbox
+                      checked={tour360}
+                      onChange={(event) => {
+                        setTour360(!tour360);
+                      }}
+                      value={tour360}
+                    />
+                  }
+                />
+              </FormGroup>
+            </Grid>
+            <Grid item xs={12}>
+              <FormGroup row>
+                <FormControlLabel
                   label="Retirar chaves na imobiliária"
                   control={
                     <Checkbox
                       checked={parcial}
-                      onChange={event => {
+                      onChange={(event) => {
                         setParcial(!parcial);
                       }}
                       value={parcial}
@@ -451,7 +469,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   control={
                     <Checkbox
                       checked={drone}
-                      onChange={event => {
+                      onChange={(event) => {
                         setDrone(!drone);
                       }}
                       value={drone}
@@ -469,7 +487,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   <small
                     style={{
                       float: "left",
-                      fontWeight: "bold"
+                      fontWeight: "bold",
                     }}
                   >
                     O agendamento será confirmado pelo administrador
@@ -518,7 +536,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   fullWidth
                   label="Data da Sessão"
                   disabled={!photographer_id}
-                  onChange={date => {
+                  onChange={(date) => {
                     if (date) {
                       const year = date.getFullYear(),
                         month = ("0" + (date.getMonth() + 1)).slice(-2),
@@ -532,8 +550,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                             autoHideDuration: 5000,
                             anchorOrigin: {
                               vertical: "top",
-                              horizontal: "center"
-                            }
+                              horizontal: "center",
+                            },
                           }
                         );
                       } else {
@@ -561,14 +579,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   labelWidth={labelWidth}
                   value={horary_id}
                   disabled={horaryDisable}
-                  onChange={event => {
+                  onChange={(event) => {
                     setHoraryId(event.target.value);
                     setHorary(event.nativeEvent.target.id);
                     console.log(event);
                   }}
                 >
                   <MenuItem value="">-- Selecione --</MenuItem>
-                  {horaries.map(item => {
+                  {horaries.map((item) => {
                     const date_horary = new Date(`${date}T${item.time}-03:00`);
 
                     let validHorary = true;
@@ -581,7 +599,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                       validHorary = false;
                     }
 
-                    events.map(event => {
+                    events.map((event) => {
                       if (event.status == "confirmed") {
                         const eventStart = event.start.date
                           ? `${event.start.date} 00:00:00`
@@ -669,7 +687,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 size="small"
                 fullWidth
                 InputProps={{
-                  readOnly: true
+                  readOnly: true,
                 }}
               />
             </Grid>
@@ -682,7 +700,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 size="small"
                 fullWidth
                 InputProps={{
-                  readOnly: true
+                  readOnly: true,
                 }}
               />
             </Grid>
@@ -695,7 +713,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 size="small"
                 fullWidth
                 InputProps={{
-                  readOnly: true
+                  readOnly: true,
                 }}
               />
             </Grid>
@@ -708,7 +726,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 size="small"
                 fullWidth
                 InputProps={{
-                  readOnly: true
+                  readOnly: true,
                 }}
               />
             </Grid>
@@ -748,8 +766,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }
 }
 
-const mapStateToProps = state => ({
-  clientCode: state.clientCode
+const mapStateToProps = (state) => ({
+  clientCode: state.clientCode,
 });
 
 const withConnect = connect(mapStateToProps, {});

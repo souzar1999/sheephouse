@@ -5,13 +5,13 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     [theme.breakpoints.down("sm")]: {
       maxWidth: 375,
-      marginTop: theme.spacing(8)
-    }
-  }
+      marginTop: theme.spacing(8),
+    },
+  },
 }));
 
 function Broker({ enqueueSnackbar }) {
@@ -19,7 +19,7 @@ function Broker({ enqueueSnackbar }) {
   const [brokers, setBrokers] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
-    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" }
+    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" },
   ];
 
   useEffect(() => {
@@ -27,7 +27,7 @@ function Broker({ enqueueSnackbar }) {
   }, []);
 
   async function handleLoad() {
-    await api.get("/broker").then(response => {
+    await api.get("/broker").then((response) => {
       setBrokers(response.data);
     });
   }
@@ -41,34 +41,34 @@ function Broker({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .post(`/broker`, { name, active })
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
 
         handleLoad();
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Erro ao cadastrar registro!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -82,34 +82,34 @@ function Broker({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .put(`/broker/${id}`, { name, active })
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
 
         handleLoad();
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Erro ao atualizar registro!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -121,38 +121,38 @@ function Broker({ enqueueSnackbar }) {
         columns={columns}
         data={brokers}
         editable={{
-          onRowAdd: newData =>
-            new Promise(resolve => {
+          onRowAdd: (newData) =>
+            new Promise((resolve) => {
               resolve();
               handleAdd(newData);
             }),
           onRowUpdate: (newData, oldData) =>
-            new Promise(resolve => {
+            new Promise((resolve) => {
               resolve();
               handleUpdate(newData, oldData);
-            })
+            }),
         }}
         localization={{
           body: {
             editRow: {
               saveTooltip: "Salvar",
               cancelTooltip: "Cancelar",
-              deleteText: "Deseja excluir este registro?"
+              deleteText: "Deseja excluir este registro?",
             },
             filterRow: {
-              filterTooltip: "Filtro"
+              filterTooltip: "Filtro",
             },
             addTooltip: "Adicionar",
             deleteTooltip: "Deletar",
             editTooltip: "Editar",
-            emptyDataSourceMessage: "Sem registros para mostrar"
+            emptyDataSourceMessage: "Sem registros para mostrar",
           },
           header: {
-            actions: "Ações"
+            actions: "",
           },
           toolbar: {
             searchTooltip: "Pesquisar",
-            searchPlaceholder: "Pesquisar"
+            searchPlaceholder: "Pesquisar",
           },
           pagination: {
             labelRowsSelect: "Registros",
@@ -164,13 +164,13 @@ function Broker({ enqueueSnackbar }) {
             nextAriaLabel: "Página Seguinte",
             nextTooltip: "Página Seguinte",
             lastAriaLabel: "Última Página",
-            lastTooltip: "Última Página"
-          }
+            lastTooltip: "Última Página",
+          },
         }}
         options={{
           search: false,
           pageSize: 20,
-          filtering: true
+          filtering: true,
         }}
       />
     </div>

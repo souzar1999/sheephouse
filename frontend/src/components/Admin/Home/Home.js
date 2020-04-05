@@ -7,16 +7,16 @@ import { withSnackbar } from "notistack";
 
 import api from "../../../services/api";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   paper: {
     padding: theme.spacing(2),
     width: "100%",
     textAlign: "center",
-    color: theme.palette.text.secondary
-  }
+    color: theme.palette.text.secondary,
+  },
 }));
 
 function Home({ enqueueSnackbar }) {
@@ -40,25 +40,25 @@ function Home({ enqueueSnackbar }) {
         cellStyle: {
           width: 120,
           maxWidth: 120,
-          textAlign: "center"
+          textAlign: "center",
         },
         headerStyle: {
           width: 120,
-          maxWidth: 120
-        }
+          maxWidth: 120,
+        },
       },
       {
         title: "Cliente",
         field: "client_id",
         defaultSort: "asc",
-        lookup: { ...Clients }
+        lookup: { ...Clients },
       },
       {
         title: "Fotografo",
         field: "photographer_id",
         defaultSort: "asc",
-        lookup: { ...Photographers }
-      }
+        lookup: { ...Photographers },
+      },
     ];
 
   useEffect(() => {
@@ -85,30 +85,30 @@ function Home({ enqueueSnackbar }) {
   }, []);
 
   async function handleLoadLookup() {
-    await api.get("/photographer").then(response => {
+    await api.get("/photographer").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = item.name);
       });
 
       setPhotographers(data);
     });
 
-    await api.get("/horary/active").then(response => {
+    await api.get("/horary/active").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = item.time);
       });
 
       setHoraries(data);
     });
 
-    await api.get("/client/active").then(response => {
+    await api.get("/client/active").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = `${item.name} (${item.broker.name})`);
       });
 
@@ -121,7 +121,7 @@ function Home({ enqueueSnackbar }) {
       .get(
         `/scheduling/completed/month/${year}-${month}-0${dayIni}/${year}-${month}-${dayEnd}`
       )
-      .then(response => {
+      .then((response) => {
         let drone = 0,
           photo = 0;
         response.data.forEach((item, index) => {
@@ -142,7 +142,7 @@ function Home({ enqueueSnackbar }) {
       .get(
         `/scheduling/canceled/month/${year}-${month}-0${dayIni}/${year}-${month}-${dayEnd}`
       )
-      .then(response => {
+      .then((response) => {
         setCanceled(response.data);
       });
   }
@@ -150,7 +150,7 @@ function Home({ enqueueSnackbar }) {
   async function handleLoadToday(year, month, today) {
     await api
       .get(`/scheduling/day/${year}-${month}-${today}`)
-      .then(response => {
+      .then((response) => {
         setToday(response.data);
       });
   }
@@ -158,7 +158,7 @@ function Home({ enqueueSnackbar }) {
   async function handleLoadTomorrow(year, month, tomorrow) {
     await api
       .get(`/scheduling/day/${year}-${month}-${tomorrow}`)
-      .then(response => {
+      .then((response) => {
         setTomorrow(response.data);
       });
   }
@@ -192,14 +192,14 @@ function Home({ enqueueSnackbar }) {
               data={today}
               localization={{
                 body: {
-                  emptyDataSourceMessage: "Sem registros para mostrar"
+                  emptyDataSourceMessage: "Sem registros para mostrar",
                 },
                 header: {
-                  actions: "Ações"
+                  actions: "",
                 },
                 toolbar: {
                   searchTooltip: "Pesquisar",
-                  searchPlaceholder: "Pesquisar"
+                  searchPlaceholder: "Pesquisar",
                 },
                 pagination: {
                   labelRowsSelect: "Registros",
@@ -211,11 +211,11 @@ function Home({ enqueueSnackbar }) {
                   nextAriaLabel: "Página Seguinte",
                   nextTooltip: "Página Seguinte",
                   lastAriaLabel: "Última Página",
-                  lastTooltip: "Última Página"
-                }
+                  lastTooltip: "Última Página",
+                },
               }}
               options={{
-                search: false
+                search: false,
               }}
             />
           </Paper>
@@ -228,14 +228,14 @@ function Home({ enqueueSnackbar }) {
               data={tomorrow}
               localization={{
                 body: {
-                  emptyDataSourceMessage: "Sem registros para mostrar"
+                  emptyDataSourceMessage: "Sem registros para mostrar",
                 },
                 header: {
-                  actions: "Ações"
+                  actions: "",
                 },
                 toolbar: {
                   searchTooltip: "Pesquisar",
-                  searchPlaceholder: "Pesquisar"
+                  searchPlaceholder: "Pesquisar",
                 },
                 pagination: {
                   labelRowsSelect: "Registros",
@@ -247,11 +247,11 @@ function Home({ enqueueSnackbar }) {
                   nextAriaLabel: "Página Seguinte",
                   nextTooltip: "Página Seguinte",
                   lastAriaLabel: "Última Página",
-                  lastTooltip: "Última Página"
-                }
+                  lastTooltip: "Última Página",
+                },
               }}
               options={{
-                search: false
+                search: false,
               }}
             />
           </Paper>

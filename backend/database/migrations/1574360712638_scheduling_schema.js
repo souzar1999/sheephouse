@@ -18,33 +18,14 @@ class SchedulingSchema extends Schema {
       table.string('google_event_id')
       table.boolean('accompanies').notNullable()
       table.boolean('drone', 9, 6).notNullable()
+      table.boolean('tour360').notNullable()
       table.uuid('file_manager_uuid').notNullable()
-      table
-        .boolean('actived')
-        .notNullable()
-        .defaultTo(true)
-      table
-        .boolean('changed')
-        .notNullable()
-        .defaultTo(false)
-      table
-        .boolean('completed')
-        .notNullable()
-        .defaultTo(false)
-      table
-        .boolean('downloaded')
-        .notNullable()
-        .defaultTo(false)
-      table
-        .integer('region_id')
-        .unsigned()
-        .references('id')
-        .inTable('regions')
-      table
-        .integer('city_id')
-        .unsigned()
-        .references('id')
-        .inTable('cities')
+      table.boolean('actived').notNullable().defaultTo(true)
+      table.boolean('changed').notNullable().defaultTo(false)
+      table.boolean('completed').notNullable().defaultTo(false)
+      table.boolean('downloaded').notNullable().defaultTo(false)
+      table.integer('region_id').unsigned().references('id').inTable('regions')
+      table.integer('city_id').unsigned().references('id').inTable('cities')
       table
         .integer('district_id')
         .unsigned()
@@ -55,16 +36,8 @@ class SchedulingSchema extends Schema {
         .unsigned()
         .references('id')
         .inTable('photographers')
-      table
-        .integer('horary_id')
-        .unsigned()
-        .references('id')
-        .inTable('horaries')
-      table
-        .integer('client_id')
-        .unsigned()
-        .references('id')
-        .inTable('clients')
+      table.integer('horary_id').unsigned().references('id').inTable('horaries')
+      table.integer('client_id').unsigned().references('id').inTable('clients')
       table.timestamps()
     })
   }

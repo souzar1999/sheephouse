@@ -17,25 +17,25 @@ import { connect } from "react-redux";
 
 import history from "../../../history";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     [theme.breakpoints.down("sm")]: {
-      maxWidth: 375,
-      marginTop: theme.spacing(8)
-    }
+      width: "100vw",
+      marginTop: theme.spacing(8),
+    },
   },
   imgDialog: {
     [theme.breakpoints.down("sm")]: {
-      paddingTop: theme.spacing(8)
-    }
-  }
+      paddingTop: theme.spacing(8),
+    },
+  },
 }));
 
 function Scheduling({ enqueueSnackbar, clientCode }) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const small = useMediaQuery(theme.breakpoints.down("sm"));
   const [Schedulings, setScheduling] = useState([]),
     [Clients, setClients] = useState([]),
     [Photographers, setPhotographers] = useState([]),
@@ -43,15 +43,15 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     columns = [
       {
         title: "Serviço",
-        field: "drone",
-        lookup: { 0: "Fotografia", 1: "Filmagem/Drone" }
+        field: "tipo",
+        lookup: { 0: "Fotografia", 1: "Filmagem/Drone", 2: "Tour 360°" },
       },
       {
         title: "Cliente",
         field: "client_id",
         defaultSort: "asc",
         lookup: { ...Clients },
-        hidden: clientCode
+        hidden: clientCode,
       },
       {
         title: "Dia",
@@ -59,20 +59,12 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         defaultSort: "asc",
         type: "numeric",
         cellStyle: {
-          width: 400,
-          maxWidth: 400,
-          textAlign: "left"
+          textAlign: "right",
         },
         filterCellStyle: {
-          paddingTop: 15,
-          paddingBottom: 15,
           paddingLeft: 2,
-          paddingRight: 2
+          paddingRight: 2,
         },
-        headerStyle: {
-          width: 400,
-          maxWidth: 400
-        }
       },
       {
         title: "Mês",
@@ -90,8 +82,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           10: "Outubro",
           11: "Novembro",
           12: "Dezembro",
-          "": "Administrador irá agendar"
-        }
+          "": "Administrador irá agendar",
+        },
       },
       {
         title: "Ano",
@@ -99,20 +91,12 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         defaultSort: "asc",
         filterPlaceholder: "9999",
         cellStyle: {
-          width: 400,
-          maxWidth: 400,
-          textAlign: "left"
+          textAlign: "right",
         },
         filterCellStyle: {
-          paddingTop: 15,
-          paddingBottom: 15,
           paddingLeft: 2,
-          paddingRight: 2
+          paddingRight: 2,
         },
-        headerStyle: {
-          width: 400,
-          maxWidth: 400
-        }
       },
       {
         title: "Horario",
@@ -120,35 +104,33 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         defaultSort: "asc",
         lookup: { ...Horaries },
         cellStyle: {
-          width: 120,
-          maxWidth: 120,
-          textAlign: "center"
+          textAlign: "center",
         },
-        headerStyle: {
-          width: 120,
-          maxWidth: 120
-        }
       },
       {
         title: "Fotografo",
         field: "photographer_id",
         defaultSort: "asc",
-        render: rowData => {
+        render: (rowData) => {
           const name = rowData.photographer.name.split(" ");
           return name[0];
         },
-        lookup: { ...Photographers }
+        lookup: { ...Photographers },
+        hidden: small,
       },
       {
-        title: "Ativo/Cancelado",
-        field: "actived",
+        title: "Status",
+        field: "status",
         lookup: {
           0: "Cancelado",
-          1: "Ativo"
-        }
+          1: "Pendente",
+          2: "Ativo",
+          3: "Enviado",
+          4: "Concluído",
+        },
+        hidden: small,
       },
-      { title: "Finalizado", field: "completed", type: "boolean" },
-      { title: "UUID", field: "file_manager_uuid", type: "text", hidden: true }
+      { title: "UUID", field: "file_manager_uuid", type: "text", hidden: true },
     ];
 
   useEffect(() => {
@@ -175,7 +157,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
         { fileName: fileName }
       )
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar(
           "Gerando arquivo ZIP \n este processo leva em media 15 segundos.",
           {
@@ -183,8 +165,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           }
         );
       });
@@ -197,8 +179,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         axios({
           url: responseDonwloadURL.data.url,
           method: "GET",
-          responseType: "blob"
-        }).then(response => {
+          responseType: "blob",
+        }).then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url;
@@ -213,13 +195,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
   async function handleLoad() {
     if (clientCode) {
-      await api.get(`/Scheduling/byclient/${clientCode}`).then(response => {
+      await api.get(`/Scheduling/byclient/${clientCode}`).then((response) => {
         let schedulingsData = [];
 
-        response.data.forEach(item => {
+        response.data.forEach((item) => {
           if (item.date) {
             const date = item.date.split("-");
-            item.day = parseInt(date[2]);
+            item.day = date[2];
             item.month = parseInt(date[1]);
             item.year = parseInt(date[0]);
           } else {
@@ -227,19 +209,43 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             item.month = "";
             item.year = "";
           }
+
+          if (!item.actived) {
+            item.status = 0;
+          } else if (item.downloaded) {
+            item.status = 4;
+          } else if (item.completed) {
+            item.status = 3;
+          } else if (
+            new Date(`${item.date}T00:00:00-03:00`) <= new Date() &&
+            new Date(`${item.date}T23:59:59-03:00`) >= new Date()
+          ) {
+            item.status = 1;
+          } else {
+            item.status = 2;
+          }
+
+          if (item.drone) {
+            item.tipo = 1;
+          } else if (item.tour360) {
+            item.tipo = 2;
+          } else {
+            item.tipo = 0;
+          }
+
           schedulingsData.push(item);
         });
 
         setScheduling(schedulingsData);
       });
     } else {
-      await api.get("/Scheduling").then(response => {
+      await api.get("/Scheduling").then((response) => {
         let schedulingsData = [];
 
-        response.data.forEach(item => {
+        response.data.forEach((item) => {
           if (item.date) {
             const date = item.date.split("-");
-            item.day = parseInt(date[2]);
+            item.day = date[2];
             item.month = parseInt(date[1]);
             item.year = parseInt(date[0]);
           } else {
@@ -247,6 +253,30 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             item.month = "";
             item.year = "";
           }
+
+          if (!item.actived) {
+            item.status = 0;
+          } else if (item.downloaded) {
+            item.status = 4;
+          } else if (item.completed) {
+            item.status = 3;
+          } else if (
+            new Date(`${item.date}T00:00:00-03:00`) <= new Date() &&
+            new Date(`${item.date}T23:59:59-03:00`) >= new Date()
+          ) {
+            item.status = 1;
+          } else {
+            item.status = 2;
+          }
+
+          if (item.drone) {
+            item.tipo = 1;
+          } else if (item.tour360) {
+            item.tipo = 2;
+          } else {
+            item.tipo = 0;
+          }
+
           schedulingsData.push(item);
         });
 
@@ -256,30 +286,30 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }
 
   async function handleLoadLookup() {
-    await api.get("/photographer").then(response => {
+    await api.get("/photographer").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = item.name);
       });
 
       setPhotographers(data);
     });
 
-    await api.get("/horary/active").then(response => {
+    await api.get("/horary/active").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = item.time);
       });
 
       setHoraries(data);
     });
 
-    await api.get("/client").then(response => {
+    await api.get("/client").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         if (item.broker) {
           return (data[item.id] = `${item.name} (${item.broker.name})`);
         } else {
@@ -292,14 +322,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }
 
   async function resendEmail(id) {
-    await api.get(`/scheduling/${id}/resend`).then(response => {
+    await api.get(`/scheduling/${id}/resend`).then((response) => {
       enqueueSnackbar("Email reenviado!", {
         variant: "success",
         autoHideDuration: 2500,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
     });
   }
@@ -313,10 +343,30 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           data={Schedulings}
           detailPanel={[
             {
-              tooltip: "Show Name",
-              render: rowData => {
+              tooltip: "Mais informações",
+              render: (rowData) => {
                 return (
                   <div style={{ margin: "0 50px" }}>
+                    {small && (
+                      <p>
+                        <strong>Status:</strong>
+                        {rowData.status == 0
+                          ? " Cancelado"
+                          : rowData.status == 1
+                          ? " Pendente"
+                          : rowData.status == 2
+                          ? " Ativo"
+                          : rowData.status == 3
+                          ? " Enviado"
+                          : " Concluído"}
+                      </p>
+                    )}
+                    {small && (
+                      <p>
+                        <strong>Fotógrafo:</strong>
+                        {" " + rowData.photographer.name}
+                      </p>
+                    )}
                     <p>
                       <strong>Endereço:</strong> {rowData.address}
                     </p>
@@ -358,11 +408,11 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                     )}
                   </div>
                 );
-              }
-            }
+              },
+            },
           ]}
           actions={[
-            rowData => ({
+            (rowData) => ({
               icon: "send",
               tooltip: "Reenviar email",
               onClick: (event, rowData) => {
@@ -373,9 +423,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 !rowData.completed ||
                 !rowData.actived ||
                 !rowData.date ||
-                rowData.downloaded
+                rowData.downloaded,
             }),
-            rowData => ({
+            (rowData) => ({
               icon: "photo_library",
               tooltip: "Fotos",
               onClick: (event, rowData) => {
@@ -394,63 +444,63 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               hidden:
                 (clientCode && !rowData.completed) ||
                 !rowData.actived ||
-                !rowData.date
+                !rowData.date,
             }),
-            rowData => ({
+            (rowData) => ({
               icon: "event",
               tooltip: "Reagendar/Cancelar",
               onClick: (event, rowData) => {
                 history.push(`/scheduling/${rowData.id}`);
               },
-              hidden: rowData.completed || !rowData.actived || !rowData.date
+              hidden: rowData.completed || !rowData.actived || !rowData.date,
             }),
-            rowData => ({
+            (rowData) => ({
               icon: "event",
               tooltip: "Agendar",
               onClick: (event, rowData) => {
                 history.push(`/scheduling/${rowData.id}`);
               },
-              hidden: rowData.date || clientCode
+              hidden: rowData.date || clientCode,
             }),
             {
               icon: "add",
               tooltip: "Agendar",
               isFreeAction: true,
-              onClick: event => history.push(`/admin/scheduling/`),
-              hidden: clientCode
-            }
+              onClick: (event) => history.push(`/admin/scheduling/`),
+              hidden: clientCode,
+            },
           ]}
           components={{
-            Cell: props => {
+            Cell: (props) => {
               return (
                 <MTableCell
                   style={{
                     background: !props.rowData.date
                       ? "#ddd"
                       : props.rowData.downloaded
-                      ? "#ddddff"
+                      ? "#bbbbff"
                       : props.rowData.completed
-                      ? "#ddffdd"
+                      ? "#bbffbb"
                       : !props.rowData.actived
-                      ? "#ffdddd"
+                      ? "#ffbbbb"
                       : props.rowData.changed
                       ? "#ffffbb"
-                      : "inherit"
+                      : "inherit",
                   }}
                   {...props}
                 />
               );
-            }
+            },
           }}
           localization={{
             body: {
               filterRow: {
-                filterTooltip: "Filtro"
+                filterTooltip: "Filtro",
               },
-              emptyDataSourceMessage: "Sem registros para mostrar"
+              emptyDataSourceMessage: "Sem registros para mostrar",
             },
             header: {
-              actions: "Ações"
+              actions: "",
             },
             pagination: {
               labelRowsSelect: "Registros",
@@ -462,18 +512,19 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               nextAriaLabel: "Página Seguinte",
               nextTooltip: "Página Seguinte",
               lastAriaLabel: "Última Página",
-              lastTooltip: "Última Página"
-            }
+              lastTooltip: "Última Página",
+            },
           }}
           options={{
             search: false,
             pageSize: 20,
-            filtering: true
+            filtering: true,
+            emptyRowsWhenPaging: false,
           }}
         />
       </div>
       <Dialog
-        fullScreen={fullScreen}
+        fullScreen={small}
         fullWidth={true}
         open={open}
         onClose={handleClose}
@@ -496,11 +547,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   );
 }
 
-const mapStateToProps = state => ({
-  clientCode: state.clientCode
+const mapStateToProps = (state) => ({
+  clientCode: state.clientCode,
 });
 
 const withConnect = connect(mapStateToProps, {});
 
 export default compose(withSnackbar, withConnect)(Scheduling);
-//"start": "serve -s build -l 3000",

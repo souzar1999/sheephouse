@@ -83,6 +83,7 @@ class SchedulingController {
       'accompanies',
       'comments',
       'drone',
+      'tour360',
       'actived',
       'region_id',
       'city_id',
@@ -90,7 +91,7 @@ class SchedulingController {
       'photographer_id',
       'horary_id',
       'client_id',
-      'file_manager_uuid'
+      'file_manager_uuid',
     ])
 
     const scheduling = await Scheduling.create(data)
@@ -109,6 +110,7 @@ class SchedulingController {
       'comments',
       'accompanies',
       'drone',
+      'tour360',
       'region_id',
       'city_id',
       'district_id',
@@ -121,7 +123,7 @@ class SchedulingController {
       'downloaded',
       'reason',
       'date_cancel',
-      'file_manager_uuid'
+      'file_manager_uuid',
     ])
 
     scheduling.merge(data)
@@ -160,7 +162,7 @@ class SchedulingController {
           scheduling,
           photographer,
           horary,
-          admin
+          admin,
         },
         message => {
           message
@@ -175,9 +177,7 @@ class SchedulingController {
   }
 
   async resendEmail({ params, request, response, view }) {
-    const scheduling = await Scheduling.query()
-      .where('id', params.id)
-      .first()
+    const scheduling = await Scheduling.query().where('id', params.id).first()
     if (scheduling.completed == true && scheduling.downloaded == false) {
       const photographer = await Photographer.findOrFail(
         scheduling.photographer_id
@@ -194,7 +194,7 @@ class SchedulingController {
           scheduling,
           photographer,
           horary,
-          admin
+          admin,
         },
         message => {
           message
@@ -209,9 +209,7 @@ class SchedulingController {
   }
 
   async downloaded({ params, request, response, view }) {
-    const scheduling = await Scheduling.query()
-      .where('id', params.id)
-      .first()
+    const scheduling = await Scheduling.query().where('id', params.id).first()
     if (scheduling.downloaded == false) {
       scheduling.downloaded = true
       await scheduling.save()

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import MaterialTable, { MTableCell } from "material-table";
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import api from "../../../services/api";
 
 import * as FileSaver from "file-saver";
@@ -15,38 +16,47 @@ import { connect } from "react-redux";
 
 import history from "../../../history";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     [theme.breakpoints.down("sm")]: {
-      maxWidth: 375,
-      marginTop: theme.spacing(8)
-    }
+      width: "100vw",
+      marginTop: theme.spacing(8),
+    },
   },
   button: {
     backgroundColor: "#43a047",
     color: "white",
     "&:hover": {
-      backgroundColor: "green"
-    }
-  }
+      backgroundColor: "green",
+    },
+  },
 }));
 
 function Reports({ enqueueSnackbar, clientCode }) {
   const classes = useStyles();
+  const theme = useTheme();
+  const small = useMediaQuery(theme.breakpoints.down("sm"));
   const [Schedulings, setScheduling] = useState([]),
     [Photographers, setPhotographers] = useState([]),
+    [Horaries, setHoraries] = useState([]),
     columns = [
       {
         title: "Serviço",
-        field: "drone",
-        lookup: { 0: "Fotografia", 1: "Filmagem/Drone" }
+        field: "tipo",
+        lookup: { 0: "Fotografia", 1: "Filmagem/Drone", 2: "Tour 360°" },
       },
       {
         title: "Dia",
         field: "day",
         defaultSort: "asc",
-        filtering: false,
-        type: "numeric"
+        type: "numeric",
+        cellStyle: {
+          textAlign: "right",
+        },
+        filterCellStyle: {
+          paddingLeft: 2,
+          paddingRight: 2,
+        },
       },
       {
         title: "Mês",
@@ -65,8 +75,8 @@ function Reports({ enqueueSnackbar, clientCode }) {
           10: "Outubro",
           11: "Novembro",
           12: "Dezembro",
-          "": "Administrador irá agendar"
-        }
+          "": "Administrador irá agendar",
+        },
       },
       {
         title: "Ano",
@@ -74,65 +84,54 @@ function Reports({ enqueueSnackbar, clientCode }) {
         defaultSort: "asc",
         filterPlaceholder: "9999",
         cellStyle: {
-          width: 200,
-          maxWidth: 200,
-          textAlign: "left"
+          textAlign: "right",
         },
         filterCellStyle: {
-          paddingTop: 15,
-          paddingBottom: 15,
           paddingLeft: 2,
-          paddingRight: 2
+          paddingRight: 2,
         },
-        headerStyle: {
-          width: 200,
-          maxWidth: 200
-        }
+      },
+      {
+        title: "Horario",
+        field: "horary_id",
+        defaultSort: "asc",
+        lookup: { ...Horaries },
+        cellStyle: {
+          textAlign: "center",
+        },
       },
       {
         title: "Fotografo",
         field: "photographer_id",
-        render: rowData => {
+        render: (rowData) => {
           const name = rowData.photographer.name.split(" ");
           return name[0];
         },
-        lookup: { ...Photographers }
+        lookup: { ...Photographers },
+        hidden: small,
       },
       {
-        title: "Ativo/Cancelado",
-        field: "actived",
+        title: "Status",
+        field: "status",
         lookup: {
           0: "Cancelado",
-          1: "Ativo"
-        }
+          1: "Pendente",
+          2: "Ativo",
+          3: "Enviado",
+          4: "Concluído",
+        },
+        hidden: small,
       },
-      { title: "Finalizado", field: "completed", type: "boolean" },
       {
         title: "Endereço",
         field: "address",
-        cellStyle: {
-          display: "none"
-        },
-        filterCellStyle: {
-          display: "none"
-        },
-        headerStyle: {
-          display: "none"
-        }
+        hidden: true,
       },
       {
         title: "Complemento",
         field: "complement",
-        cellStyle: {
-          display: "none"
-        },
-        filterCellStyle: {
-          display: "none"
-        },
-        headerStyle: {
-          display: "none"
-        }
-      }
+        hidden: true,
+      },
     ];
 
   useEffect(() => {
@@ -141,13 +140,13 @@ function Reports({ enqueueSnackbar, clientCode }) {
   }, []);
 
   async function handleLoad() {
-    await api.get(`/Scheduling/byclient/${clientCode}`).then(response => {
+    await api.get(`/Scheduling/byclient/${clientCode}`).then((response) => {
       let schedulingsComplete = [];
 
-      response.data.forEach(item => {
+      response.data.forEach((item) => {
         if (item.date) {
           const date = item.date.split("-");
-          item.day = parseInt(date[2]);
+          item.day = date[2];
           item.month = parseInt(date[1]);
           item.year = parseInt(date[0]);
         } else {
@@ -155,6 +154,30 @@ function Reports({ enqueueSnackbar, clientCode }) {
           item.month = "";
           item.year = "";
         }
+
+        if (!item.actived) {
+          item.status = 0;
+        } else if (item.downloaded) {
+          item.status = 4;
+        } else if (item.completed) {
+          item.status = 3;
+        } else if (
+          new Date(`${item.date}T00:00:00-03:00`) <= new Date() &&
+          new Date(`${item.date}T23:59:59-03:00`) >= new Date()
+        ) {
+          item.status = 1;
+        } else {
+          item.status = 2;
+        }
+
+        if (item.drone) {
+          item.tipo = 1;
+        } else if (item.tour360) {
+          item.tipo = 2;
+        } else {
+          item.tipo = 0;
+        }
+
         schedulingsComplete.push(item);
       });
 
@@ -163,29 +186,59 @@ function Reports({ enqueueSnackbar, clientCode }) {
   }
 
   async function handleLoadLookup() {
-    await api.get("/photographer").then(response => {
+    await api.get("/photographer").then((response) => {
       let data = [];
 
-      response.data.map(item => {
+      response.data.map((item) => {
         return (data[item.id] = item.name);
       });
 
       setPhotographers(data);
+    });
+
+    await api.get("/horary/active").then((response) => {
+      let data = [];
+
+      response.data.map((item) => {
+        return (data[item.id] = item.time);
+      });
+
+      setHoraries(data);
     });
   }
 
   return (
     <div className={classes.main}>
       <MaterialTable
-        title="Relatório de sessões"
+        title="Relatório"
         columns={columns}
         data={Schedulings}
         detailPanel={[
           {
-            tooltip: "Show Name",
-            render: rowData => {
+            tooltip: "Mais informações",
+            render: (rowData) => {
               return (
                 <div style={{ margin: "0 50px" }}>
+                  {small && (
+                    <p>
+                      <strong>Status:</strong>
+                      {rowData.status == 0
+                        ? " Cancelado"
+                        : rowData.status == 1
+                        ? " Pendente"
+                        : rowData.status == 2
+                        ? " Ativo"
+                        : rowData.status == 3
+                        ? " Enviado"
+                        : " Concluído"}
+                    </p>
+                  )}
+                  {small && (
+                    <p>
+                      <strong>Fotógrafo:</strong>
+                      {" " + rowData.photographer.name}
+                    </p>
+                  )}
                   <p>
                     <strong>Endereço:</strong> {rowData.address}
                   </p>
@@ -221,24 +274,24 @@ function Reports({ enqueueSnackbar, clientCode }) {
                   )}
                 </div>
               );
-            }
-          }
+            },
+          },
         ]}
         localization={{
           body: {
             filterRow: {
-              filterTooltip: "Filtro"
+              filterTooltip: "Filtro",
             },
-            emptyDataSourceMessage: "Sem registros para mostrar"
+            emptyDataSourceMessage: "Sem registros para mostrar",
           },
           header: {
-            actions: "Ações"
+            actions: "",
           },
           toolbar: {
             exportTitle: "Exportar",
             exportAriaLabel: "Exportar",
-            exportName: "Exportar Excel"
-          }
+            exportName: "Exportar Excel",
+          },
         }}
         icons={{
           Export: () => (
@@ -250,7 +303,7 @@ function Reports({ enqueueSnackbar, clientCode }) {
             >
               Relatório
             </Button>
-          )
+          ),
         }}
         options={{
           search: false,
@@ -261,17 +314,29 @@ function Reports({ enqueueSnackbar, clientCode }) {
           exportCsv: (columns, dataTable) => {
             let data = [];
 
-            dataTable.forEach(async item => {
+            dataTable.forEach(async (item) => {
               data.push({
-                Serviço: item.drone ? "Filmagem/Drone" : "Fotografia",
+                Serviço: item.drone
+                  ? "Filmagem/Drone"
+                  : item.tour360
+                  ? "Tour 360°"
+                  : "Fotografia",
                 Dia: item.day,
                 Mês: item.month,
                 Ano: item.year,
                 Fotógrafo: item.photographer.name,
-                Status: item.actived ? "Ativo" : "Cancelado",
-                Finalizado: item.completed ? "Finalizado" : "",
+                Status:
+                  item.status == 0
+                    ? "Cancelado"
+                    : item.status == 1
+                    ? "Pendente"
+                    : item.status == 2
+                    ? "Ativo"
+                    : item.status == 3
+                    ? "Enviado"
+                    : "Concluído",
                 Endereço: item.address,
-                Complemento: item.complement
+                Complemento: item.complement,
               });
             });
 
@@ -283,11 +348,11 @@ function Reports({ enqueueSnackbar, clientCode }) {
               const ws = XLSX.utils.json_to_sheet(data);
               const wb = {
                 Sheets: { Relatório: ws },
-                SheetNames: ["Relatório"]
+                SheetNames: ["Relatório"],
               };
               const excelBuffer = XLSX.write(wb, {
                 bookType: "xlsx",
-                type: "array"
+                type: "array",
               });
               const dataExport = new Blob([excelBuffer], { type: fileType });
               FileSaver.saveAs(
@@ -295,15 +360,15 @@ function Reports({ enqueueSnackbar, clientCode }) {
                 "Relatório-Sheephouse" + fileExtension
               );
             }, 5000);
-          }
+          },
         }}
       />
     </div>
   );
 }
 
-const mapStateToProps = state => ({
-  clientCode: state.clientCode
+const mapStateToProps = (state) => ({
+  clientCode: state.clientCode,
 });
 
 const withConnect = connect(mapStateToProps, {});

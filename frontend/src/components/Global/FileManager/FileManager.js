@@ -17,20 +17,20 @@ import { connect } from "react-redux";
 import api from "../../../services/api";
 import history from "../../../history";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     [theme.breakpoints.down("sm")]: {
       maxWidth: 375,
-      marginTop: theme.spacing(8)
-    }
+      marginTop: theme.spacing(8),
+    },
   },
   button: {
     backgroundColor: "#43a047",
     color: "white",
     "&:hover": {
-      backgroundColor: "green"
-    }
-  }
+      backgroundColor: "green",
+    },
+  },
 }));
 
 function FileDownloader({ enqueueSnackbar, clientCode }) {
@@ -50,7 +50,7 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   async function handleLoad() {
     await api
       .get("/storages/storage/" + uploadType + "/folder/" + folderName)
-      .then(response => {
+      .then((response) => {
         setFiles(response.data.result);
       });
   }
@@ -66,14 +66,14 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
           rowData.Key +
           "/delete"
       )
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar("Arquivo Removido com sucesso!", {
           variant: "success",
           autoHideDuration: 2500,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
         const index = files.indexOf(rowData);
         if (index > -1) {
@@ -94,7 +94,7 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
         { fileName: fileName }
       )
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar(
           "Gerando arquivo ZIP \n este processo leva em media 15 segundos.",
           {
@@ -102,8 +102,8 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           }
         );
       });
@@ -116,8 +116,8 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         axios({
           url: responseDonwloadURL.data.url,
           method: "GET",
-          responseType: "blob"
-        }).then(response => {
+          responseType: "blob",
+        }).then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url;
@@ -136,57 +136,62 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
         <MaterialTable
           title="Gerenciador de arquivos"
           actions={[
-            rowData => ({
+            (rowData) => ({
               icon: "delete",
               tooltip: "Excluir",
               onClick: (event, rowData) => {
                 deleteFile(rowData);
               },
-              hidden: clientCode
+              hidden: clientCode,
             }),
             {
               icon: "cloud_upload",
               tooltip: "Upload",
               isFreeAction: true,
               onClick: () => {
-                history.push("/fileuploader/" + uploadType + "/" + folderName);
+                history.push(
+                  "/fileuploader/" +
+                    uploadType +
+                    "/" +
+                    folderName +
+                    "/" +
+                    dbCode
+                );
               },
-              hidden: clientCode
+              hidden: clientCode,
             },
             {
-              icon: () => (
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                >
-                  Baixar imagens
-                </Button>
-              ),
-              tooltip: "Baixar todos os arquivos",
+              icon: "cloud_download",
+              tooltip: "Download",
               isFreeAction: true,
               onClick: () => {
                 downlaodZipFile();
               },
-              hidden: false
-            }
+            },
+            {
+              icon: "arrow_back",
+              tooltip: "Voltar",
+              isFreeAction: true,
+              onClick: () => {
+                history.push("/scheduling");
+              },
+            },
           ]}
           columns={columns}
           data={files}
           localization={{
             body: {
               filterRow: {
-                filterTooltip: "Filtro"
+                filterTooltip: "Filtro",
               },
-              emptyDataSourceMessage: "Sem registros para mostrar"
+              emptyDataSourceMessage: "Sem registros para mostrar",
             },
             header: {
-              actions: "Ações"
+              actions: "",
             },
             toolbar: {
               searchTooltip: "Pesquisar",
-              searchPlaceholder: "Pesquisar"
+              searchPlaceholder: "Pesquisar",
             },
             pagination: {
               labelRowsSelect: "Registros",
@@ -198,13 +203,13 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
               nextAriaLabel: "Página Seguinte",
               nextTooltip: "Página Seguinte",
               lastAriaLabel: "Última Página",
-              lastTooltip: "Última Página"
-            }
+              lastTooltip: "Última Página",
+            },
           }}
           options={{
             search: false,
             pageSize: 5,
-            filtering: true
+            filtering: true,
           }}
         />
       </div>
@@ -212,8 +217,8 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   );
 }
 
-const mapStateToProps = state => ({
-  clientCode: state.clientCode
+const mapStateToProps = (state) => ({
+  clientCode: state.clientCode,
 });
 
 const withConnect = connect(mapStateToProps, {});

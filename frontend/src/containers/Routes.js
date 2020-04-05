@@ -6,7 +6,7 @@ import {
   LoginRequeredRoute,
   LogoutRequeredRoute,
   AdminRequeredRoute,
-  ClientRequeredRoute
+  ClientRequeredRoute,
 } from "../components";
 
 import UserLogin from "./UserLogin/UserLogin";
@@ -92,7 +92,7 @@ export default function Routes() {
         />
         <LoginRequeredRoute
           exact
-          path="/fileuploader/:uploadType/:folderName"
+          path="/fileuploader/:uploadType/:folderName/:dbcode"
           component={GlobalFileUploader}
         />
 

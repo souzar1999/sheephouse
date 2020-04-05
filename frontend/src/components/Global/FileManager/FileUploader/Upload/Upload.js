@@ -15,7 +15,7 @@ class Upload extends Component {
       files: [],
       uploading: false,
       uploadProgress: {},
-      successfullUploaded: false
+      successfullUploaded: false,
     };
 
     this.onFilesAdded = this.onFilesAdded.bind(this);
@@ -27,8 +27,8 @@ class Upload extends Component {
   }
 
   onFilesAdded(files) {
-    this.setState(prevState => ({
-      files: prevState.files.concat(files)
+    this.setState((prevState) => ({
+      files: prevState.files.concat(files),
     }));
   }
 
@@ -39,7 +39,7 @@ class Upload extends Component {
 
     var folderName = this.props.folderName;
     var uploadType = this.props.uploadType;
-    this.state.files.forEach(file => {
+    this.state.files.forEach((file) => {
       promisesUrl.push(
         api.get(
           "storages/storage/" +
@@ -56,7 +56,7 @@ class Upload extends Component {
 
     const resultado = await Promise.all(promisesUrl);
     var contador = 0;
-    this.state.files.forEach(file => {
+    this.state.files.forEach((file) => {
       var url = resultado[contador].data.result;
       contador++;
       promises.push(this.sendRequest(file, url));
@@ -74,7 +74,8 @@ class Upload extends Component {
   async backFileManager() {
     var folderName = this.props.folderName;
     var uploadType = this.props.uploadType;
-    history.push(`/filemanager/${uploadType}/${folderName}`);
+    var dbCode = this.props.dbCode;
+    history.push(`/filemanager/${uploadType}/${folderName}/${dbCode}`);
   }
 
   async CompleteScheduling() {
@@ -90,30 +91,30 @@ class Upload extends Component {
       var uploadType = this.props.uploadType;
 
       var options = {
-        onUploadProgress: progressEvent => {
+        onUploadProgress: (progressEvent) => {
           const copy = { ...this.state.uploadProgress };
           copy[file.name] = {
             state: "pending",
             percentage: Math.floor(
               (progressEvent.loaded * 100) / progressEvent.total
-            )
+            ),
           };
           this.setState({ uploadProgress: copy });
         },
         headers: {
           key: uploadType + "/" + folderName + "/" + file.name,
-          "Content-Type": file.type
-        }
+          "Content-Type": file.type,
+        },
       };
       axios
         .put(url, file, options)
-        .then(response => {
+        .then((response) => {
           const copy = { ...this.state.uploadProgress };
           copy[file.name] = { state: "done", percentage: 100 };
           this.setState({ uploadProgress: copy });
           resolve(response);
         })
-        .catch(error => {
+        .catch((error) => {
           const copy = { ...this.state.uploadProgress };
           copy[file.name] = { state: "error", percentage: 0 };
           this.setState({ uploadProgress: copy });
@@ -134,7 +135,7 @@ class Upload extends Component {
             src="../../assets/baseline-check_circle_outline-24px.svg"
             style={{
               opacity:
-                uploadProgress && uploadProgress.state === "done" ? 0.5 : 0
+                uploadProgress && uploadProgress.state === "done" ? 0.5 : 0,
             }}
           />
         </div>
@@ -194,7 +195,7 @@ class Upload extends Component {
             />
           </div>
           <div className="Files">
-            {this.state.files.map(file => {
+            {this.state.files.map((file) => {
               return (
                 <div key={file.name} className="Row">
                   <span className="Filename">{file.name}</span>

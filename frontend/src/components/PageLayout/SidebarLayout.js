@@ -45,7 +45,7 @@ const SidebarLayout = ({ isUserAdmin }) => {
           label="Minhas Sessões"
         />
         <Sideitem link="/reports" icon="print" label="Relatórios" />
-        <Sideitem link="/contacts" icon="contacts" label="Contato" />
+        <Sideitem link="/contacts" icon="contacts" label="Informações" />
         <Divider />
         <Sideitem link="/profile" icon="person" label="Perfil" />
         <Divider />
@@ -55,8 +55,8 @@ const SidebarLayout = ({ isUserAdmin }) => {
   }
 };
 
-const mapStateToProps = state => ({
-  isUserAdmin: state.isUserAdmin
+const mapStateToProps = (state) => ({
+  isUserAdmin: state.isUserAdmin,
 });
 
 export default connect(mapStateToProps, {})(SidebarLayout);
