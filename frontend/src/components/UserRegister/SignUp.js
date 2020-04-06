@@ -14,7 +14,7 @@ import { withSnackbar } from "notistack";
 import history from "../../history";
 import api from "../../services/api";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(-7),
     padding: theme.spacing(4),
@@ -22,16 +22,16 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     alignItems: "center",
     [theme.breakpoints.down("sm")]: {
-      marginTop: theme.spacing(1)
-    }
+      marginTop: theme.spacing(1),
+    },
   },
   form: {
     width: "100%",
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 function SignUp({ enqueueSnackbar }) {
@@ -54,8 +54,8 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -66,8 +66,8 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -78,8 +78,8 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -90,8 +90,8 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -102,8 +102,8 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -114,8 +114,8 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -126,8 +126,8 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -138,49 +138,49 @@ function SignUp({ enqueueSnackbar }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .post("/users", { username, email, password })
-      .then(async response => {
+      .then(async (response) => {
         const user_id = response.data.id,
           actived = false;
         await api
           .post("/client", { name, phone, user_id, actived })
-          .then(response => {
-            enqueueSnackbar("Usuário cadastrado!", {
+          .then((response) => {
+            enqueueSnackbar("Obrigado pelo seu cadastro!", {
               variant: "success",
               autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
-                horizontal: "center"
-              }
+                horizontal: "center",
+              },
             });
 
-            enqueueSnackbar("Aguarde a aprovação do administrador!", {
+            enqueueSnackbar("Iremos ativar o seu cadastro em breve!", {
               variant: "success",
               autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
-                horizontal: "center"
-              }
+                horizontal: "center",
+              },
             });
 
             history.push("/");
           });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao cadastrar usuário!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -204,7 +204,7 @@ function SignUp({ enqueueSnackbar }) {
                 label="Nome"
                 autoFocus
                 value={name}
-                onChange={event => setName(event.target.value)}
+                onChange={(event) => setName(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -217,7 +217,7 @@ function SignUp({ enqueueSnackbar }) {
                 name="email"
                 autoComplete="email"
                 value={email}
-                onChange={event => {
+                onChange={(event) => {
                   setEmail(event.target.value);
                   setUsername(event.target.value);
                 }}
@@ -233,7 +233,7 @@ function SignUp({ enqueueSnackbar }) {
                 name="phone"
                 autoComplete="phone"
                 value={phone}
-                onChange={event => setPhone(event.target.value)}
+                onChange={(event) => setPhone(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -247,7 +247,7 @@ function SignUp({ enqueueSnackbar }) {
                 id="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={event => setPassword(event.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -260,7 +260,7 @@ function SignUp({ enqueueSnackbar }) {
                 type="password"
                 id="password2"
                 value={password2}
-                onChange={event => setPassword2(event.target.value)}
+                onChange={(event) => setPassword2(event.target.value)}
                 autoComplete="current-password"
               />
             </Grid>
@@ -270,7 +270,7 @@ function SignUp({ enqueueSnackbar }) {
                   <Checkbox
                     required
                     value={termsOfUse}
-                    onClick={event => setTermsOfUse(event.target.value)}
+                    onClick={(event) => setTermsOfUse(event.target.value)}
                     color="primary"
                   />
                 }

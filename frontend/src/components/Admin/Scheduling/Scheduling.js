@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -27,20 +27,20 @@ import history from "../../../history";
 
 import Maps from "../../Global/Scheduling/Maps";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%",
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
   },
   paper: {
     marginTop: theme.spacing(8),
     padding: theme.spacing(4),
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 function Scheduling({ enqueueSnackbar }) {
@@ -64,6 +64,7 @@ function Scheduling({ enqueueSnackbar }) {
     [accompanies, setAccompanies] = useState(false),
     [insertEvent, setInsertEvent] = useState(false),
     [drone, setDrone] = useState(false),
+    [tour360, setTour360] = useState(false),
     [region_id, setRegionId] = useState(""),
     [city_id, setCityId] = useState(""),
     [district_id, setDistrictId] = useState(""),
@@ -84,19 +85,19 @@ function Scheduling({ enqueueSnackbar }) {
   }, [enqueueSnackbar]);
 
   async function getHoraries() {
-    await api.get("/horary/active").then(response => {
+    await api.get("/horary/active").then((response) => {
       setHoraries(response.data);
     });
   }
 
   async function getPhotographers() {
-    await api.get("/photographer/active").then(response => {
+    await api.get("/photographer/active").then((response) => {
       setPhotographers(response.data);
     });
   }
 
   async function getClients() {
-    await api.get("/client").then(response => {
+    await api.get("/client").then((response) => {
       setClients(response.data);
     });
   }
@@ -125,8 +126,8 @@ function Scheduling({ enqueueSnackbar }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
 
         setFormatDate(
@@ -141,7 +142,7 @@ function Scheduling({ enqueueSnackbar }) {
   async function getCalendarEvents(date) {
     await api
       .post(`/calendar/event/list`, { photographer_id, date })
-      .then(response => {
+      .then((response) => {
         setEvents(response.data);
         setHoraryDisable(false);
 
@@ -150,18 +151,18 @@ function Scheduling({ enqueueSnackbar }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao definir os horários!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -169,19 +170,19 @@ function Scheduling({ enqueueSnackbar }) {
   async function handleInsertAddress(city, district) {
     await api
       .post(`/city/byName`, { city })
-      .then(async response => {
+      .then(async (response) => {
         setCityId(response.data[0].id);
         await api
           .post(`/district/byName`, {
             district,
-            city_id: response.data[0].id
+            city_id: response.data[0].id,
           })
-          .then(async response => {
+          .then(async (response) => {
             setDistrictId(response.data[0].id);
             setRegionId(response.data[0].region_id);
           });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar(
           "Problemas com endereço informado! Entre em contato pelo e-mail sheeephouse@gmail.com.",
           {
@@ -189,8 +190,8 @@ function Scheduling({ enqueueSnackbar }) {
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           }
         );
       });
@@ -216,8 +217,8 @@ function Scheduling({ enqueueSnackbar }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         }
       );
       return;
@@ -233,21 +234,22 @@ function Scheduling({ enqueueSnackbar }) {
         comments,
         accompanies,
         drone,
+        tour360,
         region_id,
         city_id,
         district_id,
         photographer_id,
         horary_id,
-        client_id
+        client_id,
       })
-      .then(async response => {
+      .then(async (response) => {
         if (!insertEvent) {
           const scheduling_id = response.data.id;
           await api
             .post(`/google/event/insertEvent`, {
               scheduling_id,
               horary,
-              date
+              date,
             })
             .then(() => {
               enqueueSnackbar("Sessão agendada com sucesso!", {
@@ -255,33 +257,39 @@ function Scheduling({ enqueueSnackbar }) {
                 autoHideDuration: 5000,
                 anchorOrigin: {
                   vertical: "top",
-                  horizontal: "center"
-                }
+                  horizontal: "center",
+                },
               });
-
-              history.push(`/scheduling`);
             });
         } else {
-          enqueueSnackbar("Sessão agendada com sucesso!", {
-            variant: "success",
-            autoHideDuration: 5000,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center"
-            }
-          });
-
-          history.push(`/scheduling`);
+          const scheduling_id = response.data.id;
+          await api
+            .post(`/scheduling/event/sendEmail`, {
+              scheduling_id,
+              horary,
+            })
+            .then((response) => {
+              enqueueSnackbar("Sessão agendada com sucesso!", {
+                variant: "success",
+                autoHideDuration: 5000,
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center",
+                },
+              });
+            });
         }
+
+        history.push(`/scheduling`);
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Erro ao agendar sessão!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -300,7 +308,7 @@ function Scheduling({ enqueueSnackbar }) {
           <Grid item xs={12}>
             <TextField
               type="text"
-              onChange={event => {
+              onChange={(event) => {
                 setComplement(event.target.value);
               }}
               value={complement}
@@ -311,7 +319,7 @@ function Scheduling({ enqueueSnackbar }) {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              onChange={event => {
+              onChange={(event) => {
                 setComments(event.target.value);
               }}
               value={comments}
@@ -331,13 +339,13 @@ function Scheduling({ enqueueSnackbar }) {
                 id="photographerSelect"
                 labelWidth={labelWidth}
                 value={photographer_id}
-                onChange={event => {
+                onChange={(event) => {
                   setDateDisable(false);
                   setPhotographerId(event.target.value);
                 }}
               >
                 <MenuItem value="">-- Selecione --</MenuItem>
-                {photographers.map(item => {
+                {photographers.map((item) => {
                   return (
                     <MenuItem key={item.id} value={item.id}>
                       {item.name}
@@ -354,7 +362,7 @@ function Scheduling({ enqueueSnackbar }) {
                 control={
                   <Checkbox
                     checked={insertEvent}
-                    onChange={event => {
+                    onChange={(event) => {
                       setInsertEvent(!insertEvent);
                       setEvents([]);
                       setDate();
@@ -376,7 +384,7 @@ function Scheduling({ enqueueSnackbar }) {
                 fullWidth
                 label="Data da Sessão"
                 disabled={!photographer_id}
-                onChange={date => {
+                onChange={(date) => {
                   if (date) {
                     const year = date.getFullYear(),
                       month = ("0" + (date.getMonth() + 1)).slice(-2),
@@ -399,13 +407,13 @@ function Scheduling({ enqueueSnackbar }) {
                 labelWidth={labelWidth}
                 value={horary_id}
                 disabled={horaryDisable || dateDisable}
-                onChange={event => {
+                onChange={(event) => {
                   setHoraryId(event.target.value);
                   setHorary(event.nativeEvent.target.id);
                 }}
               >
                 <MenuItem value="">-- Selecione --</MenuItem>
-                {horaries.map(item => {
+                {horaries.map((item) => {
                   const date_horary = new Date(`${date}T${item.time}-03:00`);
 
                   let validHorary = true;
@@ -418,7 +426,7 @@ function Scheduling({ enqueueSnackbar }) {
                     validHorary = false;
                   }
 
-                  events.map(event => {
+                  events.map((event) => {
                     if (event.status == "confirmed") {
                       const eventStart = event.start.date
                         ? `${event.start.date} 00:00:00`
@@ -461,12 +469,12 @@ function Scheduling({ enqueueSnackbar }) {
                 id="clientSelect"
                 labelWidth={labelWidth}
                 value={client_id}
-                onChange={event => {
+                onChange={(event) => {
                   setClientId(event.target.value);
                 }}
               >
                 <MenuItem value="">-- Selecione --</MenuItem>
-                {clients.map(item => {
+                {clients.map((item) => {
                   return (
                     <MenuItem key={item.id} value={item.id}>
                       {item.name}
@@ -483,10 +491,26 @@ function Scheduling({ enqueueSnackbar }) {
                 control={
                   <Checkbox
                     checked={drone}
-                    onChange={event => {
+                    onChange={(event) => {
                       setDrone(!drone);
                     }}
                     value={drone}
+                  />
+                }
+              />
+            </FormGroup>
+          </Grid>
+          <Grid item xs={12}>
+            <FormGroup row>
+              <FormControlLabel
+                label="Tour Virtual 360°"
+                control={
+                  <Checkbox
+                    checked={tour360}
+                    onChange={(event) => {
+                      setTour360(!tour360);
+                    }}
+                    value={tour360}
                   />
                 }
               />

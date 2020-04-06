@@ -21,7 +21,7 @@ class GapiCalendarController {
         calendarId,
         auth: Env.get('GAPI_KEY'),
         timeMax,
-        timeMin
+        timeMin,
       },
       res = await calendar.events.list(params)
 
@@ -32,7 +32,7 @@ class GapiCalendarController {
     const { scheduling_id, horary, date } = request.only([
         'scheduling_id',
         'horary',
-        'date'
+        'date',
       ]),
       numTime = Date.parse(`1970-01-01T${horary}Z`),
       numDate = Date.parse(`${date}T00:00:00Z`),
@@ -60,7 +60,7 @@ class GapiCalendarController {
         end,
         start,
         summary,
-        description
+        description,
       },
       tokens = JSON.parse(photographer.tokens)
 
@@ -74,13 +74,13 @@ class GapiCalendarController {
       await scheduling.save()
 
       await Mail.send(
-        'emails.addEvent',
+        'emails.addEventCalendar',
         {
           client,
           scheduling,
           photographer,
           horaryItem,
-          admin
+          admin,
         },
         message => {
           message
@@ -101,7 +101,7 @@ class GapiCalendarController {
     const { scheduling_id, horary, date } = request.only([
         'scheduling_id',
         'horary',
-        'date'
+        'date',
       ]),
       numTime = Date.parse(`1970-01-01T${horary}Z`),
       numDate = Date.parse(`${date}T00:00:00Z`),
@@ -130,23 +130,42 @@ class GapiCalendarController {
         end,
         start,
         summary,
-        description
+        description,
       },
       tokens = JSON.parse(photographer.tokens)
 
-    oauth2Client.setCredentials(tokens)
+    if (eventId) {
+      oauth2Client.setCredentials(tokens)
 
-    const params = { calendarId, eventId, auth: oauth2Client, requestBody }
+      const params = { calendarId, eventId, auth: oauth2Client, requestBody }
 
-    await calendar.events.update(params).then(async res => {
+      await calendar.events.update(params).then(async res => {
+        await Mail.send(
+          'emails.reschedulingEventCalendar',
+          {
+            client,
+            scheduling,
+            photographer,
+            horaryItem,
+            admin,
+          },
+          message => {
+            message
+              .to(user.email)
+              .cc(admin.email)
+              .from('noreply@sheephouse.com.br', 'Sheep House')
+              .subject('Sheep House - Sessão reagendada')
+          }
+        )
+      })
+    } else {
       await Mail.send(
         'emails.reschedulingEvent',
         {
           client,
           scheduling,
           photographer,
-          horaryItem,
-          admin
+          admin,
         },
         message => {
           message
@@ -156,11 +175,11 @@ class GapiCalendarController {
             .subject('Sheep House - Sessão reagendada')
         }
       )
+    }
 
-      return response
-        .status(200)
-        .send({ message: 'Agendamento alterado com sucesso' })
-    })
+    return response
+      .status(200)
+      .send({ message: 'Agendamento alterado com sucesso' })
   }
 
   async cancelEvent({ request, response }) {
@@ -180,11 +199,31 @@ class GapiCalendarController {
       eventId = scheduling.google_event_id,
       tokens = JSON.parse(photographer.tokens)
 
-    oauth2Client.setCredentials(tokens)
+    if (eventId) {
+      oauth2Client.setCredentials(tokens)
 
-    const params = { calendarId, auth: oauth2Client, eventId }
+      const params = { calendarId, auth: oauth2Client, eventId }
 
-    await calendar.events.delete(params).then(async res => {
+      await calendar.events.delete(params).then(async res => {
+        await Mail.send(
+          'emails.cancelEventCalendar',
+          {
+            client,
+            scheduling,
+            photographer,
+            horary,
+            admin,
+          },
+          message => {
+            message
+              .to(user.email)
+              .cc(admin.email)
+              .from('noreply@sheephouse.com.br', 'Sheep House')
+              .subject('Sheep House - Sessão cancelada')
+          }
+        )
+      })
+    } else {
       await Mail.send(
         'emails.cancelEvent',
         {
@@ -192,7 +231,7 @@ class GapiCalendarController {
           scheduling,
           photographer,
           horary,
-          admin
+          admin,
         },
         message => {
           message
@@ -202,11 +241,11 @@ class GapiCalendarController {
             .subject('Sheep House - Sessão cancelada')
         }
       )
+    }
 
-      return response
-        .status(200)
-        .send({ message: 'Agendamento alterado com sucesso' })
-    })
+    return response
+      .status(200)
+      .send({ message: 'Agendamento alterado com sucesso' })
   }
 }
 

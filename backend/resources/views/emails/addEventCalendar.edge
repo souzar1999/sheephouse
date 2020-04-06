@@ -7,9 +7,17 @@
       </a>
     </div>
     <div style="padding:20px 50px;background-color: #fff;color:#444;">
-      Olá {{ client.name }}
+      Olá {{ client.name }}!
       <br/><br/>
-      Sua sessão do dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} foi cancelada.
+      Sua sessão foi agendada para o dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ horaryItem.time }} horas.
+      <br/><br/>
+      Serviço: {{ (scheduling.drone ? 'Filmagem/Drone':(scheduling.tour360 ? 'Tour 360°':'Fotografia')) }}<br/><br/>
+      
+      Endereço: {{ scheduling.address }}<br/>
+      Complemento: {{ scheduling.complement }}<br/><br/>
+      Fotógrafo: {{ photographer.name }} (<a style="color:#444;" href="mailto:{{ photographer.email }}">{{ photographer.email }}</a>)
+      <br/><br/>
+      Para reagendar/cancelar a sessão de fotos clique <a style="color:#444;" href="https://app.sheephouse.com.br/scheduling/{{scheduling.id}}">aqui</a>.
       <br/><br/>
       Ficamos a disposição para tirar dúvidas pelo e-mail <a style="color:#444;" href="mailto:{{ admin.email }}">{{ admin.email }}</a>.
       <br/>

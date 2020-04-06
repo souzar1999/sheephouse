@@ -16,21 +16,21 @@ import { userLogin, userClient, userAdmin } from "../../store/actions";
 import api from "../../services/api";
 import history from "../../history";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(6),
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   form: {
     width: "100%",
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
@@ -52,8 +52,8 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -64,8 +64,8 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -76,23 +76,23 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .post("/sessions", { email, password })
-      .then(async response => {
+      .then(async (response) => {
         localStorage.setItem("userToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
 
         await api
           .get("/user", {
-            headers: { Authorization: `Bearer ${response.data.token}` }
+            headers: { Authorization: `Bearer ${response.data.token}` },
           })
-          .then(async response => {
+          .then(async (response) => {
             if (response.data.admin) {
               onUserAdmin();
               onUserLogin();
@@ -102,8 +102,8 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
                 autoHideDuration: 5000,
                 anchorOrigin: {
                   vertical: "top",
-                  horizontal: "center"
-                }
+                  horizontal: "center",
+                },
               });
 
               localStorage.setItem("userEmail", email);
@@ -114,42 +114,44 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
               return;
             }
 
-            await api.get(`/client/user/${response.data.id}`).then(response => {
-              if (response.data[0]) {
-                if (response.data[0].id) {
-                  onUserClient(response.data[0].id);
-                  onUserLogin();
+            await api
+              .get(`/client/user/${response.data.id}`)
+              .then((response) => {
+                if (response.data[0]) {
+                  if (response.data[0].id) {
+                    onUserClient(response.data[0].id);
+                    onUserLogin();
 
-                  enqueueSnackbar("Seja bem vindo!", {
-                    variant: "success",
-                    autoHideDuration: 5000,
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "center"
-                    }
-                  });
+                    enqueueSnackbar("Seja bem vindo!", {
+                      variant: "success",
+                      autoHideDuration: 5000,
+                      anchorOrigin: {
+                        vertical: "top",
+                        horizontal: "center",
+                      },
+                    });
 
-                  history.push("/home");
+                    history.push("/home");
 
-                  return;
-                }
-              } else {
-                enqueueSnackbar(
-                  "Seu usuário está desativado, entre em contato pelo e-mail sheeephouse@gmail.com para verificar a situação!",
-                  {
-                    variant: "error",
-                    autoHideDuration: 5000,
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "center"
-                    }
+                    return;
                   }
-                );
-              }
-            });
+                } else {
+                  enqueueSnackbar(
+                    "Obrigado pelo seu cadastro.\nIremos ativar o seu cadastro em breve!",
+                    {
+                      variant: "error",
+                      autoHideDuration: 5000,
+                      anchorOrigin: {
+                        vertical: "top",
+                        horizontal: "center",
+                      },
+                    }
+                  );
+                }
+              });
           });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar(
           "Email e senha informados não correspondem a nenhum usuário!",
           {
@@ -157,8 +159,8 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           }
         );
       });
@@ -171,8 +173,8 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -183,15 +185,15 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .post("/forgotPassword", { email })
-      .then(async response => {
+      .then(async (response) => {
         enqueueSnackbar(
           "Acesse seu email para trocar a senha!\nVerifique a caixa de SPAM.",
           {
@@ -199,19 +201,19 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           }
         );
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao enviar email de troca de senha!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -234,7 +236,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
             autoComplete="email"
             autoFocus
             value={email}
-            onChange={event => setEmail(event.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
             variant="outlined"
@@ -247,7 +249,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
             id="password"
             autoComplete="current-password"
             value={password}
-            onChange={event => setPassword(event.target.value)}
+            onChange={(event) => setPassword(event.target.value)}
           />
           <Button
             type="submit"
@@ -275,17 +277,17 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
   );
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     onUserLogin: () => {
       dispatch(userLogin());
     },
-    onUserClient: id => {
+    onUserClient: (id) => {
       dispatch(userClient(id));
     },
     onUserAdmin: () => {
       dispatch(userAdmin());
-    }
+    },
   };
 };
 

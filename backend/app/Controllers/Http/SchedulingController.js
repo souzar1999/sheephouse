@@ -139,6 +139,39 @@ class SchedulingController {
     await scheduling.delete()
   }
 
+  async sendEmailWithoutEvent({ params, request, response, view }) {
+    const { scheduling_id, horary, date } = request.only([
+        'scheduling_id',
+        'horary',
+      ]),
+      scheduling = await Scheduling.findOrFail(scheduling_id),
+      photographer = await Photographer.findOrFail(scheduling.photographer_id),
+      client = await Client.findOrFail(scheduling.client_id),
+      user = await User.findOrFail(client.user_id),
+      admin = await User.findByOrFail('admin', true)
+
+    await Mail.send(
+      'emails.addEvent',
+      {
+        client,
+        scheduling,
+        photographer,
+        admin,
+      },
+      message => {
+        message
+          .to(user.email)
+          .cc(admin.email)
+          .from('noreply@sheephouse.com.br', 'Sheep House')
+          .subject('Sheep House - Sessão agendada')
+      }
+    )
+
+    return response
+      .status(200)
+      .send({ message: 'Agendamento criado com sucesso' })
+  }
+
   async completeAndSendEmail({ params, request, response, view }) {
     const scheduling = await Scheduling.query()
       .where('file_manager_uuid', params.fileManagerId)

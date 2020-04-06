@@ -15,7 +15,7 @@ import { useParams } from "react-router-dom";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -28,17 +28,17 @@ import api from "../../../services/api";
 
 import history from "../../../history";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%",
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
   },
   paper: {
     marginTop: theme.spacing(8),
     padding: theme.spacing(4),
     display: "flex",
-    flexDirection: "column"
-  }
+    flexDirection: "column",
+  },
 }));
 
 function Rescheduling({ enqueueSnackbar, clientCode }) {
@@ -72,25 +72,25 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
   }, [horaries, id]);
 
   async function getHoraries() {
-    await api.get("/horary/active").then(response => {
+    await api.get("/horary/active").then((response) => {
       setHoraries(response.data);
     });
   }
 
   async function getPhotographers() {
-    await api.get("/photographer/active").then(response => {
+    await api.get("/photographer/active").then((response) => {
       setPhotographers(response.data);
     });
   }
 
   async function getPhotographerSabado() {
-    await api.get("/photographer/sabado").then(response => {
+    await api.get("/photographer/sabado").then((response) => {
       setPhotographerSabado(response.data[0]);
     });
   }
 
   async function getScheduling() {
-    await api.get(`/scheduling/${id}`).then(response => {
+    await api.get(`/scheduling/${id}`).then((response) => {
       if (
         response.data[0].completed ||
         (!response.data[0].actived && response.data[0].date)
@@ -121,8 +121,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       }
     } else {
@@ -137,9 +137,9 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           new Date(new Date(+new Date(date) + 86400000)).getDay() == 6
             ? photographer_sabado.id
             : photographer.id,
-        date
+        date,
       })
-      .then(response => {
+      .then((response) => {
         setEvents(response.data);
         setHoraryDisable(false);
 
@@ -148,18 +148,18 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao definir os horários!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -173,8 +173,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         }
       );
       return;
@@ -186,8 +186,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -201,33 +201,33 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
               new Date().toTimeString().split(" ")[0]
             }`
           : null,
-        reason: clientCode ? reason : null
+        reason: clientCode ? reason : null,
       })
-      .then(async response => {
+      .then(async (response) => {
         await api
           .post(`/google/event/cancelEvent`, {
-            scheduling_id
+            scheduling_id,
           })
-          .then(response => {
+          .then((response) => {
             enqueueSnackbar("Sessão cancelada com sucesso!", {
               variant: "success",
               autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
-                horizontal: "center"
-              }
+                horizontal: "center",
+              },
             });
             history.push(`/scheduling`);
           });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao cancelar sessão!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -239,8 +239,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -251,8 +251,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -263,8 +263,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -277,8 +277,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         }
       );
       return;
@@ -289,50 +289,56 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         horary_id,
         photographer_id,
         changed: false,
-        actived: true
+        actived: true,
       })
-      .then(async response => {
+      .then(async (response) => {
         if (!insertEvent) {
           const scheduling_id = response.data.id;
           await api
             .post(`/google/event/insertEvent`, {
               scheduling_id,
               horary,
-              date
+              date,
             })
-            .then(response => {
+            .then(() => {
               enqueueSnackbar("Sessão agendada com sucesso!", {
                 variant: "success",
                 autoHideDuration: 5000,
                 anchorOrigin: {
                   vertical: "top",
-                  horizontal: "center"
-                }
+                  horizontal: "center",
+                },
               });
-
-              history.push(`/scheduling`);
             });
         } else {
-          enqueueSnackbar("Registro cadastrado com sucesso!", {
-            variant: "success",
-            autoHideDuration: 5000,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center"
-            }
-          });
-
-          history.push(`/scheduling`);
+          const scheduling_id = response.data.id;
+          await api
+            .post(`/scheduling/event/sendEmail`, {
+              scheduling_id,
+              horary,
+            })
+            .then((response) => {
+              enqueueSnackbar("Sessão agendada com sucesso!", {
+                variant: "success",
+                autoHideDuration: 5000,
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center",
+                },
+              });
+            });
         }
+
+        history.push(`/scheduling`);
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Erro ao agendar sessão!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -344,8 +350,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -356,8 +362,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -370,8 +376,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         }
       );
       return;
@@ -385,8 +391,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         }
       );
       return;
@@ -397,37 +403,37 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         photographer_id,
         horary_id,
         changed: true,
-        reason: clientCode ? reason : null
+        reason: clientCode ? reason : null,
       })
-      .then(async response => {
+      .then(async (response) => {
         const scheduling_id = response.data.id;
         await api
           .post(`/google/event/editEvent`, {
             scheduling_id,
             horary,
-            date
+            date,
           })
-          .then(response => {
+          .then((response) => {
             enqueueSnackbar("Sessão reagendada com sucesso!", {
               variant: "success",
               autoHideDuration: 5000,
               anchorOrigin: {
                 vertical: "top",
-                horizontal: "center"
-              }
+                horizontal: "center",
+              },
             });
 
             history.push(`/scheduling`);
           });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao reagendar sessão!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -451,12 +457,12 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     id="photographerSelect"
                     labelWidth={labelWidth}
                     value={photographer_id}
-                    onChange={event => {
+                    onChange={(event) => {
                       setPhotographerId(event.target.value);
                     }}
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
-                    {photographers.map(item => {
+                    {photographers.map((item) => {
                       return (
                         <MenuItem id={item.id} key={item.id} value={item.id}>
                           {item.name}
@@ -473,7 +479,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     control={
                       <Checkbox
                         checked={insertEvent}
-                        onChange={event => {
+                        onChange={(event) => {
                           setInsertEvent(!insertEvent);
                           setEvents([]);
                           setDate();
@@ -495,7 +501,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     fullWidth
                     label="Data da Sessão"
                     disabled={!photographer_id}
-                    onChange={date => {
+                    onChange={(date) => {
                       if (date) {
                         const year = date.getFullYear(),
                           month = ("0" + (date.getMonth() + 1)).slice(-2),
@@ -509,8 +515,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                               autoHideDuration: 5000,
                               anchorOrigin: {
                                 vertical: "top",
-                                horizontal: "center"
-                              }
+                                horizontal: "center",
+                              },
                             }
                           );
                         } else {
@@ -538,13 +544,13 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     labelWidth={labelWidth}
                     value={horary_id}
                     disabled={horaryDisable}
-                    onChange={event => {
+                    onChange={(event) => {
                       setHoraryId(event.target.value);
                       setHorary(event.nativeEvent.target.id);
                     }}
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
-                    {horaries.map(item => {
+                    {horaries.map((item) => {
                       const date_horary = new Date(
                         `${date}T${item.time}-03:00`
                       );
@@ -558,7 +564,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                         validHorary = false;
                       }
 
-                      events.map(event => {
+                      events.map((event) => {
                         if (event.status == "confirmed") {
                           const eventStart = event.start.date
                             ? `${event.start.date} 00:00:00`
@@ -648,7 +654,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     fullWidth
                     label="Data da Sessão (Apenas para reagendar)"
                     disabled={!photographer_id}
-                    onChange={date => {
+                    onChange={(date) => {
                       if (date) {
                         const year = date.getFullYear(),
                           month = ("0" + (date.getMonth() + 1)).slice(-2),
@@ -662,8 +668,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                               autoHideDuration: 5000,
                               anchorOrigin: {
                                 vertical: "top",
-                                horizontal: "center"
-                              }
+                                horizontal: "center",
+                              },
                             }
                           );
                         } else {
@@ -691,13 +697,13 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                     labelWidth={labelWidth}
                     value={horary_id}
                     disabled={horaryDisable}
-                    onChange={event => {
+                    onChange={(event) => {
                       setHoraryId(event.target.value);
                       setHorary(event.nativeEvent.target.id);
                     }}
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
-                    {horaries.map(item => {
+                    {horaries.map((item) => {
                       const date_horary = new Date(
                         `${date}T${item.time}-03:00`
                       );
@@ -715,7 +721,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                         validHorary = false;
                       }
 
-                      events.map(event => {
+                      events.map((event) => {
                         if (event.status == "confirmed") {
                           const eventStart = event.start.date
                             ? `${event.start.date} 00:00:00`
@@ -757,7 +763,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
               <Grid item xs={12}>
                 <TextField
                   type="text"
-                  onChange={event => {
+                  onChange={(event) => {
                     setReason(event.target.value);
                   }}
                   value={reason}
@@ -818,8 +824,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
   );
 }
 
-const mapStateToProps = state => ({
-  clientCode: state.clientCode
+const mapStateToProps = (state) => ({
+  clientCode: state.clientCode,
 });
 
 const withConnect = connect(mapStateToProps, {});
