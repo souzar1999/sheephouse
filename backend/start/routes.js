@@ -86,27 +86,37 @@ Route.get(
   'SchedulingController.downloaded'
 ).middleware('auth')
 
-Route.resource('broker', 'BrokerController').apiOnly().middleware('auth')
+Route.resource('broker', 'BrokerController')
+  .apiOnly()
+  .middleware('auth')
 
-Route.resource('city', 'CityController').apiOnly().middleware('auth')
+Route.resource('city', 'CityController')
+  .apiOnly()
+  .middleware('auth')
 
 Route.resource('client', 'ClientController').apiOnly()
 
-Route.resource('district', 'DistrictController').apiOnly().middleware('auth')
+Route.resource('district', 'DistrictController')
+  .apiOnly()
+  .middleware('auth')
 
-Route.resource('horary', 'HoraryController').apiOnly().middleware('auth')
+Route.resource('horary', 'HoraryController')
+  .apiOnly()
+  .middleware('auth')
 
 Route.resource('photographer', 'PhotographerController')
   .apiOnly()
   .middleware('auth')
 
-Route.resource('property', 'PropertyController').apiOnly().middleware('auth')
-
-Route.resource('region', 'RegionController').apiOnly().middleware('auth')
-
-Route.resource('scheduling', 'SchedulingController')
+Route.resource('property', 'PropertyController')
   .apiOnly()
   .middleware('auth')
+
+Route.resource('region', 'RegionController')
+  .apiOnly()
+  .middleware('auth')
+
+Route.resource('scheduling', 'SchedulingController').apiOnly()
 
 Route.get(
   'storages/storage/:storageType/folder/:folderName',
@@ -126,12 +136,12 @@ Route.get(
 Route.post(
   'storages/storage/:storageType/folder/:folderName/zip',
   'StorageController.zipFolder'
-).middleware('auth')
+)
 
 Route.get(
   '/storages/zip/filename/:fileName/download',
   'StorageController.downloadZipFolder'
-).middleware('auth')
+)
 
 Route.post('/resetPassword', 'ResetPasswordController.store')
 Route.post('/forgotPassword', 'ForgotPasswordController.store')

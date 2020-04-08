@@ -14,6 +14,7 @@ import UserLogout from "./UserLogout/UserLogout";
 import UserLogoutError from "./UserLogout/UserLogoutError";
 import UserRegister from "./UserRegister/UserRegister";
 import UserResetPassword from "./UserResetPassword/UserResetPassword";
+import UserDownload from "./UserDownload/UserDownload";
 
 import NotFound from "./NotFound/NotFound";
 
@@ -87,13 +88,18 @@ export default function Routes() {
         />
         <LoginRequeredRoute
           exact
-          path="/filemanager/:uploadType/:folderName/:dbcode"
+          path="/filemanager/:uploadType/:folderName/:dbCode"
           component={GlobalFileManager}
         />
         <LoginRequeredRoute
           exact
-          path="/fileuploader/:uploadType/:folderName/:dbcode"
+          path="/fileuploader/:uploadType/:folderName/:dbCode"
           component={GlobalFileUploader}
+        />
+
+        <Route
+          path="/download/:uploadType/:folderName/:dbCode"
+          component={UserDownload}
         />
 
         <Route component={NotFound} />

@@ -20,7 +20,7 @@ function Client({ enqueueSnackbar }) {
     [brokers, setBrokers] = useState([]),
     columns = [
       { title: "Nome", field: "name", defaultSort: "asc" },
-      { title: "Imobiliária", field: "broker_id", lookup: { ...brokers } },
+      { title: "Imobiliária", field: "broker.id", lookup: { ...brokers } },
       { title: "Telefone", field: "phone" },
       { title: "Email", field: "user.email", editable: "never" },
       {
@@ -51,6 +51,7 @@ function Client({ enqueueSnackbar }) {
   async function handleLoad() {
     await api.get("/client").then((response) => {
       setClients(response.data);
+      console.log(response.data);
     });
   }
 

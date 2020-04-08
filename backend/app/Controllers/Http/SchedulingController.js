@@ -91,7 +91,7 @@ class SchedulingController {
       'photographer_id',
       'horary_id',
       'client_id',
-      'file_manager_uuid',
+      'file_manager_uuid'
     ])
 
     const scheduling = await Scheduling.create(data)
@@ -123,7 +123,7 @@ class SchedulingController {
       'downloaded',
       'reason',
       'date_cancel',
-      'file_manager_uuid',
+      'file_manager_uuid'
     ])
 
     scheduling.merge(data)
@@ -142,7 +142,7 @@ class SchedulingController {
   async sendEmailWithoutEvent({ params, request, response, view }) {
     const { scheduling_id, horary, date } = request.only([
         'scheduling_id',
-        'horary',
+        'horary'
       ]),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
@@ -156,7 +156,7 @@ class SchedulingController {
         client,
         scheduling,
         photographer,
-        admin,
+        admin
       },
       message => {
         message
@@ -195,11 +195,12 @@ class SchedulingController {
           scheduling,
           photographer,
           horary,
-          admin,
+          admin
         },
         message => {
           message
             .to(user.email)
+            .to(broker.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão Concluída')
@@ -210,7 +211,9 @@ class SchedulingController {
   }
 
   async resendEmail({ params, request, response, view }) {
-    const scheduling = await Scheduling.query().where('id', params.id).first()
+    const scheduling = await Scheduling.query()
+      .where('id', params.id)
+      .first()
     if (scheduling.completed == true && scheduling.downloaded == false) {
       const photographer = await Photographer.findOrFail(
         scheduling.photographer_id
@@ -227,7 +230,7 @@ class SchedulingController {
           scheduling,
           photographer,
           horary,
-          admin,
+          admin
         },
         message => {
           message
@@ -242,7 +245,9 @@ class SchedulingController {
   }
 
   async downloaded({ params, request, response, view }) {
-    const scheduling = await Scheduling.query().where('id', params.id).first()
+    const scheduling = await Scheduling.query()
+      .where('id', params.id)
+      .first()
     if (scheduling.downloaded == false) {
       scheduling.downloaded = true
       await scheduling.save()

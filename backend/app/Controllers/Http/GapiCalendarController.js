@@ -21,7 +21,7 @@ class GapiCalendarController {
         calendarId,
         auth: Env.get('GAPI_KEY'),
         timeMax,
-        timeMin,
+        timeMin
       },
       res = await calendar.events.list(params)
 
@@ -32,7 +32,7 @@ class GapiCalendarController {
     const { scheduling_id, horary, date } = request.only([
         'scheduling_id',
         'horary',
-        'date',
+        'date'
       ]),
       numTime = Date.parse(`1970-01-01T${horary}Z`),
       numDate = Date.parse(`${date}T00:00:00Z`),
@@ -50,9 +50,15 @@ class GapiCalendarController {
       horaryItem = await Horary.findOrFail(scheduling.horary_id),
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
-      title = scheduling.drone ? 'Filmagem Aérea' : 'Fotografia Imobiliária',
+      title = scheduling.drone
+        ? 'Filmagem/Drone'
+        : scheduling.tour360
+        ? 'Tour 360°'
+        : 'Fotografia',
       summary = `${title} - (${user.email} | ${broker.name})`,
-      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel / Observação: ${scheduling.address} (${scheduling.complement})\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      complement = scheduling.complement ? scheduling.complement : '',
+      comments = scheduling.comments ? scheduling.comments : '',
+      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -60,7 +66,7 @@ class GapiCalendarController {
         end,
         start,
         summary,
-        description,
+        description
       },
       tokens = JSON.parse(photographer.tokens)
 
@@ -80,7 +86,7 @@ class GapiCalendarController {
           scheduling,
           photographer,
           horaryItem,
-          admin,
+          admin
         },
         message => {
           message
@@ -101,7 +107,7 @@ class GapiCalendarController {
     const { scheduling_id, horary, date } = request.only([
         'scheduling_id',
         'horary',
-        'date',
+        'date'
       ]),
       numTime = Date.parse(`1970-01-01T${horary}Z`),
       numDate = Date.parse(`${date}T00:00:00Z`),
@@ -120,9 +126,15 @@ class GapiCalendarController {
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
-      title = scheduling.drone ? 'Filmagem Aérea' : 'Fotografia Imobiliária',
+      title = scheduling.drone
+        ? 'Filmagem/Drone'
+        : scheduling.tour360
+        ? 'Tour 360°'
+        : 'Fotografia',
       summary = `${title} - (${user.email} | ${broker.name})`,
-      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel / Observação: ${scheduling.address} (${scheduling.complement})\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      complement = scheduling.complement ? scheduling.complement : '',
+      comments = scheduling.comments ? scheduling.comments : '',
+      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -130,7 +142,7 @@ class GapiCalendarController {
         end,
         start,
         summary,
-        description,
+        description
       },
       tokens = JSON.parse(photographer.tokens)
 
@@ -147,7 +159,7 @@ class GapiCalendarController {
             scheduling,
             photographer,
             horaryItem,
-            admin,
+            admin
           },
           message => {
             message
@@ -165,7 +177,7 @@ class GapiCalendarController {
           client,
           scheduling,
           photographer,
-          admin,
+          admin
         },
         message => {
           message
@@ -212,7 +224,7 @@ class GapiCalendarController {
             scheduling,
             photographer,
             horary,
-            admin,
+            admin
           },
           message => {
             message
@@ -231,7 +243,7 @@ class GapiCalendarController {
           scheduling,
           photographer,
           horary,
-          admin,
+          admin
         },
         message => {
           message

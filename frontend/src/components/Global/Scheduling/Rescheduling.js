@@ -475,7 +475,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
               <Grid item xs={12}>
                 <FormGroup row>
                   <FormControlLabel
-                    label="Agendamento sem integração com agenda?"
+                    label="Agendamento sem integração com agenda"
                     control={
                       <Checkbox
                         checked={insertEvent}
