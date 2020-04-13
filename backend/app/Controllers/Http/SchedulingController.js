@@ -200,7 +200,6 @@ class SchedulingController {
         message => {
           message
             .to(user.email)
-            .to(broker.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão Concluída')
