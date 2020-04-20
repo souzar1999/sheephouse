@@ -428,7 +428,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             <Grid item xs={12}>
               <FormGroup row>
                 <FormControlLabel
-                  label="Tour Virtual 360°?"
+                  label="Tour Virtual 360°"
                   control={
                     <Checkbox
                       checked={tour360}

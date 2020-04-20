@@ -19,6 +19,7 @@ function Broker({ enqueueSnackbar }) {
   const [brokers, setBrokers] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
+    { title: "E-mail", field: "email" },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" },
   ];
 
@@ -33,7 +34,7 @@ function Broker({ enqueueSnackbar }) {
   }
 
   async function handleAdd(newData) {
-    const { name, active } = newData;
+    const { name, email, active } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da imobiliária!", {
@@ -47,8 +48,32 @@ function Broker({ enqueueSnackbar }) {
       return;
     }
 
+    if (!email) {
+      enqueueSnackbar("Informe o email da imoiliária!", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
+    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      enqueueSnackbar("Informe um email válido!", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
     await api
-      .post(`/broker`, { name, active })
+      .post(`/broker`, { name, email, active })
       .then((response) => {
         enqueueSnackbar("Registro cadastrada com sucesso!", {
           variant: "success",
@@ -74,7 +99,7 @@ function Broker({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, active, id } = newData;
+    const { name, email, active, id } = newData;
 
     if (!name) {
       enqueueSnackbar("Informe o nome da imobiliária!", {
@@ -88,8 +113,32 @@ function Broker({ enqueueSnackbar }) {
       return;
     }
 
+    if (!email) {
+      enqueueSnackbar("Informe o email da imoiliária!", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
+    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      enqueueSnackbar("Informe um email válido!", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
     await api
-      .put(`/broker/${id}`, { name, active })
+      .put(`/broker/${id}`, { name, email, active })
       .then((response) => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",

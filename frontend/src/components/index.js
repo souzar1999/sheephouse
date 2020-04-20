@@ -12,6 +12,7 @@ import Logout from "./UserLogout/Logout";
 import LogoutError from "./UserLogout/LogoutError";
 import SignUp from "./UserRegister/SignUp";
 import ResetPassword from "./UserResetPassword/ResetPassword";
+import Download from "./UserDownload/UserDownload";
 
 import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
@@ -66,5 +67,6 @@ export {
   UserContact,
   UserReports,
   UserProfile,
-  ResetPassword
+  ResetPassword,
+  Download,
 };

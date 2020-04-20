@@ -14,7 +14,7 @@
       Serviço: {{ (scheduling.drone ? 'Filmagem/Drone':(scheduling.tour360 ? 'Tour 360°':'Fotografia')) }}<br/><br/>
       
       Endereço: {{ scheduling.address }}<br/>
-      Complemento: {{ scheduling.complement }}<br/><br/>
+      Complemento: {{ scheduling.complement ? scheduling.complement : '' }}<br/><br/>
       Fotógrafo: {{ photographer.name }} (<a style="color:#444;" href="mailto:{{ photographer.email }}">{{ photographer.email }}</a>)
       <br/><br/>
       Para reagendar/cancelar a sessão de fotos clique <a style="color:#444;" href="https://app.sheephouse.com.br/scheduling/{{scheduling.id}}">aqui</a>.

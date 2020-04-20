@@ -102,7 +102,7 @@ function Contact() {
             <a
               className={classes.link}
               target="_blank"
-              href="./assets/termos-de-uso-sheephouse.pdf"
+              href="./assets/manual-da-plataforma.pdf"
             >
               <p className={classes.manualItem}>
                 <h4>Manual da Plataforma</h4>
@@ -112,7 +112,7 @@ function Contact() {
             <a
               className={classes.link}
               target="_blank"
-              href="./assets/termos-de-uso-sheephouse.pdf"
+              href="./assets/manual-do-proprietario.pdf"
             >
               <p className={classes.manualItem}>
                 <h4>Manual de Organização para Proprietários</h4>
