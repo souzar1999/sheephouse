@@ -55,7 +55,7 @@ function Scheduling({ enqueueSnackbar }) {
     [horaryDisable, setHoraryDisable] = useState(true),
     [dateDisable, setDateDisable] = useState(true),
     [events, setEvents] = useState([]),
-    [date, setDate] = useState(null),
+    [date, setDate] = useState(new Date()),
     [latitude, setLat] = useState(""),
     [longitude, setLng] = useState(""),
     [address, setAddress] = useState(""),
@@ -144,6 +144,7 @@ function Scheduling({ enqueueSnackbar }) {
       .post(`/calendar/event/list`, { photographer_id, date })
       .then((response) => {
         setEvents(response.data);
+        setHoraries(horaries);
         setHoraryDisable(false);
 
         enqueueSnackbar("Horários definidos!", {
@@ -429,11 +430,15 @@ function Scheduling({ enqueueSnackbar }) {
                   events.map((event) => {
                     if (event.status == "confirmed") {
                       const eventStart = event.start.date
-                        ? `${event.start.date} 00:00:00`
-                        : event.start.dateTime;
+                        ? `${date} 00:00:00`
+                        : `${date} ${new Date(
+                            event.start.dateTime
+                          ).toLocaleTimeString()}`;
                       const eventEnd = event.end.date
-                        ? `${event.end.date} 23:59:59`
-                        : event.end.dateTime;
+                        ? `${date} 23:59:59`
+                        : `${date} ${new Date(
+                            event.end.dateTime
+                          ).toLocaleTimeString()}`;
 
                       if (
                         (Date.parse(date_horary) + 1 >=

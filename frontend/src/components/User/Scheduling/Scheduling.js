@@ -56,7 +56,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [formatDate, setFormatDate] = useState(),
     [horaryDisable, setHoraryDisable] = useState(true),
     [events, setEvents] = useState([]),
-    [date, setDate] = useState(),
+    [date, setDate] = useState(new Date()),
     [latitude, setLat] = useState(""),
     [longitude, setLng] = useState(""),
     [address, setAddress] = useState(""),
@@ -140,13 +140,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     });
   }
 
-  function verifyDate(value) {
+  function verifyDate(value, photographerId) {
     setDate(value);
     setHoraryDisable(true);
     setHoraryId();
 
-    if (Date.parse(value) > Date.now() - 43200000) {
-      getCalendarEvents(value);
+    if (Date.parse(value) > Date.now() - 129600000) {
+      getCalendarEvents(value, photographerId);
 
       enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
         variant: "success",
@@ -167,13 +167,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setStep(step - 1);
   }
 
-  async function getCalendarEvents(date) {
+  async function getCalendarEvents(date, photographerId) {
     await api
       .post(`/calendar/event/list`, {
-        photographer_id:
-          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6
-            ? photographer_sabado.id
-            : photographer.id,
+        photographer_id: photographerId,
         date,
       })
       .then((response) => {
@@ -557,10 +554,17 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                       } else {
                         if (date.getDay() == 6) {
                           setPhotographerId(photographer_sabado.id);
+                          verifyDate(
+                            `${year}-${month}-${day}`,
+                            photographer_sabado.id
+                          );
                         } else {
                           setPhotographerId(photographer.id);
+                          verifyDate(
+                            `${year}-${month}-${day}`,
+                            photographer.id
+                          );
                         }
-                        verifyDate(`${year}-${month}-${day}`);
                       }
                     }
                   }}
@@ -582,7 +586,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   onChange={(event) => {
                     setHoraryId(event.target.value);
                     setHorary(event.nativeEvent.target.id);
-                    console.log(event);
                   }}
                 >
                   <MenuItem value="">-- Selecione --</MenuItem>
@@ -602,11 +605,15 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                     events.map((event) => {
                       if (event.status == "confirmed") {
                         const eventStart = event.start.date
-                          ? `${event.start.date} 00:00:00`
-                          : event.start.dateTime;
+                          ? `${date} 00:00:00`
+                          : `${date} ${new Date(
+                              event.start.dateTime
+                            ).toLocaleTimeString()}`;
                         const eventEnd = event.end.date
-                          ? `${event.end.date} 23:59:59`
-                          : event.end.dateTime;
+                          ? `${date} 23:59:59`
+                          : `${date} ${new Date(
+                              event.end.dateTime
+                            ).toLocaleTimeString()}`;
 
                         if (
                           (Date.parse(date_horary) + 1 >=

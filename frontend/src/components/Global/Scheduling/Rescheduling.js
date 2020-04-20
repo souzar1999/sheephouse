@@ -50,7 +50,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     [horaryDisable, setHoraryDisable] = useState(true),
     [insertEvent, setInsertEvent] = useState(false),
     [events, setEvents] = useState([]),
-    [date, setDate] = useState(null),
+    [date, setDate] = useState(new Date()),
     [photographer_id, setPhotographerId] = useState(""),
     [photographer, setPhotographer] = useState([]),
     [photographer_sabado, setPhotographerSabado] = useState([]),
@@ -107,14 +107,14 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     });
   }
 
-  function verifyDate(value) {
+  function verifyDate(value, photographerId) {
     setDate(value);
     setHoraryDisable(true);
     setHoraryId();
 
     if (!insertEvent) {
-      if (Date.parse(value)) {
-        getCalendarEvents(value);
+      if (Date.parse(value) > Date.now() - 129600000) {
+        getCalendarEvents(value, photographerId);
 
         enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
           variant: "success",
@@ -130,13 +130,10 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     }
   }
 
-  async function getCalendarEvents(date) {
+  async function getCalendarEvents(date, photographerId) {
     await api
       .post(`/calendar/event/list`, {
-        photographer_id:
-          new Date(new Date(+new Date(date) + 86400000)).getDay() == 6
-            ? photographer_sabado.id
-            : photographer.id,
+        photographer_id: photographerId,
         date,
       })
       .then((response) => {
@@ -522,10 +519,17 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                         } else {
                           if (date.getDay() == 6) {
                             setPhotographerId(photographer_sabado.id);
+                            verifyDate(
+                              `${year}-${month}-${day}`,
+                              photographer_sabado.id
+                            );
                           } else {
-                            setPhotographerId(photographer.id);
+                            verifyDate(
+                              `${year}-${month}-${day}`,
+                              photographer_id
+                            );
+                            setPhotographerId(photographer_id);
                           }
-                          verifyDate(`${year}-${month}-${day}`);
                         }
                       }
                     }}
@@ -675,10 +679,17 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                         } else {
                           if (date.getDay() == 6) {
                             setPhotographerId(photographer_sabado.id);
+                            verifyDate(
+                              `${year}-${month}-${day}`,
+                              photographer_sabado.id
+                            );
                           } else {
+                            verifyDate(
+                              `${year}-${month}-${day}`,
+                              photographer.id
+                            );
                             setPhotographerId(photographer.id);
                           }
-                          verifyDate(`${year}-${month}-${day}`);
                         }
                       }
                     }}
@@ -724,11 +735,15 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                       events.map((event) => {
                         if (event.status == "confirmed") {
                           const eventStart = event.start.date
-                            ? `${event.start.date} 00:00:00`
-                            : event.start.dateTime;
+                            ? `${date} 00:00:00`
+                            : `${date} ${new Date(
+                                event.start.dateTime
+                              ).toLocaleTimeString()}`;
                           const eventEnd = event.end.date
-                            ? `${event.end.date} 23:59:59`
-                            : event.end.dateTime;
+                            ? `${date} 23:59:59`
+                            : `${date} ${new Date(
+                                event.end.dateTime
+                              ).toLocaleTimeString()}`;
 
                           if (
                             (Date.parse(date_horary) + 1 >=

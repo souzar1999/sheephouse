@@ -51,7 +51,6 @@ function Client({ enqueueSnackbar }) {
   async function handleLoad() {
     await api.get("/client").then((response) => {
       setClients(response.data);
-      console.log(response.data);
     });
   }
 
