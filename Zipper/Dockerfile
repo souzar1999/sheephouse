@@ -5,4 +5,4 @@ WORKDIR /usr/app/sheephouse/zipper
 COPY . .
 
 EXPOSE 3001
-CMD ["go","run","s3zipper.go"]
+CMD ["go","run","zipper.go"]
