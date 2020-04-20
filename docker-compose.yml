@@ -21,4 +21,4 @@ services:
             container_name: sheephouse-zipper
             ports:
              - "3001:3001"
-            command: go run s3zipper.go
+            command: go run zipper.go
