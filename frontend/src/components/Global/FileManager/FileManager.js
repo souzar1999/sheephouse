@@ -111,11 +111,7 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   }
 
   async function downlaodZipFile() {
-    var fileName =
-      "SheepHouse-Fotos-Imovel" +
-      Math.floor(Math.random() * 10000) +
-      1 +
-      ".zip";
+    var fileName = "SheepHouse-Fotos-Imovel-" +  uuidv4() +".zip";
     await api
       .post(
         "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",

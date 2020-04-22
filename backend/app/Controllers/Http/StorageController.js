@@ -99,24 +99,17 @@ class StorageController {
   }
 
   async zipFolder({ params, request, response, view }) {
-
+    try {
     const { storageType: StorageType, folderName: FolderName } = params
-    zipper.zipToS3File({
-      s3FolderName: StorageType + '/' + FolderName
-      , s3ZipFileName: 'Zip/' + request.body.fileName
-    }, function (err, result) {
-      if (err){
-        console.error(err);
-      }
-    });
-
-
-    return response.status(200).send({ result: "Gerando zip" })
+    zipper.zipToS3File({s3FolderName: StorageType + '/' + FolderName, s3ZipFileName: 'Zip/' + request.body.fileName});
+      return response.status(200).send({ result: "Gerando zip" })
+    } catch {
+      return response.status(200).send({ result: "Erro gerando zip" })
+    }
   }
 
 
   async downloadZipFolder({ params, request, response, view }) {
-
     const {fileName: FileName } = params
     const S3BucketName = Env.get('S3_BUCKET');
 
@@ -135,8 +128,7 @@ class StorageController {
         await s3.headObject(S3paramsHead).promise()
         break;
       } catch (err) {
-        //console.log(err)
-        //return response.status(200).send({ exists: false })
+        console.log(err)
       }
     }
 
