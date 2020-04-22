@@ -55,7 +55,8 @@ function Client({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { name, broker_id, id, phone, actived } = newData;
+    const { name, broker, id, phone, actived } = newData,
+      broker_id = broker.id;
 
     if (!name) {
       enqueueSnackbar("Informe o nome do corretor!", {
