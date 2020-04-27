@@ -13,9 +13,11 @@ import api from "../../../services/api";
 import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
+
 import { connect } from "react-redux";
 
 import history from "../../../history";
+import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -142,55 +144,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setOpen(false);
   };
 
+  const FileDownload = require('js-file-download');
+  
   async function downlaodZipFile(uploadType, folderName, SchedulingId) {
-    var fileName =
-      "SheepHouse-Fotos-Imovel" +
-      Math.floor(Math.random() * 10000) +
-      1 +
-      ".zip";
-
     setOpen(true);
 
     await api.put(`/scheduling/${SchedulingId}`, { downloaded: 1 });
-    await api
-      .post(
-        "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
-        { fileName: fileName }
-      )
-      .then((response) => {
-        enqueueSnackbar(
-          "Gerando arquivo ZIP \n este processo leva em media 15 segundos.",
-          {
-            variant: "success",
-            autoHideDuration: 5000,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center",
-            },
-          }
-        );
-      });
-
-    while (true) {
-      var responseDonwloadURL = await api.get(
-        "/storages/zip/filename/" + fileName + "/download"
-      );
-      if (responseDonwloadURL.data.exists == true) {
-        axios({
-          url: responseDonwloadURL.data.url,
-          method: "GET",
-          responseType: "blob",
-        }).then((response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", fileName);
-          document.body.appendChild(link);
-          link.click();
-        });
-        break;
-      }
-    }
+    var responseZip = await api.get("/storages/storage/" + uploadType + "/folder/" + folderName + "/zip")
+    window.open("https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result, "_blank")
   }
 
   async function handleLoad() {

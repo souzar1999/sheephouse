@@ -1,6 +1,7 @@
 'use strict'
 
-const S3Zipper = require('aws-s3-zipper');
+const uuidv4 = require('uuid/v4')
+const redis = use('redis')
 const AWS = require('aws-sdk');
 const Env = use('Env')
 const s3 = new AWS.S3({
@@ -8,14 +9,7 @@ const s3 = new AWS.S3({
   secretAccessKey: Env.get('S3_SECRET')
 });
 
-const ZipS3config = {
-  accessKeyId: Env.get('S3_KEY'),
-  secretAccessKey: Env.get('S3_SECRET'),
-  region: Env.get('S3_REGION'),
-  bucket: Env.get('S3_BUCKET')
-};
-
-const zipper = new S3Zipper(ZipS3config);
+const client = redis.createClient(Env.get('REDIS_PORT'), Env.get('REDIS_URL'), { no_ready_check: true });
 
 class StorageController {
   async getAllFilesFromFolder({ params, request, response, view }) {
@@ -100,44 +94,33 @@ class StorageController {
 
   async zipFolder({ params, request, response, view }) {
     try {
-    const { storageType: StorageType, folderName: FolderName } = params
-    zipper.zipToS3File({s3FolderName: StorageType + '/' + FolderName, s3ZipFileName: 'Zip/' + request.body.fileName});
-      return response.status(200).send({ result: "Gerando zip" })
-    } catch {
-      return response.status(200).send({ result: "Erro gerando zip" })
+      const { storageType: StorageType, folderName: FolderName } = params
+
+      var s3params = {
+        Bucket: Env.get('S3_BUCKET'),
+        Prefix: StorageType + "/" + FolderName
+      };
+
+      var s3ObjectList = await s3.listObjectsV2(s3params).promise();
+
+      var files = new Array();
+
+      s3ObjectList.Contents.forEach(file => {
+        var stringResult = file.Key;
+        var result = stringResult.split('/');
+        var fileName = result[result.length - 1];
+
+        files.push({ S3Path: file.Key, FileName: fileName, Folder: StorageType + "/" + FolderName })
+      });
+
+      var key = uuidv4();
+      client.set('zip:' + key, JSON.stringify(files), 'EX', 1440);
+
+      return response.status(200).send({ result: key })
+    } catch (err) {
+      return response.status(200).send({ result: err.message })
     }
   }
-
-
-  async downloadZipFolder({ params, request, response, view }) {
-    const {fileName: FileName } = params
-    const S3BucketName = Env.get('S3_BUCKET');
-
-    var S3params = {
-      Bucket: S3BucketName,
-      Key: 'Zip/'+ FileName,
-      Expires: 7200000
-    };
-    var S3paramsHead = {
-      Bucket: S3BucketName,
-      Key: 'Zip/' + FileName
-    };
-
-    while (true) {
-      try {
-        await s3.headObject(S3paramsHead).promise()
-        break;
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
-
-    const Url = await s3.getSignedUrlPromise('getObject', S3params)
-    return response.status(200).send({ exists: true, url: Url })
-  }
-
-
 }
 
 module.exports = StorageController

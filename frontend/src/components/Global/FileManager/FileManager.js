@@ -111,47 +111,12 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   }
 
   async function downlaodZipFile() {
-    var fileName = "SheepHouse-Fotos-Imovel-" +  uuidv4() +".zip";
-    await api
-      .post(
-        "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
-        { fileName: fileName }
-      )
-      .then(response => {
-        enqueueSnackbar(
-          "Gerando arquivo ZIP \n este processo leva em media 15 segundos.",
-          {
-            variant: "success",
-            autoHideDuration: 5000,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center"
-            }
-          }
-        );
-      });
+    var responseZip = await api.get("/storages/storage/" + uploadType + "/folder/" + folderName + "/zip")
 
-    while (true) {
-      var responseDonwloadURL = await api.get(
-        "/storages/zip/filename/" + fileName + "/download"
-      );
-      if (responseDonwloadURL.data.exists == true) {
-        axios({
-          url: responseDonwloadURL.data.url,
-          method: "GET",
-          responseType: "blob"
-        }).then(response => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", fileName);
-          document.body.appendChild(link);
-          link.click();
-        });
-        break;
-      }
-    }
+    window.open ("https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result, "_blank")
+    
   }
+
 
   async function handleChangePhotographer() {
     await api

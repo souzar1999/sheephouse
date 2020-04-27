@@ -37,9 +37,6 @@ type RedisFile struct {
 	FileName string
 	Folder   string
 	S3Path   string
-	FileId       int64 `json:",string"`
-	ProjectId    int64 `json:",string"`
-	ProjectName  string
 	Modified     string
 	ModifiedTime time.Time
 }
@@ -152,10 +149,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if !ok && len(downloadas) > 0 {
 		downloadas[0] = makeSafeFileName.ReplaceAllString(downloadas[0], "")
 		if downloadas[0] == "" {
-			downloadas[0] = "download.zip"
+			downloadas[0] = "SheepHouse-Fotos-Imovel.zip"
 		}
 	} else {
-		downloadas = append(downloadas, "download.zip")
+		downloadas = append(downloadas, "SheepHouse-Fotos-Imovel.zip")
 	}
 
 	files, err := getFilesFromRedis(ref)
@@ -195,14 +192,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		zipPath := ""
-		if file.ProjectId > 0 {
-			zipPath += strconv.FormatInt(file.ProjectId, 10) + "."
-			file.ProjectName = makeSafeFileName.ReplaceAllString(file.ProjectName, "")
-			if file.ProjectName == "" {
-				file.ProjectName = "Project"
-			}
-			zipPath += file.ProjectName + "/"
-		}
 
 		if file.Folder != "" {
 			zipPath += file.Folder
