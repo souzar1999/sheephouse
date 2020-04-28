@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     width: "60%",
     [theme.breakpoints.down("sm")]: {
       width: "100%",
-      paddingTop: theme.spacing(4),
+      paddingTop: theme.spacing(8),
     },
   },
 }));
@@ -32,52 +32,15 @@ function UserDownload({ enqueueSnackbar, clientCode }) {
   }, []);
 
   async function downlaodZipFile(uploadType, folderName, SchedulingId) {
-    var fileName =
-      "SheepHouse-Fotos-Imovel" +
-      Math.floor(Math.random() * 10000) +
-      1 +
-      ".zip";
-
-    await api.put(`/scheduling/${SchedulingId}`, { downloaded: 1 });
-    await api
-      .post(
-        "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip",
-        { fileName: fileName }
-      )
-      .then((response) => {
-        enqueueSnackbar(
-          "Gerando arquivo ZIP \n este processo leva em media 15 segundos.",
-          {
-            variant: "success",
-            autoHideDuration: 5000,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center",
-            },
-          }
-        );
-      });
-
-    while (true) {
-      var responseDonwloadURL = await api.get(
-        "/storages/zip/filename/" + fileName + "/download"
-      );
-      if (responseDonwloadURL.data.exists == true) {
-        axios({
-          url: responseDonwloadURL.data.url,
-          method: "GET",
-          responseType: "blob",
-        }).then((response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", fileName);
-          document.body.appendChild(link);
-          link.click();
-        });
-        break;
-      }
-    }
+    console.log(uploadType, folderName);
+    var responseZip = await api.get(
+      "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip"
+    );
+    console.log(responseZip);
+    window.open(
+      "https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result,
+      "_blank"
+    );
   }
 
   return (

@@ -136,7 +136,7 @@ Route.get(
 Route.get(
   'storages/storage/:storageType/folder/:folderName/zip',
   'StorageController.zipFolder'
-).middleware('auth')
+)
 
 Route.post('/resetPassword', 'ResetPasswordController.store')
 Route.post('/forgotPassword', 'ForgotPasswordController.store')
