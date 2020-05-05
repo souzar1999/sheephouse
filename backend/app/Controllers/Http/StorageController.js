@@ -1,7 +1,7 @@
 'use strict'
 
 const uuidv4 = require('uuid/v4')
-//const redis = use('redis')
+const redis = use('redis')
 const AWS = require('aws-sdk')
 const Env = use('Env')
 const s3 = new AWS.S3({
@@ -9,9 +9,9 @@ const s3 = new AWS.S3({
   secretAccessKey: Env.get('S3_SECRET')
 })
 
-/*const client = redis.createClient(Env.get('REDIS_PORT'), Env.get('REDIS_URL'), {
+const client = redis.createClient(Env.get('REDIS_PORT'), Env.get('REDIS_URL'), {
   no_ready_check: true
-})*/
+})
 
 class StorageController {
   async getAllFilesFromFolder({ params, request, response, view }) {
@@ -126,7 +126,7 @@ class StorageController {
       })
 
       var key = uuidv4()
-      //client.set('zip:' + key, JSON.stringify(files), 'EX', 1440)
+      client.set('zip:' + key, JSON.stringify(files), 'EX', 1440)
 
       return response.status(200).send({ result: key })
     } catch (err) {
