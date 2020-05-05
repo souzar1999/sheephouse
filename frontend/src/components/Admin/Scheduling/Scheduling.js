@@ -430,15 +430,19 @@ function Scheduling({ enqueueSnackbar }) {
                   events.map((event) => {
                     if (event.status == "confirmed") {
                       const eventStart = event.start.date
-                        ? `${date} 00:00:00`
-                        : `${date} ${new Date(
-                            event.start.dateTime
-                          ).toLocaleTimeString()}`;
+                        ? new Date(`${date}T00:00:00-03:00`)
+                        : new Date(
+                            `${date}T${new Date(
+                              event.start.dateTime
+                            ).toLocaleTimeString()}-03:00`
+                          );
                       const eventEnd = event.end.date
-                        ? `${date} 23:59:59`
-                        : `${date} ${new Date(
-                            event.end.dateTime
-                          ).toLocaleTimeString()}`;
+                        ? new Date(`${date}T23:59:59-03:00`)
+                        : new Date(
+                            `${date}T${new Date(
+                              event.end.dateTime
+                            ).toLocaleTimeString()}-03:00`
+                          );
 
                       if (
                         (Date.parse(date_horary) + 1 >=

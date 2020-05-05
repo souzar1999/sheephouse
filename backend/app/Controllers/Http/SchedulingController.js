@@ -6,6 +6,7 @@ const Horary = use('App/Models/Horary')
 const Client = use('App/Models/Client')
 const Region = use('App/Models/Region')
 const City = use('App/Models/City')
+const Broker = use('App/Models/Broker')
 const District = use('App/Models/District')
 const Photographer = use('App/Models/Photographer')
 const Scheduling = use('App/Models/Scheduling')
@@ -182,6 +183,7 @@ class SchedulingController {
       )
       const client = await Client.findOrFail(scheduling.client_id)
       const user = await User.findOrFail(client.user_id)
+      const broker = await Broker.findOrFail(client.broker_id)
       const horary = await Horary.findOrFail(scheduling.horary_id)
       const admin = await User.findByOrFail('admin', true)
 
@@ -200,6 +202,7 @@ class SchedulingController {
         message => {
           message
             .to(user.email)
+            .bcc(broker.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão Concluída')
@@ -219,6 +222,7 @@ class SchedulingController {
       )
       const client = await Client.findOrFail(scheduling.client_id)
       const user = await User.findOrFail(client.user_id)
+      const broker = await Broker.findOrFail(client.broker_id)
       const horary = await Horary.findOrFail(scheduling.horary_id)
       const admin = await User.findByOrFail('admin', true)
 
@@ -234,6 +238,7 @@ class SchedulingController {
         message => {
           message
             .to(user.email)
+            .bcc(broker.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão Concluída')

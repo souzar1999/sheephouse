@@ -128,6 +128,11 @@ Route.get(
   'StorageController.getPutPreSignedUrl'
 ).middleware('auth')
 
+Route.delete(
+  'storages/storage/:storageType/folder/:folderName/:fileName/delete',
+  'StorageController.deleteObject'
+).middleware('auth')
+
 Route.get(
   'storages/storage/:storageType/folder/:folderName/:fileName/download',
   'StorageController.getDownloadPreSignedUrl'
