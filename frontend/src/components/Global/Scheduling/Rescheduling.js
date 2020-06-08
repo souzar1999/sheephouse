@@ -555,9 +555,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
                     {horaries.map((item) => {
-                      const date_horary = new Date(
-                        `${date}T${item.time}-03:00`
-                      );
+                      const date_horary = new Date(`${date}T${item.time}-03:00`);
+
                       let validHorary = true;
 
                       if (!date_horary) {
@@ -567,24 +566,33 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                       if (new Date(date_horary).getDay() == 6 && !item.sabado) {
                         validHorary = false;
                       }
+                      
+                      const today = new Date(Date.parse(new Date(date)) + 10800000);
+                      const endDay = new Date(Date.parse(new Date(date)) + 10800000 + 86399999);
 
                       events.map((event) => {
                         if (event.status == "confirmed") {
+                          const dateStart = new Date(event.start.dateTime);
+                          const dateEnd = new Date(event.end.dateTime);
+                          
                           const eventStart = event.start.date
-                            ? new Date(`${date}T00:00:00-03:00`)
+                            ? today
                             : new Date(
-                                `${date}T${new Date(
-                                  event.start.dateTime
-                                ).toLocaleTimeString()}-03:00`
-                              );
+                                      Date.UTC(today.getFullYear(),
+                                              today.getMonth(),
+                                              today.getDate(),
+                                              dateStart.getHours(),
+                                              dateStart.getMinutes()) + 10800000)
+                                              
                           const eventEnd = event.end.date
                             ? new Date(`${date}T23:59:59-03:00`)
                             : new Date(
-                                `${date}T${new Date(
-                                  event.end.dateTime
-                                ).toLocaleTimeString()}-03:00`
-                              );
-
+                                      Date.UTC(today.getFullYear(),
+                                              today.getMonth(),
+                                              today.getDate(),
+                                              dateEnd.getHours(),
+                                              dateEnd.getMinutes()) + 10800000)
+                              
                           if (
                             (Date.parse(date_horary) + 1 >=
                               Date.parse(eventStart) &&
@@ -602,11 +610,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
                       if (validHorary) {
                         return (
-                          <MenuItem
-                            id={item.time}
-                            key={item.id}
-                            value={item.id}
-                          >
+                          <MenuItem id={item.time} key={item.id} value={item.id}>
                             {item.time}
                           </MenuItem>
                         );
@@ -723,40 +727,44 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
                     {horaries.map((item) => {
-                      const date_horary = new Date(
-                        `${date}T${item.time}-03:00`
-                      );
+                      const date_horary = new Date(`${date}T${item.time}-03:00`);
+
                       let validHorary = true;
 
                       if (!date_horary) {
                         return;
                       }
 
-                      if (
-                        new Date(date_horary).getDay() == 6 &&
-                        item.sabado &&
-                        clientCode
-                      ) {
+                      if (new Date(date_horary).getDay() == 6 && !item.sabado) {
                         validHorary = false;
                       }
+                      
+                      const today = new Date(Date.parse(new Date(date)) + 10800000);
+                      const endDay = new Date(Date.parse(new Date(date)) + 10800000 + 86399999);
 
                       events.map((event) => {
                         if (event.status == "confirmed") {
+                          const dateStart = new Date(event.start.dateTime);
+                          const dateEnd = new Date(event.end.dateTime);
+                          
                           const eventStart = event.start.date
-                            ? new Date(`${date}T00:00:00-03:00`)
+                            ? today
                             : new Date(
-                                `${date}T${new Date(
-                                  event.start.dateTime
-                                ).toLocaleTimeString()}-03:00`
-                              );
+                                      Date.UTC(today.getFullYear(),
+                                              today.getMonth(),
+                                              today.getDate(),
+                                              dateStart.getHours(),
+                                              dateStart.getMinutes()) + 10800000)
+                                              
                           const eventEnd = event.end.date
                             ? new Date(`${date}T23:59:59-03:00`)
                             : new Date(
-                                `${date}T${new Date(
-                                  event.end.dateTime
-                                ).toLocaleTimeString()}-03:00`
-                              );
-
+                                      Date.UTC(today.getFullYear(),
+                                              today.getMonth(),
+                                              today.getDate(),
+                                              dateEnd.getHours(),
+                                              dateEnd.getMinutes()) + 10800000)
+                              
                           if (
                             (Date.parse(date_horary) + 1 >=
                               Date.parse(eventStart) &&
@@ -774,11 +782,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
                       if (validHorary) {
                         return (
-                          <MenuItem
-                            id={item.time}
-                            key={item.id}
-                            value={item.id}
-                          >
+                          <MenuItem id={item.time} key={item.id} value={item.id}>
                             {item.time}
                           </MenuItem>
                         );

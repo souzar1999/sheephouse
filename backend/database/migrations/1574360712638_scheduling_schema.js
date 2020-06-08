@@ -24,6 +24,7 @@ class SchedulingSchema extends Schema {
       table.boolean('changed').notNullable().defaultTo(false)
       table.boolean('completed').notNullable().defaultTo(false)
       table.boolean('downloaded').notNullable().defaultTo(false)
+      table.boolean('retirarChaves').notNullable().defaultTo(false)
       table.integer('region_id').unsigned().references('id').inTable('regions')
       table.integer('city_id').unsigned().references('id').inTable('cities')
       table

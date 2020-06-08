@@ -44,8 +44,7 @@ function Reports({ enqueueSnackbar }) {
       },
       {
         title: "Cliente",
-        field: "client_id",
-        lookup: { ...Clients },
+        field: "clientName",
         hidden: small,
       },
       {
@@ -179,6 +178,8 @@ function Reports({ enqueueSnackbar }) {
         } else {
           item.tipo = 0;
         }
+
+        item.clientName = item.client.name;
 
         schedulingsComplete.push(item);
       });

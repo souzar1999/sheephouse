@@ -77,7 +77,7 @@ class Dropzone extends Component {
         <img
           alt="upload"
           className="Icon"
-          src="../../assets/baseline-cloud_upload-24px.svg"
+          src="https://app.sheephouse.com.br/assets/baseline-cloud_upload-24px.svg"
         />
         <span></span>
       </div>

@@ -55,7 +55,8 @@ class GapiCalendarController {
         : scheduling.tour360
         ? 'Tour 360°'
         : 'Fotografia',
-      summary = `${title} - (${user.email} | ${broker.name})`,
+      retirarChaves = scheduling.retirarChaves ? '(RETIRAR CHAVES)\n' : '',
+      summary = `${retirarChaves}${title} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
       description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
@@ -131,7 +132,8 @@ class GapiCalendarController {
         : scheduling.tour360
         ? 'Tour 360°'
         : 'Fotografia',
-      summary = `${title} - (${user.email} | ${broker.name})`,
+      retirarChaves = scheduling.retirarChaves ? '(RETIRAR CHAVES)\n' : '',
+      summary = `${retirarChaves}${title} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
       description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,

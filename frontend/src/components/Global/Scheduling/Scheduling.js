@@ -13,7 +13,6 @@ import api from "../../../services/api";
 import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
-
 import { connect } from "react-redux";
 
 import history from "../../../history";
@@ -39,7 +38,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   const [open, setOpen] = useState(false);
   const small = useMediaQuery(theme.breakpoints.down("sm"));
   const [Schedulings, setScheduling] = useState([]),
-    [Clients, setClients] = useState([]),
     [Photographers, setPhotographers] = useState([]),
     [Horaries, setHoraries] = useState([]),
     columns = [
@@ -50,9 +48,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       },
       {
         title: "Cliente",
-        field: "client_id",
+        field: "clientName",
         defaultSort: "asc",
-        lookup: { ...Clients },
         hidden: clientCode,
       },
       {
@@ -144,14 +141,19 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setOpen(false);
   };
 
-  const FileDownload = require('js-file-download');
-  
+  const FileDownload = require("js-file-download");
+
   async function downlaodZipFile(uploadType, folderName, SchedulingId) {
     setOpen(true);
 
     await api.put(`/scheduling/${SchedulingId}`, { downloaded: 1 });
-    var responseZip = await api.get("/storages/storage/" + uploadType + "/folder/" + folderName + "/zip")
-    window.open("https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result, "_blank")
+    var responseZip = await api.get(
+      "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip"
+    );
+    window.open(
+      "https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result,
+      "_blank"
+    );
   }
 
   async function handleLoad() {
@@ -238,6 +240,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             item.tipo = 0;
           }
 
+          item.clientName = item.client.name;
+
           schedulingsData.push(item);
         });
 
@@ -265,20 +269,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
 
       setHoraries(data);
-    });
-
-    await api.get("/client").then((response) => {
-      let data = [];
-
-      response.data.map((item) => {
-        if (item.broker) {
-          return (data[item.id] = `${item.name} (${item.broker.name})`);
-        } else {
-          return (data[item.id] = `${item.name}`);
-        }
-      });
-
-      setClients(data);
     });
   }
 

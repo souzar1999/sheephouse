@@ -92,7 +92,8 @@ class SchedulingController {
       'photographer_id',
       'horary_id',
       'client_id',
-      'file_manager_uuid'
+      'file_manager_uuid',
+      'retirarChaves'
     ])
 
     const scheduling = await Scheduling.create(data)
@@ -124,7 +125,8 @@ class SchedulingController {
       'downloaded',
       'reason',
       'date_cancel',
-      'file_manager_uuid'
+      'file_manager_uuid',
+      'retirarChaves'
     ])
 
     scheduling.merge(data)
