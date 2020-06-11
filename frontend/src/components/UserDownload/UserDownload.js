@@ -32,15 +32,10 @@ function UserDownload({ enqueueSnackbar, clientCode }) {
   }, []);
 
   async function downlaodZipFile(uploadType, folderName, SchedulingId) {
-    console.log(uploadType, folderName);
-    var responseZip = await api.get(
-      "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip"
-    );
-    console.log(responseZip);
-    window.open(
-      "https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result,
-      "_blank"
-    );
+
+    await api.put(`/scheduling/${SchedulingId}`, { downloaded: 1 });
+    var responseZip = await api.get("/storages/storage/" + uploadType + "/folder/" + folderName + "/zip")
+    window.open("https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result, "_blank")
   }
 
   return (
