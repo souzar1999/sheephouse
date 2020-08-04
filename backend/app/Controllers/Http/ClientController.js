@@ -10,7 +10,6 @@ class ClientController {
     const clients = Client.query()
       .with('broker')
       .with('user')
-      .with('scheduling')
       .fetch()
 
     return clients
@@ -20,7 +19,6 @@ class ClientController {
     const clients = Client.query()
       .with('broker')
       .with('user')
-      .with('scheduling')
       .where('actived', true)
       .fetch()
 
