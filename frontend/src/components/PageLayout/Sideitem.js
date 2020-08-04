@@ -13,29 +13,24 @@ import { closeMenu } from "../../store/actions";
 const useStyles = makeStyles({
   list: {
     width: 250,
-    color: "#fff"
+    color: "#fff",
   },
   listIcon: {
-    color: "#fff"
-  }
+    color: "#fff",
+  },
 });
 
 function ListItemLink(props: ListItemProps<"a", { button?: true }>) {
-  return <ListItem button component="a" {...props} />;
+  return <ListItem button component={Link} {...props} />;
 }
 
 const Sideitem = ({ onCloseMenu, label, link, icon }) => {
   const classes = useStyles();
 
   return (
-    <div
-      component={Link}
-      className={classes.list}
-      role="presentation"
-      onClick={onCloseMenu}
-    >
+    <div className={classes.list} role="presentation" onClick={onCloseMenu}>
       <List>
-        <ListItemLink href={link}>
+        <ListItemLink to={link}>
           <ListItemIcon>
             <Icon className={classes.listIcon}>{icon}</Icon>
           </ListItemIcon>
@@ -47,7 +42,7 @@ const Sideitem = ({ onCloseMenu, label, link, icon }) => {
 };
 
 const mapDispatchToProps = {
-  onCloseMenu: closeMenu
+  onCloseMenu: closeMenu,
 };
 
 export default connect(null, mapDispatchToProps)(Sideitem);

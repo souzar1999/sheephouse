@@ -5,8 +5,6 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { userLogout } from "../../store/actions";
 
-import history from "../../history";
-
 function Logout({ enqueueSnackbar, onUserLogout }) {
   useEffect(() => {
     onUserLogout();
@@ -19,11 +17,11 @@ function Logout({ enqueueSnackbar, onUserLogout }) {
   return <div></div>;
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     onUserLogout: () => {
       dispatch(userLogout());
-    }
+    },
   };
 };
 

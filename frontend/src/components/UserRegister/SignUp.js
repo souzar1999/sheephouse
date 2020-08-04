@@ -4,12 +4,13 @@ import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
+import { Link as LinkMaterial } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { withSnackbar } from "notistack";
+import { Link } from "react-router-dom";
 
 import history from "../../history";
 import api from "../../services/api";
@@ -278,9 +279,12 @@ function SignUp({ enqueueSnackbar }) {
               />
               <small style={{ float: "left", fontStyle: "italic" }}>
                 Clique aqui para ver os{" "}
-                <a target="_blank" href="./assets/termos-de-uso-sheephouse.pdf">
+                <Link
+                  target="_blank"
+                  to="./assets/termos-de-uso-sheephouse.pdf"
+                >
                   termos
-                </a>
+                </Link>
               </small>
             </Grid>
           </Grid>
@@ -294,9 +298,9 @@ function SignUp({ enqueueSnackbar }) {
             Cadastrar
           </Button>
           <Grid container justify="center">
-            <Link href="/" variant="body2">
+            <LinkMaterial component={Link} to="/" variant="body2">
               {"Já possui uma conta? Faça Login!"}
-            </Link>
+            </LinkMaterial>
           </Grid>
         </form>
       </Paper>

@@ -1,1 +1,3 @@
 docker-production.yml
+backend/.env.dev
+frontend/.env.dev

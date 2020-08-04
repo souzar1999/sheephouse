@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,7 +15,7 @@ import { connect } from "react-redux";
 import api from "../../../services/api";
 import history from "../../../history";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(4),
     padding: theme.spacing(4),
@@ -26,12 +23,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     alignItems: "center",
     [theme.breakpoints.down("sm")]: {
-      marginTop: theme.spacing(6)
-    }
+      marginTop: theme.spacing(6),
+    },
   },
   title: {
-    marginBottom: theme.spacing(4)
-  }
+    marginBottom: theme.spacing(4),
+  },
 }));
 
 function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
@@ -47,7 +44,7 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
   }, []);
 
   async function handleLoad() {
-    await api.get(`/client/${clientCode}`).then(response => {
+    await api.get(`/client/${clientCode}`).then((response) => {
       setName(response.data[0].name);
       setEmail(response.data[0].user.email);
       setPhone(response.data[0].phone);
@@ -58,7 +55,7 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
   async function handleForgotPassword() {
     await api
       .post("/forgotPassword", { email: client.user.email })
-      .then(async response => {
+      .then(async (response) => {
         enqueueSnackbar(
           "Acesse seu email para trocar a senha!\nVerifique a caixa de SPAM.",
           {
@@ -66,22 +63,22 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           }
         );
 
         onUserLogout();
         history.push("/");
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas ao enviar email de troca de senha!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -95,8 +92,8 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -107,8 +104,8 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -119,8 +116,8 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
@@ -131,32 +128,32 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
         autoHideDuration: 5000,
         anchorOrigin: {
           vertical: "top",
-          horizontal: "center"
-        }
+          horizontal: "center",
+        },
       });
       return;
     }
 
     await api
       .put(`/client/${clientCode}`, { name, phone, email })
-      .then(response => {
+      .then((response) => {
         enqueueSnackbar("Informações alteradas com sucesso!", {
           variant: "success",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       })
-      .catch(error => {
+      .catch((error) => {
         enqueueSnackbar("Problemas alterar informações!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
       });
   }
@@ -179,7 +176,7 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
               label="Nome"
               autoFocus
               value={name}
-              onChange={event => setName(event.target.value)}
+              onChange={(event) => setName(event.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -192,7 +189,7 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
               name="email"
               autoComplete="email"
               value={email}
-              onChange={event => {
+              onChange={(event) => {
                 setEmail(event.target.value);
               }}
             />
@@ -207,7 +204,7 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
               name="phone"
               autoComplete="phone"
               value={phone}
-              onChange={event => setPhone(event.target.value)}
+              onChange={(event) => setPhone(event.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -237,15 +234,15 @@ function Profile({ enqueueSnackbar, clientCode, onUserLogout }) {
   );
 }
 
-const mapStateToProps = state => ({
-  clientCode: state.clientCode
+const mapStateToProps = (state) => ({
+  clientCode: state.clientCode,
 });
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     onUserLogout: () => {
       dispatch(userLogout());
-    }
+    },
   };
 };
 

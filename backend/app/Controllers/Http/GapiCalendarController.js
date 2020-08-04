@@ -12,20 +12,31 @@ const { google } = require('googleapis'),
 
 class GapiCalendarController {
   async eventList({ request, response }) {
-    const { photographer_id, date } = request.only(['photographer_id', 'date']),
-      photographer = await Photographer.findOrFail(photographer_id),
-      timeMax = `${date}T23:59:59Z`,
-      timeMin = `${date}T00:00:00Z`,
-      calendarId = photographer.email,
-      params = {
-        calendarId,
-        auth: Env.get('GAPI_KEY'),
-        timeMax,
-        timeMin
-      },
-      res = await calendar.events.list(params)
+    try {
+      const { photographer_id, date } = request.only([
+          'photographer_id',
+          'date'
+        ]),
+        photographer = await Photographer.findOrFail(photographer_id),
+        timeMax = `${date}T23:59:59Z`,
+        timeMin = `${date}T00:00:00Z`,
+        calendarId = photographer.email,
+        params = {
+          calendarId,
+          auth: Env.get('GAPI_KEY'),
+          timeMax,
+          timeMin
+        }
 
-    return res.data.items
+      console.log(params)
+      const res = await calendar.events.list(params)
+
+      console.log(res)
+
+      return res.data.items
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   async insertEvent({ request, response }) {

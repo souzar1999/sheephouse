@@ -2,6 +2,8 @@ import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
 import history from "../history";
 
+import PageLayout from "./PageLayout/PageLayout";
+
 import {
   LoginRequeredRoute,
   LogoutRequeredRoute,
@@ -43,67 +45,72 @@ import GlobalFileUploader from "./Global/Scheduling/FileUploader";
 export default function Routes() {
   return (
     <Router history={history}>
-      <Switch>
-        <LogoutRequeredRoute path="/" exact component={UserLogin} />
-        <LogoutRequeredRoute path="/signup" component={UserRegister} />
-        <LogoutRequeredRoute path="/reset" component={UserResetPassword} />
-        <LoginRequeredRoute path="/logout" component={UserLogout} />
-        <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
+      <PageLayout>
+        <Switch>
+          <LogoutRequeredRoute path="/" exact component={UserLogin} />
+          <LogoutRequeredRoute path="/signup" component={UserRegister} />
+          <LogoutRequeredRoute path="/reset" component={UserResetPassword} />
+          <LoginRequeredRoute path="/logout" component={UserLogout} />
+          <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
 
-        <ClientRequeredRoute path="/home" component={UserHome} />
-        <ClientRequeredRoute path="/reports" component={UserReports} />
-        <ClientRequeredRoute path="/contacts" component={UserContact} />
-        <ClientRequeredRoute path="/profile" component={UserProfile} />
-        <ClientRequeredRoute
-          path="/scheduling/photo"
-          component={UserScheduling}
-        />
+          <ClientRequeredRoute path="/home" component={UserHome} />
+          <ClientRequeredRoute path="/reports" component={UserReports} />
+          <ClientRequeredRoute path="/contacts" component={UserContact} />
+          <ClientRequeredRoute path="/profile" component={UserProfile} />
+          <ClientRequeredRoute
+            path="/scheduling/photo"
+            component={UserScheduling}
+          />
 
-        <AdminRequeredRoute path="/admin/home" component={AdminHome} />
-        <AdminRequeredRoute path="/admin/city" component={AdminCity} />
-        <AdminRequeredRoute path="/admin/broker" component={AdminBroker} />
-        <AdminRequeredRoute path="/admin/district" component={AdminDistrict} />
-        <AdminRequeredRoute path="/admin/region" component={AdminRegion} />
-        <AdminRequeredRoute path="/admin/client" component={AdminClient} />
-        <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
-        <AdminRequeredRoute path="/admin/reports" component={AdminReports} />
-        <AdminRequeredRoute
-          path="/admin/scheduling"
-          component={AdminScheduling}
-        />
-        <AdminRequeredRoute
-          path="/admin/photographer"
-          component={AdminPhotographer}
-        />
+          <AdminRequeredRoute path="/admin/home" component={AdminHome} />
+          <AdminRequeredRoute path="/admin/city" component={AdminCity} />
+          <AdminRequeredRoute path="/admin/broker" component={AdminBroker} />
+          <AdminRequeredRoute
+            path="/admin/district"
+            component={AdminDistrict}
+          />
+          <AdminRequeredRoute path="/admin/region" component={AdminRegion} />
+          <AdminRequeredRoute path="/admin/client" component={AdminClient} />
+          <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
+          <AdminRequeredRoute path="/admin/reports" component={AdminReports} />
+          <AdminRequeredRoute
+            path="/admin/scheduling"
+            component={AdminScheduling}
+          />
+          <AdminRequeredRoute
+            path="/admin/photographer"
+            component={AdminPhotographer}
+          />
 
-        <LoginRequeredRoute
-          exact
-          path="/scheduling"
-          component={GlobalScheduling}
-        />
-        <LoginRequeredRoute
-          exact
-          path="/scheduling/:id"
-          component={GlobalRescheduling}
-        />
-        <LoginRequeredRoute
-          exact
-          path="/filemanager/:uploadType/:folderName/:dbCode"
-          component={GlobalFileManager}
-        />
-        <LoginRequeredRoute
-          exact
-          path="/fileuploader/:uploadType/:folderName/:dbCode"
-          component={GlobalFileUploader}
-        />
+          <LoginRequeredRoute
+            exact
+            path="/scheduling"
+            component={GlobalScheduling}
+          />
+          <LoginRequeredRoute
+            exact
+            path="/scheduling/:id"
+            component={GlobalRescheduling}
+          />
+          <LoginRequeredRoute
+            exact
+            path="/filemanager/:uploadType/:folderName/:dbCode"
+            component={GlobalFileManager}
+          />
+          <LoginRequeredRoute
+            exact
+            path="/fileuploader/:uploadType/:folderName/:dbCode"
+            component={GlobalFileUploader}
+          />
 
-        <Route
-          path="/download/:uploadType/:folderName/:dbCode"
-          component={UserDownload}
-        />
+          <Route
+            path="/download/:uploadType/:folderName/:dbCode"
+            component={UserDownload}
+          />
 
-        <Route component={NotFound} />
-      </Switch>
+          <Route component={NotFound} />
+        </Switch>
+      </PageLayout>
     </Router>
   );
 }

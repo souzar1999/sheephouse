@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
+import { Link as LinkMaterial } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { withSnackbar } from "notistack";
 import { compose } from "redux";
+import { Link } from "react-router-dom";
 
 import { connect } from "react-redux";
 import { userLogin, userClient, userAdmin } from "../../store/actions";
@@ -261,15 +262,15 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
             Entrar
           </Button>
           <Grid container justify="center">
-            <Link href="/signup" variant="body2">
+            <LinkMaterial component={Link} to="/signup" variant="body2">
               Não possui uma conta? Cadastre-se!
-            </Link>
+            </LinkMaterial>
           </Grid>
           <br />
           <Grid container justify="center">
-            <Link onClick={handleForgotPassword} variant="body2">
+            <LinkMaterial onClick={handleForgotPassword} variant="body2">
               Esqueci minha senha!
-            </Link>
+            </LinkMaterial>
           </Grid>
         </form>
       </Paper>

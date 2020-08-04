@@ -7,7 +7,6 @@ import { SnackbarProvider } from "notistack";
 import api from "../../services/api";
 import localStorage from "../../services/localStorage.js";
 
-import PageLayout from "../PageLayout/PageLayout";
 import Routes from "../Routes";
 import { store, persistor } from "../../store";
 
@@ -19,7 +18,7 @@ function App({ enqueueSnackbar }) {
     async function refreshToken() {
       if (dateToken) {
         if (43200000 + Date.parse(dateToken) > Date.parse(new Date())) {
-          api.post("/refresh", { refreshToken }).then(res => {
+          api.post("/refresh", { refreshToken }).then((res) => {
             localStorage.setToken(res.data);
           });
         }
@@ -35,9 +34,7 @@ function App({ enqueueSnackbar }) {
         <>
           <SnackbarProvider maxSnack={2} preventDuplicate>
             <CssBaseline />
-            <PageLayout>
-              <Routes />
-            </PageLayout>
+            <Routes />
           </SnackbarProvider>
         </>
       </PersistGate>

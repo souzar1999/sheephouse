@@ -1,7 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import Icon from "@material-ui/core/Icon";
 import WhatsAppIcon from "@material-ui/icons/WhatsApp";
 import GetAppIcon from "@material-ui/icons/GetApp";
 
