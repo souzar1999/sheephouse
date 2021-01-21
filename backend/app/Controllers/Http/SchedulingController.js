@@ -93,7 +93,10 @@ class SchedulingController {
       'horary_id',
       'client_id',
       'file_manager_uuid',
-      'retirarChaves'
+      'retirar_chaves',
+      'photo_link',
+      'video_link',
+      'tour_link'
     ])
 
     const scheduling = await Scheduling.create(data)
@@ -126,7 +129,10 @@ class SchedulingController {
       'reason',
       'date_cancel',
       'file_manager_uuid',
-      'retirarChaves'
+      'retirar_chaves',
+      'photo_link',
+      'video_link',
+      'tour_link'
     ])
 
     scheduling.merge(data)
@@ -177,7 +183,7 @@ class SchedulingController {
 
   async completeAndSendEmail({ params, request, response, view }) {
     const scheduling = await Scheduling.query()
-      .where('file_manager_uuid', params.fileManagerId)
+      .where('id', params.id)
       .first()
     if (scheduling.completed == false) {
       const photographer = await Photographer.findOrFail(

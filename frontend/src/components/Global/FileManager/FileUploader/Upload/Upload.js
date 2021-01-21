@@ -79,8 +79,8 @@ class Upload extends Component {
   }
 
   async CompleteScheduling() {
-    var folderName = this.props.folderName;
-    await api.get("/scheduling/" + folderName + "/complete");
+    var dbCode = this.props.dbCode;
+    await api.get("/scheduling/" + dbCode + "/complete");
 
     await this.backFileManager();
   }

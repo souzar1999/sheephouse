@@ -69,7 +69,7 @@ Route.get('/scheduling/day/:date', 'SchedulingController.indexDay').middleware(
 )
 
 Route.get(
-  '/scheduling/:fileManagerId/complete',
+  '/scheduling/:id/complete',
   'SchedulingController.completeAndSendEmail'
 ).middleware('auth')
 Route.get(

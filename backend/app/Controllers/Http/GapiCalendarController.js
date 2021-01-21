@@ -28,10 +28,7 @@ class GapiCalendarController {
           timeMin
         }
 
-      console.log(params)
       const res = await calendar.events.list(params)
-
-      console.log(res)
 
       return res.data.items
     } catch (e) {

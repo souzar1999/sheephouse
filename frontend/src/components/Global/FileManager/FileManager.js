@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -33,13 +34,17 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
   },
   title: {
     marginBottom: theme.spacing(4),
+  },
+  grid: {
+    marginBottom: theme.spacing(2),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -54,17 +59,20 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   const columns = [{ title: "Nome", field: "Key", defaultSort: "asc" }];
   const [photographers, setPhotographers] = useState([]);
   const [photographer_id, setPhotographerId] = useState("");
+  const [photo_link, setPhotoLink] = useState("");
+  const [video_link, setVideoLink] = useState("");
+  const [tour_link, setTourLink] = useState("");
 
   useEffect(() => {
     handleLoad();
   }, []);
 
   async function handleLoad() {
-    await api
+    /*await api
       .get("/storages/storage/" + uploadType + "/folder/" + folderName)
       .then((response) => {
         setFiles(response.data.result);
-      });
+      });*/
 
     await api.get("/photographer").then((response) => {
       setPhotographers(response.data);
@@ -137,9 +145,113 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
       });
   }
 
+  async function handleUploadLinks() {
+    await api
+      .put(`/scheduling/${dbCode}`, {
+        photo_link,
+        tour_link,
+        video_link,
+      })
+      .then(async (response) => {
+        await api
+          .get("/scheduling/" + dbCode + "/complete")
+          .then(async (response) => {
+            enqueueSnackbar("Sessão finalizada", {
+              variant: "success",
+              autoHideDuration: 5000,
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center",
+              },
+            });
+          });
+      })
+      .catch((error) => {
+        enqueueSnackbar("Erro ao adicioanr links!", {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+      });
+  }
+
   return (
     <>
       <div className={classes.main}>
+        <Paper className={classes.paper}>
+          <Typography className={classes.title} component="h5" variant="h5">
+            Adicionar links
+          </Typography>
+          <Grid className={classes.grid} item xs={12}>
+            <FormControl variant="outlined" fullWidth>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="photoLink"
+                label="Fotos"
+                name="photoLink"
+                autoComplete="photoLink"
+                value={photo_link}
+                onChange={(event) => {
+                  setPhotoLink(event.target.value);
+                }}
+              />
+            </FormControl>
+          </Grid>
+          <Grid className={classes.grid} item xs={12}>
+            <FormControl variant="outlined" fullWidth>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="videoLink"
+                label="Vídeos"
+                name="videoLink"
+                autoComplete="videoLink"
+                value={video_link}
+                onChange={(event) => {
+                  setVideoLink(event.target.value);
+                }}
+              />
+            </FormControl>
+          </Grid>
+          <Grid className={classes.grid} item xs={12}>
+            <FormControl variant="outlined" fullWidth>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="tourLink"
+                label="Tour 360°"
+                name="tourLink"
+                autoComplete="tourLink"
+                value={tour_link}
+                onChange={(event) => {
+                  setTourLink(event.target.value);
+                }}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              size="small"
+              className={classes.submit}
+              onClick={() => {
+                handleUploadLinks();
+              }}
+            >
+              Salvar
+            </Button>
+          </Grid>
+        </Paper>
         <MaterialTable
           title="Gerenciador de arquivos"
           actions={[
