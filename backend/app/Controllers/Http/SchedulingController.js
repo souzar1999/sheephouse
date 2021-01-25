@@ -74,6 +74,14 @@ class SchedulingController {
     return scheduling
   }
 
+  async show({ params, request, response, view }) {
+    const scheduling = await Scheduling.query()
+      .where('id', params.id)
+      .first()
+
+    return scheduling
+  }
+
   async store({ request, response }) {
     const data = request.only([
       'date',
@@ -224,48 +232,34 @@ class SchedulingController {
     const scheduling = await Scheduling.query()
       .where('id', params.id)
       .first()
-    if (scheduling.completed == true && scheduling.downloaded == false) {
-      const photographer = await Photographer.findOrFail(
-        scheduling.photographer_id
-      )
-      const client = await Client.findOrFail(scheduling.client_id)
-      const user = await User.findOrFail(client.user_id)
-      const broker = await Broker.findOrFail(client.broker_id)
-      const horary = await Horary.findOrFail(scheduling.horary_id)
-      const admin = await User.findByOrFail('admin', true)
+    const photographer = await Photographer.findOrFail(
+      scheduling.photographer_id
+    )
+    const client = await Client.findOrFail(scheduling.client_id)
+    const user = await User.findOrFail(client.user_id)
+    const broker = await Broker.findOrFail(client.broker_id)
+    const horary = await Horary.findOrFail(scheduling.horary_id)
+    const admin = await User.findByOrFail('admin', true)
 
-      await Mail.send(
-        'emails.completedScheduling',
-        {
-          client,
-          scheduling,
-          photographer,
-          horary,
-          admin
-        },
-        message => {
-          message
-            .to(user.email)
-            .bcc(broker.email)
-            .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheep House')
-            .subject('Sheep House - Sessão Concluída')
-        }
-      )
-    }
+    await Mail.send(
+      'emails.completedScheduling',
+      {
+        client,
+        scheduling,
+        photographer,
+        horary,
+        admin
+      },
+      message => {
+        message
+          .to(user.email)
+          .bcc(broker.email)
+          .cc(admin.email)
+          .from('noreply@sheephouse.com.br', 'Sheep House')
+          .subject('Sheep House - Sessão Concluída')
+      }
+    )
     return response.status(200).send({ result: 'Agendamento concluido' })
-  }
-
-  async downloaded({ params, request, response, view }) {
-    const scheduling = await Scheduling.query()
-      .where('id', params.id)
-      .first()
-    if (scheduling.downloaded == false) {
-      scheduling.downloaded = true
-      await scheduling.save()
-    }
-
-    return response.status(200).send({ result: 'Imagens baixadas' })
   }
 }
 

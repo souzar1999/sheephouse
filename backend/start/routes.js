@@ -49,6 +49,7 @@ Route.get(
   'PhotographerController.showPhotographerSabado'
 ).middleware('auth')
 
+Route.get('/scheduling/:id', 'SchedulingController.show').middleware('auth')
 Route.get(
   '/scheduling/byClient/:client_id',
   'SchedulingController.indexClient'
@@ -80,11 +81,6 @@ Route.post(
   '/scheduling/event/sendEmail',
   'SchedulingController.sendEmailWithoutEvent'
 )
-
-Route.get(
-  '/scheduling/:id/downloaded',
-  'SchedulingController.downloaded'
-).middleware('auth')
 
 Route.resource('broker', 'BrokerController')
   .apiOnly()

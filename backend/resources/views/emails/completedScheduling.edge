@@ -12,10 +12,6 @@
       Sua sessão do dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ horary.time }} horas, 
       realizada pelo fotógrafo: {{ photographer.name }} (<a href="mailto:{{ photographer.email }}">{{ photographer.email }}</a>) no endereço {{ scheduling.address }}  foi concluída!
       <br/><br/>
-      @if(scheduling.file_manager_uuid && !(scheduling.photo_link || scheduling.video_link || scheduling.tour_link))
-        Para fazer o download dos arquvios clique <a href="https://app.sheephouse.com.br/download/Scheduling/{{scheduling.file_manager_uuid}}/{{scheduling.id}}">aqui</a>(os arquivos estão disponiveis por 30 dias a partir de hoje).
-        <br/>
-      @endif  
       @if(scheduling.photo_link)
         Para fazer o download das <strong>fotos</strong> clique <a href="{{scheduling.photo_link}}">aqui</a>.
         <br/>
