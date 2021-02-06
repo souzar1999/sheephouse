@@ -20,7 +20,6 @@ import UserDownload from "./UserDownload/UserDownload";
 
 import NotFound from "./NotFound/NotFound";
 
-import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
 import UserReports from "./User/Reports/Reports";
@@ -29,13 +28,16 @@ import UserProfile from "./User/Profile/Profile";
 import AdminHome from "./Admin/Home/Home";
 import AdminDistrict from "./Admin/District/District";
 import AdminCity from "./Admin/City/City";
+import AdminCityServices from "./Admin/City/CityServices";
 import AdminRegion from "./Admin/Region/Region";
 import AdminClient from "./Admin/Client/Client";
 import AdminBroker from "./Admin/Broker/Broker";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
-import AdminHorary from "./Admin/Horary/Horary";
+import AdminPhotographerHorary from "./Admin/Photographer/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
 import AdminReports from "./Admin/Reports/Reports";
+import AdminService from "./Admin/Service/Service";
+//import AdminBrokerServices from "./Admin/Broker/BrokerServices";
 
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
@@ -53,34 +55,43 @@ export default function Routes() {
           <LoginRequeredRoute path="/logout" component={UserLogout} />
           <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
 
-          <ClientRequeredRoute path="/home" component={UserHome} />
           <ClientRequeredRoute path="/reports" component={UserReports} />
           <ClientRequeredRoute path="/contacts" component={UserContact} />
           <ClientRequeredRoute path="/profile" component={UserProfile} />
-          <ClientRequeredRoute
-            path="/scheduling/photo"
-            component={UserScheduling}
-          />
+          <ClientRequeredRoute path="/home" component={UserScheduling} />
 
           <AdminRequeredRoute path="/admin/home" component={AdminHome} />
-          <AdminRequeredRoute path="/admin/city" component={AdminCity} />
-          <AdminRequeredRoute path="/admin/broker" component={AdminBroker} />
+          <AdminRequeredRoute
+            path="/admin/city/:city_id/services"
+            component={AdminCityServices}
+          />
+          <AdminRequeredRoute exact path="/admin/city" component={AdminCity} />
+          <AdminRequeredRoute
+            exact
+            path="/admin/broker"
+            component={AdminBroker}
+          />
           <AdminRequeredRoute
             path="/admin/district"
             component={AdminDistrict}
           />
           <AdminRequeredRoute path="/admin/region" component={AdminRegion} />
           <AdminRequeredRoute path="/admin/client" component={AdminClient} />
-          <AdminRequeredRoute path="/admin/horary" component={AdminHorary} />
           <AdminRequeredRoute path="/admin/reports" component={AdminReports} />
           <AdminRequeredRoute
             path="/admin/scheduling"
             component={AdminScheduling}
           />
           <AdminRequeredRoute
+            path="/admin/photographer/:photographer_id/horary"
+            component={AdminPhotographerHorary}
+          />
+          <AdminRequeredRoute
+            exact
             path="/admin/photographer"
             component={AdminPhotographer}
           />
+          <AdminRequeredRoute path="/admin/service" component={AdminService} />
 
           <LoginRequeredRoute
             exact
@@ -114,3 +125,4 @@ export default function Routes() {
     </Router>
   );
 }
+//<AdminRequeredRoute path="/admin/broker/:broker_id/services"component={AdminBrokerServices} />

@@ -14,30 +14,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Horary({ enqueueSnackbar }) {
+function Service({ enqueueSnackbar }) {
   const classes = useStyles();
-  const [horaries, setHoraries] = useState([]);
-  const columns = [
-    { title: "Horário", field: "time", defaultSort: "asc" },
-    { title: "Sábado", field: "sabado", type: "boolean" },
-    { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" },
-  ];
+  const [services, setServices] = useState([]);
+  const columns = [{ title: "Serviço", field: "name", defaultSort: "asc" }];
 
   useEffect(() => {
     handleLoad();
   }, []);
 
   async function handleLoad() {
-    await api.get("/horary").then((response) => {
-      setHoraries(response.data);
+    await api.get("/service").then((response) => {
+      setServices(response.data);
     });
   }
 
   async function handleAdd(newData) {
-    const { time, sabado, active } = newData;
+    const { name } = newData;
 
-    if (!time) {
-      enqueueSnackbar("Informe o horário!", {
+    if (!name) {
+      enqueueSnackbar("Informe o serviço!", {
         variant: "error",
         autoHideDuration: 5000,
         anchorOrigin: {
@@ -49,9 +45,9 @@ function Horary({ enqueueSnackbar }) {
     }
 
     await api
-      .post(`/horary`, { time, sabado, active })
+      .post(`/service`, { name })
       .then((response) => {
-        enqueueSnackbar("Registro cadastrada com sucesso!", {
+        enqueueSnackbar("Registro cadastrado com sucesso!", {
           variant: "success",
           autoHideDuration: 5000,
           anchorOrigin: {
@@ -75,10 +71,10 @@ function Horary({ enqueueSnackbar }) {
   }
 
   async function handleUpdate(newData, oldData) {
-    const { time, id, sabado, active } = newData;
+    const { name, id } = newData;
 
-    if (!time) {
-      enqueueSnackbar("Informe o horário!", {
+    if (!name) {
+      enqueueSnackbar("Informe o serviço!", {
         variant: "error",
         autoHideDuration: 5000,
         anchorOrigin: {
@@ -90,7 +86,7 @@ function Horary({ enqueueSnackbar }) {
     }
 
     await api
-      .put(`/horary/${id}`, { time, sabado, active })
+      .put(`/service/${id}`, { name })
       .then((response) => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -115,12 +111,41 @@ function Horary({ enqueueSnackbar }) {
       });
   }
 
+  async function handleDelete(oldData) {
+    const { id } = oldData;
+
+    await api
+      .delete(`/service/${id}`)
+      .then((response) => {
+        enqueueSnackbar("Registro deletado com sucesso!", {
+          variant: "success",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+
+        handleLoad();
+      })
+      .catch((error) => {
+        enqueueSnackbar("Erro ao deletar registro!", {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+      });
+  }
+
   return (
     <div className={classes.main}>
       <MaterialTable
-        title="Horários"
+        title="Serviços"
         columns={columns}
-        data={horaries}
+        data={services}
         editable={{
           onRowAdd: (newData) =>
             new Promise((resolve) => {
@@ -131,6 +156,11 @@ function Horary({ enqueueSnackbar }) {
             new Promise((resolve) => {
               resolve();
               handleUpdate(newData, oldData);
+            }),
+          onRowDelete: (newData, oldData) =>
+            new Promise((resolve) => {
+              resolve();
+              handleDelete(newData, oldData);
             }),
         }}
         localization={{
@@ -178,4 +208,4 @@ function Horary({ enqueueSnackbar }) {
   );
 }
 
-export default withSnackbar(Horary);
+export default withSnackbar(Service);

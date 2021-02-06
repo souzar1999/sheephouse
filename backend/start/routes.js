@@ -33,7 +33,11 @@ Route.get('/client/active', 'ClientController.indexActive').middleware('auth')
 Route.get('/district/active', 'DistrictController.indexActive').middleware(
   'auth'
 )
-Route.get('/horary/active', 'HoraryController.indexActive').middleware('auth')
+Route.get(
+  '/horary/photographer/:photographer_id',
+  'HoraryController.photographerHoraries'
+).middleware('auth')
+
 Route.get(
   '/photographer/active',
   'PhotographerController.indexActive'
@@ -49,7 +53,6 @@ Route.get(
   'PhotographerController.showPhotographerSabado'
 ).middleware('auth')
 
-Route.get('/scheduling/:id', 'SchedulingController.show').middleware('auth')
 Route.get(
   '/scheduling/byClient/:client_id',
   'SchedulingController.indexClient'
@@ -104,6 +107,10 @@ Route.resource('photographer', 'PhotographerController')
   .apiOnly()
   .middleware('auth')
 
+Route.resource('service', 'ServiceController')
+  .apiOnly()
+  .middleware('auth')
+
 Route.resource('property', 'PropertyController')
   .apiOnly()
   .middleware('auth')
@@ -112,32 +119,9 @@ Route.resource('region', 'RegionController')
   .apiOnly()
   .middleware('auth')
 
+Route.resource('configuration', 'ConfigurationController').apiOnly()
+
 Route.resource('scheduling', 'SchedulingController').apiOnly()
-
-Route.get(
-  'storages/storage/:storageType/folder/:folderName',
-  'StorageController.getAllFilesFromFolder'
-).middleware('auth')
-
-Route.get(
-  'storages/storage/:storageType/folder/:folderName/:fileName/upload',
-  'StorageController.getPutPreSignedUrl'
-).middleware('auth')
-
-Route.delete(
-  'storages/storage/:storageType/folder/:folderName/:fileName/delete',
-  'StorageController.deleteObject'
-).middleware('auth')
-
-Route.get(
-  'storages/storage/:storageType/folder/:folderName/:fileName/download',
-  'StorageController.getDownloadPreSignedUrl'
-).middleware('auth')
-
-Route.get(
-  'storages/storage/:storageType/folder/:folderName/zip',
-  'StorageController.zipFolder'
-)
 
 Route.post('/resetPassword', 'ResetPasswordController.store')
 Route.post('/forgotPassword', 'ForgotPasswordController.store')

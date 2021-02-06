@@ -24,6 +24,8 @@ import { compose } from "redux";
 
 import { connect } from "react-redux";
 
+import moment from "moment";
+
 import api from "../../../services/api";
 
 import history from "../../../history";
@@ -53,7 +55,6 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     [date, setDate] = useState(new Date()),
     [photographer_id, setPhotographerId] = useState(""),
     [photographer, setPhotographer] = useState([]),
-    [photographer_sabado, setPhotographerSabado] = useState([]),
     [reason, setReason] = useState(null),
     [scheduling_id, setSchedulingId] = useState(""),
     [scheduling, setScheduling] = useState([]),
@@ -62,30 +63,37 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     { id } = useParams();
 
   useEffect(() => {
-    if (horaries.length === 0) {
-      setSchedulingId(id);
-      getScheduling();
-      getHoraries();
-      getPhotographerSabado();
-      setLabelWidth(inputLabel.current.offsetWidth);
-    }
-  }, [horaries, id]);
+    setSchedulingId(id);
+    getScheduling();
+    setLabelWidth(inputLabel.current.offsetWidth);
+  }, []);
 
-  async function getHoraries() {
-    await api.get("/horary/active").then((response) => {
-      setHoraries(response.data);
+  async function getHoraries(date, dia_semana, photographer_id) {
+    setHoraryDisable(true);
+    setHoraryId();
+
+    enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
+      variant: "success",
+      autoHideDuration: 5000,
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
     });
+
+    await api
+      .get("/horary", { params: { photographer_id, dia_semana } })
+      .then(async (response) => {
+        if (response.data && response.data.length > 0) {
+          setHoraries(response.data);
+          getEvents(date.format("YYYY-MM-DD"), photographer_id);
+        }
+      });
   }
 
   async function getPhotographers() {
     await api.get("/photographer/active").then((response) => {
       setPhotographers(response.data);
-    });
-  }
-
-  async function getPhotographerSabado() {
-    await api.get("/photographer/sabado").then((response) => {
-      setPhotographerSabado(response.data[0]);
     });
   }
 
@@ -107,38 +115,20 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     });
   }
 
-  function verifyDate(value, photographerId) {
-    setDate(value);
-    setHoraryDisable(true);
-    setHoraryId();
-
-    if (!insertEvent) {
-      if (Date.parse(value) > Date.now() - 129600000) {
-        getCalendarEvents(value, photographerId);
-
-        enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
-          variant: "success",
-          autoHideDuration: 5000,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center",
-          },
-        });
-      }
-    } else {
-      setHoraryDisable(false);
-    }
-  }
-
-  async function getCalendarEvents(date, photographerId) {
+  async function getEvents(date, photographerId) {
     await api
       .post(`/calendar/event/list`, {
         photographer_id: photographerId,
         date,
       })
       .then((response) => {
-        setEvents(response.data);
-        setHoraryDisable(false);
+        if (response.data) {
+          setEvents(response.data);
+          setHoraryDisable(false);
+        } else {
+          setEvents([]);
+          setHoraryDisable(false);
+        }
 
         enqueueSnackbar("Horários definidos!", {
           variant: "success",
@@ -193,11 +183,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
       .put(`/scheduling/${scheduling_id}`, {
         changed: true,
         actived: false,
-        date_cancel: clientCode
-          ? `${new Date().toISOString().split("T")[0]} ${
-              new Date().toTimeString().split(" ")[0]
-            }`
-          : null,
+        date_cancel: clientCode ? moment().format("YYYY-MM-DD") : null,
         reason: clientCode ? reason : null,
       })
       .then(async (response) => {
@@ -282,8 +268,8 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     }
     await api
       .put(`/scheduling/${scheduling_id}`, {
-        date,
-        horary_id,
+        date: date.format("YYYY-MM-DD"),
+        horary,
         photographer_id,
         changed: false,
         actived: true,
@@ -295,7 +281,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
             .post(`/google/event/insertEvent`, {
               scheduling_id,
               horary,
-              date,
+              date: date.format("YYYY-MM-DD"),
             })
             .then(() => {
               enqueueSnackbar("Sessão agendada com sucesso!", {
@@ -396,9 +382,9 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
     }
     await api
       .put(`/scheduling/${scheduling_id}`, {
-        date,
+        date: date.format("YYYY-MM-DD"),
         photographer_id,
-        horary_id,
+        horary,
         changed: true,
         reason: clientCode ? reason : null,
       })
@@ -408,7 +394,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
           .post(`/google/event/editEvent`, {
             scheduling_id,
             horary,
-            date,
+            date: date.format("YYYY-MM-DD"),
           })
           .then((response) => {
             enqueueSnackbar("Sessão reagendada com sucesso!", {
@@ -493,20 +479,17 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
                     autoOk
-                    value={date ? new Date(+new Date(date) + 86400000) : date}
+                    value={date ? moment(date) : ""}
                     inputVariant="outlined"
                     fullWidth
                     label="Data da Sessão"
-                    disabled={!photographer_id}
-                    onChange={(date) => {
-                      if (date) {
-                        const year = date.getFullYear(),
-                          month = ("0" + (date.getMonth() + 1)).slice(-2),
-                          day = ("0" + date.getDate()).slice(-2);
+                    onChange={(value) => {
+                      let date = moment(value);
 
-                        if (date.getDay() == 0) {
+                      if (value && date.isValid()) {
+                        if (date.day() === 0) {
                           enqueueSnackbar(
-                            "A data informada é domingo! Por favor, selecione outra data.",
+                            "A data informada é um domingo! Por favor, selecione outra data.",
                             {
                               variant: "error",
                               autoHideDuration: 5000,
@@ -517,24 +500,18 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                             }
                           );
                         } else {
-                          if (date.getDay() == 6) {
-                            setPhotographerId(photographer_sabado.id);
-                            verifyDate(
-                              `${year}-${month}-${day}`,
-                              photographer_sabado.id
-                            );
-                          } else {
-                            verifyDate(
-                              `${year}-${month}-${day}`,
-                              photographer_id
-                            );
-                            setPhotographerId(photographer_id);
-                          }
+                          setDate(date);
+                          getHoraries(date, date.day(), photographer_id);
                         }
                       }
                     }}
-                    minDate={new Date()}
+                    minDate={moment()}
                     format="dd/MM/yyyy"
+                    cancelLabel="Cancelar"
+                    invalidDateMessage="Data em formato inválido."
+                    minDateMessage={`A data deve ser maior que ${moment().format(
+                      "DD/MM/YYYY"
+                    )}.`}
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
@@ -555,53 +532,64 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
                     {horaries.map((item) => {
-                      const date_horary = new Date(`${date}T${item.time}-03:00`);
-
                       let validHorary = true;
 
-                      if (!date_horary) {
-                        return;
-                      }
-
-                      if (new Date(date_horary).getDay() == 6 && !item.sabado) {
-                        validHorary = false;
-                      }
-                      
-                      const today = new Date(Date.parse(new Date(date)) + 10800000);
-                      const endDay = new Date(Date.parse(new Date(date)) + 10800000 + 86399999);
+                      const dateHorary = moment(
+                          moment(date).format("YYYY-MM-DD") + " " + item.time
+                        ),
+                        initDay = moment(date).set({
+                          hour: 0,
+                          minute: 0,
+                          second: 0,
+                          millisecond: 0,
+                        }),
+                        endDay = moment(date).set({
+                          hour: 23,
+                          minute: 59,
+                          second: 59,
+                          millisecond: 59,
+                        });
 
                       events.map((event) => {
-                        if (event.status == "confirmed") {
-                          const dateStart = new Date(event.start.dateTime);
-                          const dateEnd = new Date(event.end.dateTime);
-                          
+                        if (event.status === "confirmed") {
+                          const dateStart = moment(event.start.dateTime);
+                          const dateEnd = moment(event.end.dateTime);
+
                           const eventStart = event.start.date
-                            ? today
-                            : new Date(
-                                      Date.UTC(today.getFullYear(),
-                                              today.getMonth(),
-                                              today.getDate(),
-                                              dateStart.getHours(),
-                                              dateStart.getMinutes()) + 10800000)
-                                              
+                            ? initDay
+                            : moment(
+                                moment(date).format("YYYY-MM-DD") +
+                                  " " +
+                                  moment(dateStart).format("HH:mm:ss")
+                              );
+
                           const eventEnd = event.end.date
-                            ? new Date(`${date}T23:59:59-03:00`)
-                            : new Date(
-                                      Date.UTC(today.getFullYear(),
-                                              today.getMonth(),
-                                              today.getDate(),
-                                              dateEnd.getHours(),
-                                              dateEnd.getMinutes()) + 10800000)
-                              
+                            ? endDay
+                            : moment(
+                                moment(date).format("YYYY-MM-DD") +
+                                  " " +
+                                  moment(dateEnd).format("HH:mm:ss")
+                              );
+
                           if (
-                            (Date.parse(date_horary) + 1 >=
-                              Date.parse(eventStart) &&
-                              Date.parse(date_horary) + 1 <=
-                                Date.parse(eventEnd)) ||
-                            (Date.parse(date_horary) + 4499999 >=
-                              Date.parse(eventStart) &&
-                              Date.parse(date_horary) + 4499999 <=
-                                Date.parse(eventEnd))
+                            (eventStart.isBefore(
+                              dateHorary.clone().add(1, "seconds")
+                            ) &&
+                              eventEnd.isAfter(
+                                dateHorary.clone().add(1, "seconds")
+                              )) ||
+                            (eventStart.isBefore(
+                              dateHorary
+                                .clone()
+                                .add(photographer.intervalo, "minutes")
+                                .subtract(1, "seconds")
+                            ) &&
+                              eventEnd.isAfter(
+                                dateHorary
+                                  .clone()
+                                  .add(photographer.intervalo, "minutes")
+                                  .subtract(1, "seconds")
+                              ))
                           ) {
                             validHorary = false;
                           }
@@ -610,7 +598,11 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
                       if (validHorary) {
                         return (
-                          <MenuItem id={item.time} key={item.id} value={item.id}>
+                          <MenuItem
+                            id={item.time}
+                            key={item.id}
+                            value={item.id}
+                          >
                             {item.time}
                           </MenuItem>
                         );
@@ -665,20 +657,17 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
                     autoOk
-                    value={date ? new Date(+new Date(date) + 86400000) : date}
+                    value={date ? moment(date) : ""}
                     inputVariant="outlined"
                     fullWidth
-                    label="Data da Sessão (Apenas para reagendar)"
-                    disabled={!photographer_id}
-                    onChange={(date) => {
-                      if (date) {
-                        const year = date.getFullYear(),
-                          month = ("0" + (date.getMonth() + 1)).slice(-2),
-                          day = ("0" + date.getDate()).slice(-2);
+                    label="Data da Sessão"
+                    onChange={(value) => {
+                      let date = moment(value);
 
-                        if (date.getDay() == 0) {
+                      if (value && date.isValid()) {
+                        if (date.day() === 0) {
                           enqueueSnackbar(
-                            "A data informada é domingo! Por favor, selecione outra data.",
+                            "A data informada é um domingo! Por favor, selecione outra data.",
                             {
                               variant: "error",
                               autoHideDuration: 5000,
@@ -689,24 +678,18 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                             }
                           );
                         } else {
-                          if (date.getDay() == 6) {
-                            setPhotographerId(photographer_sabado.id);
-                            verifyDate(
-                              `${year}-${month}-${day}`,
-                              photographer_sabado.id
-                            );
-                          } else {
-                            verifyDate(
-                              `${year}-${month}-${day}`,
-                              photographer.id
-                            );
-                            setPhotographerId(photographer.id);
-                          }
+                          setDate(date);
+                          getHoraries(date, date.day(), photographer_id);
                         }
                       }
                     }}
-                    minDate={new Date()}
+                    minDate={moment()}
                     format="dd/MM/yyyy"
+                    cancelLabel="Cancelar"
+                    invalidDateMessage="Data em formato inválido."
+                    minDateMessage={`A data deve ser maior que ${moment().format(
+                      "DD/MM/YYYY"
+                    )}.`}
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
@@ -727,53 +710,64 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
                   >
                     <MenuItem value="">-- Selecione --</MenuItem>
                     {horaries.map((item) => {
-                      const date_horary = new Date(`${date}T${item.time}-03:00`);
-
                       let validHorary = true;
 
-                      if (!date_horary) {
-                        return;
-                      }
-
-                      if (new Date(date_horary).getDay() == 6 && !item.sabado) {
-                        validHorary = false;
-                      }
-                      
-                      const today = new Date(Date.parse(new Date(date)) + 10800000);
-                      const endDay = new Date(Date.parse(new Date(date)) + 10800000 + 86399999);
+                      const dateHorary = moment(
+                          moment(date).format("YYYY-MM-DD") + " " + item.time
+                        ),
+                        initDay = moment(date).set({
+                          hour: 0,
+                          minute: 0,
+                          second: 0,
+                          millisecond: 0,
+                        }),
+                        endDay = moment(date).set({
+                          hour: 23,
+                          minute: 59,
+                          second: 59,
+                          millisecond: 59,
+                        });
 
                       events.map((event) => {
-                        if (event.status == "confirmed") {
-                          const dateStart = new Date(event.start.dateTime);
-                          const dateEnd = new Date(event.end.dateTime);
-                          
+                        if (event.status === "confirmed") {
+                          const dateStart = moment(event.start.dateTime);
+                          const dateEnd = moment(event.end.dateTime);
+
                           const eventStart = event.start.date
-                            ? today
-                            : new Date(
-                                      Date.UTC(today.getFullYear(),
-                                              today.getMonth(),
-                                              today.getDate(),
-                                              dateStart.getHours(),
-                                              dateStart.getMinutes()) + 10800000)
-                                              
+                            ? initDay
+                            : moment(
+                                moment(date).format("YYYY-MM-DD") +
+                                  " " +
+                                  moment(dateStart).format("HH:mm:ss")
+                              );
+
                           const eventEnd = event.end.date
-                            ? new Date(`${date}T23:59:59-03:00`)
-                            : new Date(
-                                      Date.UTC(today.getFullYear(),
-                                              today.getMonth(),
-                                              today.getDate(),
-                                              dateEnd.getHours(),
-                                              dateEnd.getMinutes()) + 10800000)
-                              
+                            ? endDay
+                            : moment(
+                                moment(date).format("YYYY-MM-DD") +
+                                  " " +
+                                  moment(dateEnd).format("HH:mm:ss")
+                              );
+
                           if (
-                            (Date.parse(date_horary) + 1 >=
-                              Date.parse(eventStart) &&
-                              Date.parse(date_horary) + 1 <=
-                                Date.parse(eventEnd)) ||
-                            (Date.parse(date_horary) + 4499999 >=
-                              Date.parse(eventStart) &&
-                              Date.parse(date_horary) + 4499999 <=
-                                Date.parse(eventEnd))
+                            (eventStart.isBefore(
+                              dateHorary.clone().add(1, "seconds")
+                            ) &&
+                              eventEnd.isAfter(
+                                dateHorary.clone().add(1, "seconds")
+                              )) ||
+                            (eventStart.isBefore(
+                              dateHorary
+                                .clone()
+                                .add(photographer.intervalo, "minutes")
+                                .subtract(1, "seconds")
+                            ) &&
+                              eventEnd.isAfter(
+                                dateHorary
+                                  .clone()
+                                  .add(photographer.intervalo, "minutes")
+                                  .subtract(1, "seconds")
+                              ))
                           ) {
                             validHorary = false;
                           }
@@ -782,7 +776,11 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
                       if (validHorary) {
                         return (
-                          <MenuItem id={item.time} key={item.id} value={item.id}>
+                          <MenuItem
+                            id={item.time}
+                            key={item.id}
+                            value={item.id}
+                          >
                             {item.time}
                           </MenuItem>
                         );

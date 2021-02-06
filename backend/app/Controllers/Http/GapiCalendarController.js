@@ -5,7 +5,6 @@ const { google } = require('googleapis'),
   calendar = google.calendar(Env.get('GAPI_VERSION')),
   Photographer = use('App/Models/Photographer'),
   Client = use('App/Models/Client'),
-  Horary = use('App/Models/Horary'),
   Scheduling = use('App/Models/Scheduling'),
   Broker = use('App/Models/Broker'),
   User = use('App/Models/User')
@@ -55,7 +54,6 @@ class GapiCalendarController {
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
-      horaryItem = await Horary.findOrFail(scheduling.horary_id),
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       title = scheduling.drone
@@ -63,8 +61,8 @@ class GapiCalendarController {
         : scheduling.tour360
         ? 'Tour 360°'
         : 'Fotografia',
-      retirarChaves = scheduling.retirarChaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirarChaves}${title} - (${user.email} | ${broker.name})`,
+      retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
+      summary = `${retirar_chaves}${title} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
       description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
@@ -94,7 +92,6 @@ class GapiCalendarController {
           client,
           scheduling,
           photographer,
-          horaryItem,
           admin
         },
         message => {
@@ -131,7 +128,6 @@ class GapiCalendarController {
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
-      horaryItem = await Horary.findOrFail(scheduling.horary_id),
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
@@ -140,8 +136,8 @@ class GapiCalendarController {
         : scheduling.tour360
         ? 'Tour 360°'
         : 'Fotografia',
-      retirarChaves = scheduling.retirarChaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirarChaves}${title} - (${user.email} | ${broker.name})`,
+      retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
+      summary = `${retirar_chaves}${title} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
       description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
@@ -168,7 +164,6 @@ class GapiCalendarController {
             client,
             scheduling,
             photographer,
-            horaryItem,
             admin
           },
           message => {
@@ -215,7 +210,6 @@ class GapiCalendarController {
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
-      horary = await Horary.findOrFail(scheduling.horary_id),
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
@@ -233,7 +227,6 @@ class GapiCalendarController {
             client,
             scheduling,
             photographer,
-            horary,
             admin
           },
           message => {
@@ -252,7 +245,6 @@ class GapiCalendarController {
           client,
           scheduling,
           photographer,
-          horary,
           admin
         },
         message => {

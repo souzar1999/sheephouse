@@ -4,17 +4,18 @@
 const Model = use('Model')
 
 class Scheduling extends Model {
-  
-  horary () {
-    return this.belongsTo('App/Models/Horary')
-  }
-
-  client () {
+  client() {
     return this.belongsTo('App/Models/Client')
   }
-  
-  photographer () {
+
+  photographer() {
     return this.belongsTo('App/Models/Photographer')
+  }
+
+  services() {
+    return this.belongsToMany('App/Models/Service').pivotTable(
+      'scheduling_service'
+    )
   }
 }
 

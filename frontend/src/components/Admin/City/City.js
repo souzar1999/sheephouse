@@ -5,6 +5,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 
+import history from "../../../history";
+
 const useStyles = makeStyles((theme) => ({
   main: {
     [theme.breakpoints.down("sm")]: {
@@ -19,6 +21,20 @@ function City({ enqueueSnackbar }) {
   const [cities, setCities] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
+    {
+      title: "Serviços",
+      field: "services",
+      editable: "never",
+      render: (rowData) => {
+        let services = "";
+        rowData.services.map((service) => {
+          if (services != "") services += ", ";
+
+          services += service.name;
+        });
+        return services;
+      },
+    },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" },
   ];
 
@@ -132,6 +148,15 @@ function City({ enqueueSnackbar }) {
               handleUpdate(newData, oldData);
             }),
         }}
+        actions={[
+          (rowData) => ({
+            icon: "work",
+            tooltip: "Editar serviços",
+            onClick: (event, rowData) => {
+              history.push(`/admin/city/${rowData.id}/services/`);
+            },
+          }),
+        ]}
         localization={{
           body: {
             editRow: {

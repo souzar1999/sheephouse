@@ -9,7 +9,7 @@
     <div style="padding:20px 50px;background-color: #fff;color:#444;">
       Olá {{ client.name }}!
       <br/><br/>
-      Sua sessão foi agendada para o dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ horaryItem.time }} horas.
+      Sua sessão foi agendada para o dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ scheduling.horary }} horas.
       <br/><br/>
       Serviço: {{ (scheduling.drone ? 'Filmagem/Drone':(scheduling.tour360 ? 'Tour 360°':'Fotografia')) }}<br/><br/>
       

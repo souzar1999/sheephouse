@@ -28,15 +28,13 @@ function Home({ enqueueSnackbar }) {
     [canceled, setCanceled] = useState(0),
     [Clients, setClients] = useState([]),
     [Photographers, setPhotographers] = useState([]),
-    [Horaries, setHoraries] = useState([]),
     [dateToday, setDateToday] = useState(""),
     [dateTomorrow, setDateTomorrow] = useState(""),
     columns = [
       {
         title: "Horario",
-        field: "horary_id",
+        field: "horary",
         defaultSort: "desc",
-        lookup: { ...Horaries },
         cellStyle: {
           width: 120,
           maxWidth: 120,
@@ -93,16 +91,6 @@ function Home({ enqueueSnackbar }) {
       });
 
       setPhotographers(data);
-    });
-
-    await api.get("/horary/active").then((response) => {
-      let data = [];
-
-      response.data.map((item) => {
-        return (data[item.id] = item.time);
-      });
-
-      setHoraries(data);
     });
 
     await api.get("/client/active").then((response) => {

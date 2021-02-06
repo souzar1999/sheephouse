@@ -39,12 +39,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   const small = useMediaQuery(theme.breakpoints.down("sm"));
   const [Schedulings, setScheduling] = useState([]),
     [Photographers, setPhotographers] = useState([]),
-    [Horaries, setHoraries] = useState([]),
     columns = [
       {
         title: "Serviço",
-        field: "tipo",
-        lookup: { 0: "Fotografia", 1: "Filmagem/Drone", 2: "Tour 360°" },
+        field: "serviceName",
       },
       {
         title: "Cliente",
@@ -99,9 +97,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       },
       {
         title: "Horario",
-        field: "horary_id",
+        field: "horary",
         defaultSort: "asc",
-        lookup: { ...Horaries },
         cellStyle: {
           textAlign: "center",
         },
@@ -196,6 +193,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             item.tipo = 0;
           }
 
+          let serviceString = "";
+
+          item.services.map((service) => {
+            serviceString += ` ${service.name},`;
+          });
+
+          item.serviceName = serviceString.slice(0, -1);
+
           schedulingsData.push(item);
         });
 
@@ -240,6 +245,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             item.tipo = 0;
           }
 
+          let serviceString = "";
+
+          item.services.map((service) => {
+            serviceString += ` ${service.name},`;
+          });
+
+          item.serviceName = serviceString.slice(0, -1);
+
           item.clientName = item.client.name;
 
           schedulingsData.push(item);
@@ -259,16 +272,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
 
       setPhotographers(data);
-    });
-
-    await api.get("/horary/active").then((response) => {
-      let data = [];
-
-      response.data.map((item) => {
-        return (data[item.id] = item.time);
-      });
-
-      setHoraries(data);
     });
   }
 

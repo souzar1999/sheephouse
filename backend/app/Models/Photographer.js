@@ -4,12 +4,15 @@
 const Model = use('Model')
 
 class Photographer extends Model {
-  
-  region () {
+  region() {
     return this.belongsTo('App/Models/Region')
   }
-  
-  scheduling () {
+
+  horary() {
+    return this.hasMany('App/Models/Horary')
+  }
+
+  scheduling() {
     return this.hasMany('App/Models/Scheduling')
   }
 }

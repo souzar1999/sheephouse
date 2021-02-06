@@ -56,7 +56,14 @@ class PhotographerController {
   }
 
   async store({ request, response }) {
-    const data = request.only(['name', 'email', 'drone', 'sabado', 'region_id'])
+    const data = request.only([
+      'name',
+      'email',
+      'drone',
+      'sabado',
+      'intervalo',
+      'region_id'
+    ])
 
     const region = await Region.findOrFail(data.region_id)
 
@@ -73,8 +80,9 @@ class PhotographerController {
       'name',
       'email',
       'drone',
-      'sabado',
       'active',
+      'sabado',
+      'intervalo',
       'region_id',
       'tokens'
     ])

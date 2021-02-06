@@ -4,9 +4,8 @@
 const Model = use('Model')
 
 class Horary extends Model {
-
-  scheduling () {
-    return this.hasMany('App/Models/Scheduling')
+  photographer() {
+    return this.belongsTo('App/Models/Photographer')
   }
 }
 

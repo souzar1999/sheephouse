@@ -1,10 +1,10 @@
 import React from "react";
 
-import { AdminHorary } from "../../../components";
+import { AdminPhotographerHorary } from "../../../components";
 
 const Horary = () => (
   <div>
-    <AdminHorary />
+    <AdminPhotographerHorary />
   </div>
 );
 

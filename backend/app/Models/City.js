@@ -7,6 +7,10 @@ class City extends Model {
   district() {
     return this.hasMany('App/Models/District')
   }
+
+  services() {
+    return this.belongsToMany('App/Models/Service').pivotTable('city_service')
+  }
 }
 
 module.exports = City

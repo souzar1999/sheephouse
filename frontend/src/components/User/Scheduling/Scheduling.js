@@ -12,10 +12,16 @@ import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import DateFnsUtils from "@date-io/date-fns";
+import WhatsAppIcon from "@material-ui/icons/WhatsApp";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
+
+import moment from "moment";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
@@ -43,35 +49,59 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  service: {
+    width: "100%",
+    height: "60px",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: "6px",
+    borderRadius: "4px",
+    padding: "8px",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#efefef",
+      boxShadow:
+        "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)",
+    },
+  },
+  serviceContent: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginLeft: "50px",
+    marginRight: "50px",
+  },
 }));
 
 function Scheduling({ enqueueSnackbar, clientCode }) {
   const classes = useStyles(),
     [step, setStep] = useState(0),
     [horaries, setHoraries] = useState([]),
+    [services, setServices] = useState([]),
     [horary, setHorary] = useState(""),
-    [parcial, setParcial] = useState(false),
+    [retirar_chaves, setRetirarChaves] = useState(false),
     [city, setCity] = useState(""),
     [district, setDistrict] = useState(""),
-    [formatDate, setFormatDate] = useState(),
     [horaryDisable, setHoraryDisable] = useState(true),
     [events, setEvents] = useState([]),
-    [date, setDate] = useState(new Date()),
+    [date, setDate] = useState(null),
     [latitude, setLat] = useState(""),
     [longitude, setLng] = useState(""),
     [address, setAddress] = useState(""),
     [complement, setComplement] = useState(""),
     [comments, setComments] = useState(""),
     [accompanies, setAccompanies] = useState(false),
-    [drone, setDrone] = useState(false),
-    [tour360, setTour360] = useState(false),
     [region_id, setRegionId] = useState(""),
     [city_id, setCityId] = useState(""),
+    [service_id, setServiceId] = useState([]),
     [district_id, setDistrictId] = useState(""),
     [photographer, setPhotographer] = useState([]),
     [photographer_sabado, setPhotographerSabado] = useState([]),
     [photographer_id, setPhotographerId] = useState(""),
     [horary_id, setHoraryId] = useState(""),
+    [servicesSelected, setServicesSelected] = useState(""),
     client_id = clientCode,
     [labelWidth, setLabelWidth] = useState(0),
     inputLabel = React.useRef(null),
@@ -80,18 +110,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   script.src = "https://apis.google.com/js/client.js";
 
   useEffect(() => {
-    if (step === 1) {
-      getHoraries();
+    if (step === 0) {
+      getPhotographerSabado();
+    }
+    if (step === 2) {
       setLabelWidth(inputLabel.current.offsetWidth);
     }
-    getPhotographerSabado();
-  }, [enqueueSnackbar, step]);
-
-  async function getHoraries() {
-    await api.get("/horary/active").then((response) => {
-      setHoraries(response.data);
-    });
-  }
+  }, [step]);
 
   async function getPhotographerSabado() {
     await api.get("/photographer/sabado").then((response) => {
@@ -107,6 +132,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setLng(lng);
     await api.post(`/city/byName`, { city }).then(async (response) => {
       setCityId(response.data[0].id);
+      setServices(response.data[0].services);
       await api
         .post(`/district/byName`, {
           district,
@@ -140,42 +166,45 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     });
   }
 
-  function verifyDate(value, photographerId) {
-    setDate(value);
+  async function getHoraries(date, dia_semana, photographer_id) {
     setHoraryDisable(true);
     setHoraryId();
 
-    if (Date.parse(value) > Date.now() - 129600000) {
-      getCalendarEvents(value, photographerId);
+    enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
+      variant: "success",
+      autoHideDuration: 5000,
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    });
 
-      enqueueSnackbar("Carregando horários disponíveis na data selecionada", {
-        variant: "success",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center",
-        },
+    await api
+      .get("/horary", { params: { photographer_id, dia_semana } })
+      .then(async (response) => {
+        if (response.data && response.data.length > 0) {
+          setHoraries(response.data);
+          getEvents(date.format("YYYY-MM-DD"), photographer_id);
+        } else if (dia_semana === 6) {
+          getHoraries(date, dia_semana, photographer_sabado[0].id);
+        }
       });
-
-      setFormatDate(
-        value.slice(8, 10) + "/" + value.slice(5, 7) + "/" + value.slice(0, 4)
-      );
-    }
   }
 
-  function handleReturnStep() {
-    setStep(step - 1);
-  }
-
-  async function getCalendarEvents(date, photographerId) {
+  async function getEvents(date, photographer_id) {
     await api
       .post(`/calendar/event/list`, {
-        photographer_id: photographerId,
+        photographer_id,
         date,
       })
       .then((response) => {
-        setEvents(response.data);
-        setHoraryDisable(false);
+        if (response.data) {
+          setEvents(response.data);
+          setHoraryDisable(false);
+        } else {
+          setEvents([]);
+          setHoraryDisable(false);
+        }
 
         enqueueSnackbar("Horários definidos!", {
           variant: "success",
@@ -198,6 +227,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       });
   }
 
+  function handleReturnStep() {
+    setStep(step - 1);
+  }
+
   async function handleSubmitStep0() {
     if (!address) {
       enqueueSnackbar("Necessário informar endereço para prosseguir", {
@@ -211,7 +244,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       return;
     }
 
-    if (parcial || drone) {
+    if (retirar_chaves) {
       if (
         !latitude ||
         !longitude ||
@@ -242,7 +275,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           address,
           complement,
           comments,
-          drone,
           region_id,
           city_id,
           district_id,
@@ -250,7 +282,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           client_id,
           accompanies,
           actived: false,
-          retirarChaves: parcial
+          retirar_chaves,
         })
         .then(async (response) => {
           enqueueSnackbar("Sessão cadastrada com sucesso!", {
@@ -301,6 +333,36 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }
 
   async function handleSubmitStep1() {
+    if (service_id.length == 0) {
+      enqueueSnackbar("Necessário selecionar um serviço para prosseguir", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
+    let serviceString = "";
+
+    services.map((service) => {
+      if (service.checked) {
+        serviceString += ` ${service.name},`;
+      }
+    });
+
+    setServicesSelected(serviceString);
+
+    setDate(null);
+    setHoraryDisable(true);
+    setHoraryId();
+    setEvents([]);
+    setStep(2);
+  }
+
+  async function handleSubmitStep2() {
     if (!date) {
       enqueueSnackbar("Necessário informar data da sessão para prosseguir", {
         variant: "error",
@@ -325,10 +387,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       return;
     }
 
-    setStep(2);
+    setStep(3);
   }
 
-  async function handleSubmitStep2() {
+  async function handleSubmitStep3() {
     if (
       !date ||
       !latitude ||
@@ -338,8 +400,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       !city_id ||
       !district_id ||
       !photographer_id ||
-      !horary_id ||
-      !client_id
+      !horary ||
+      !client_id ||
+      !service_id
     ) {
       enqueueSnackbar(
         "Informações estão faltando para dar sequência ao processo!",
@@ -357,21 +420,20 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
     await api
       .post(`/scheduling`, {
-        date,
+        date: date.format("YYYY-MM-DD"),
         latitude,
         longitude,
         address,
         complement,
         comments,
         accompanies,
-        drone,
-        tour360,
         region_id,
         city_id,
         district_id,
         photographer_id,
-        horary_id,
+        horary,
         client_id,
+        services: service_id,
       })
       .then(async (response) => {
         const scheduling_id = response.data.id;
@@ -379,7 +441,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           .post(`/google/event/insertEvent`, {
             scheduling_id,
             horary,
-            date,
+            date: date.format("YYYY-MM-DD"),
           })
           .then(() => {
             enqueueSnackbar(
@@ -449,30 +511,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             <Grid item xs={12}>
               <FormGroup row>
                 <FormControlLabel
-                  label="Tour Virtual 360°"
-                  control={
-                    <Checkbox
-                      checked={tour360}
-                      onChange={(event) => {
-                        setTour360(!tour360);
-                      }}
-                      value={tour360}
-                    />
-                  }
-                />
-              </FormGroup>
-            </Grid>
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
                   label="Retirar chaves na imobiliária"
                   control={
                     <Checkbox
-                      checked={parcial}
+                      checked={retirar_chaves}
                       onChange={(event) => {
-                        setParcial(!parcial);
+                        setRetirarChaves(!retirar_chaves);
                       }}
-                      value={parcial}
+                      value={retirar_chaves}
                     />
                   }
                 />
@@ -482,26 +528,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 retirada de chaves.
               </small>
               <br />
-            </Grid>
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Filmagem e/ou uso de Drone"
-                  control={
-                    <Checkbox
-                      checked={drone}
-                      onChange={(event) => {
-                        setDrone(!drone);
-                      }}
-                      value={drone}
-                    />
-                  }
-                />
-              </FormGroup>
               <small style={{ float: "left", fontStyle: "italic" }}>
                 Para serviços de filmagem interna ou serviços com drone
               </small>
-              {(drone || parcial) && (
+              {retirar_chaves && (
                 <>
                   <br />
                   <br />
@@ -543,6 +573,86 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     return (
       <Paper className={classes.paper}>
         <Typography component="h2" variant="h4">
+          Selecione os serviços
+        </Typography>
+
+        <div className={classes.form}>
+          <Grid container spacing={2}>
+            {services.map((service, index) => {
+              return (
+                <div
+                  key={service.id}
+                  className={classes.service}
+                  onClick={() => {
+                    let newServices = services;
+                    let newServiceId = service_id;
+
+                    newServices[index].checked = !service.checked;
+
+                    if (newServiceId.includes(service.id)) {
+                      newServiceId = newServiceId.filter((item) => {
+                        return item != service.id;
+                      });
+                    } else {
+                      newServiceId.push(service.id);
+                    }
+
+                    setServices([...newServices]);
+                    setServiceId([...newServiceId]);
+                  }}
+                >
+                  <div className={classes.serviceContent}>
+                    <Typography component="h5" variant="h6" align="left">
+                      {service.name}
+                    </Typography>
+                    {service.checked ? (
+                      <CheckBoxIcon />
+                    ) : (
+                      <CheckBoxOutlineBlankIcon />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            <Grid item xs={4}>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                fullWidth
+                className={classes.submit}
+                onClick={() => {
+                  handleReturnStep();
+                }}
+              >
+                Voltar
+              </Button>
+            </Grid>
+            <Grid item xs={8}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="small"
+                fullWidth
+                className={classes.submit}
+                onClick={() => {
+                  handleSubmitStep1();
+                }}
+              >
+                Continuar
+              </Button>
+            </Grid>
+          </Grid>
+        </div>
+      </Paper>
+    );
+  }
+
+  if (step === 2) {
+    return (
+      <Paper className={classes.paper}>
+        <Typography component="h2" variant="h4">
           Quando será a sessão de fotos
         </Typography>
 
@@ -552,20 +662,17 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   autoOk
-                  value={date ? new Date(+new Date(date) + 86400000) : date}
+                  value={date ? moment(date) : ""}
                   inputVariant="outlined"
                   fullWidth
                   label="Data da Sessão"
-                  disabled={!photographer_id}
-                  onChange={(date) => {
-                    if (date) {
-                      const year = date.getFullYear(),
-                        month = ("0" + (date.getMonth() + 1)).slice(-2),
-                        day = ("0" + date.getDate()).slice(-2);
+                  onChange={(value) => {
+                    let date = moment(value);
 
-                      if (date.getDay() == 0) {
+                    if (value && date.isValid()) {
+                      if (date.day() === 0) {
                         enqueueSnackbar(
-                          "A data informada é domingo! Por favor, selecione outra data.",
+                          "A data informada é um domingo! Por favor, selecione outra data.",
                           {
                             variant: "error",
                             autoHideDuration: 5000,
@@ -576,24 +683,18 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                           }
                         );
                       } else {
-                        if (date.getDay() == 6) {
-                          setPhotographerId(photographer_sabado.id);
-                          verifyDate(
-                            `${year}-${month}-${day}`,
-                            photographer_sabado.id
-                          );
-                        } else {
-                          setPhotographerId(photographer.id);
-                          verifyDate(
-                            `${year}-${month}-${day}`,
-                            photographer.id
-                          );
-                        }
+                        setDate(date);
+                        getHoraries(date, date.day(), photographer_id);
                       }
                     }
                   }}
-                  minDate={new Date()}
+                  minDate={moment()}
                   format="dd/MM/yyyy"
+                  cancelLabel="Cancelar"
+                  invalidDateMessage="Data em formato inválido."
+                  minDateMessage={`A data deve ser maior que ${moment().format(
+                    "DD/MM/YYYY"
+                  )}.`}
                 />
               </MuiPickersUtilsProvider>
             </Grid>
@@ -614,53 +715,64 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 >
                   <MenuItem value="">-- Selecione --</MenuItem>
                   {horaries.map((item) => {
-                    const date_horary = new Date(`${date}T${item.time}-03:00`);
-
                     let validHorary = true;
 
-                    if (!date_horary) {
-                      return;
-                    }
-
-                    if (new Date(date_horary).getDay() == 6 && !item.sabado) {
-                      validHorary = false;
-                    }
-                    
-                    const today = new Date(Date.parse(new Date(date)) + 10800000);
-                    const endDay = new Date(Date.parse(new Date(date)) + 10800000 + 86399999);
+                    const dateHorary = moment(
+                        moment(date).format("YYYY-MM-DD") + " " + item.time
+                      ),
+                      initDay = moment(date).set({
+                        hour: 0,
+                        minute: 0,
+                        second: 0,
+                        millisecond: 0,
+                      }),
+                      endDay = moment(date).set({
+                        hour: 23,
+                        minute: 59,
+                        second: 59,
+                        millisecond: 59,
+                      });
 
                     events.map((event) => {
-                      if (event.status == "confirmed") {
-                        const dateStart = new Date(event.start.dateTime);
-                        const dateEnd = new Date(event.end.dateTime);
-                        
+                      if (event.status === "confirmed") {
+                        const dateStart = moment(event.start.dateTime);
+                        const dateEnd = moment(event.end.dateTime);
+
                         const eventStart = event.start.date
-                          ? today
-                          : new Date(
-                                    Date.UTC(today.getFullYear(),
-                                            today.getMonth(),
-                                            today.getDate(),
-                                            dateStart.getHours(),
-                                            dateStart.getMinutes()) + 10800000)
-                                            
+                          ? initDay
+                          : moment(
+                              moment(date).format("YYYY-MM-DD") +
+                                " " +
+                                moment(dateStart).format("HH:mm:ss")
+                            );
+
                         const eventEnd = event.end.date
-                          ? new Date(`${date}T23:59:59-03:00`)
-                          : new Date(
-                                    Date.UTC(today.getFullYear(),
-                                            today.getMonth(),
-                                            today.getDate(),
-                                            dateEnd.getHours(),
-                                            dateEnd.getMinutes()) + 10800000)
-                            
+                          ? endDay
+                          : moment(
+                              moment(date).format("YYYY-MM-DD") +
+                                " " +
+                                moment(dateEnd).format("HH:mm:ss")
+                            );
+
                         if (
-                          (Date.parse(date_horary) + 1 >=
-                            Date.parse(eventStart) &&
-                            Date.parse(date_horary) + 1 <=
-                              Date.parse(eventEnd)) ||
-                          (Date.parse(date_horary) + 4499999 >=
-                            Date.parse(eventStart) &&
-                            Date.parse(date_horary) + 4499999 <=
-                              Date.parse(eventEnd))
+                          (eventStart.isBefore(
+                            dateHorary.clone().add(1, "seconds")
+                          ) &&
+                            eventEnd.isAfter(
+                              dateHorary.clone().add(1, "seconds")
+                            )) ||
+                          (eventStart.isBefore(
+                            dateHorary
+                              .clone()
+                              .add(photographer.intervalo, "minutes")
+                              .subtract(1, "seconds")
+                          ) &&
+                            eventEnd.isAfter(
+                              dateHorary
+                                .clone()
+                                .add(photographer.intervalo, "minutes")
+                                .subtract(1, "seconds")
+                            ))
                         ) {
                           validHorary = false;
                         }
@@ -701,7 +813,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 fullWidth
                 className={classes.submit}
                 onClick={() => {
-                  handleSubmitStep1();
+                  handleSubmitStep2();
                 }}
               >
                 Continuar
@@ -713,7 +825,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     );
   }
 
-  if (step === 2) {
+  if (step === 3) {
     return (
       <Paper className={classes.paper}>
         <Typography component="h2" variant="h4">
@@ -751,7 +863,20 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             <Grid item xs={12}>
               <TextField
                 type="text"
-                value={formatDate}
+                value={servicesSelected.slice(0, -1)}
+                label="Serviços"
+                variant="outlined"
+                size="small"
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                type="text"
+                value={moment(date).format("DD/MM/YYYY")}
                 label="Data da Sessão"
                 variant="outlined"
                 size="small"
@@ -797,7 +922,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 fullWidth
                 className={classes.submit}
                 onClick={() => {
-                  handleSubmitStep2();
+                  handleSubmitStep3();
                 }}
               >
                 Agendar

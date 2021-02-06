@@ -94,9 +94,8 @@ function Reports({ enqueueSnackbar }) {
       },
       {
         title: "Horario",
-        field: "horary_id",
+        field: "horary",
         defaultSort: "asc",
-        lookup: { ...Horaries },
         cellStyle: {
           textAlign: "center",
         },
@@ -211,16 +210,6 @@ function Reports({ enqueueSnackbar }) {
       });
 
       setClients(data);
-    });
-
-    await api.get("/horary/active").then((response) => {
-      let data = [];
-
-      response.data.map((item) => {
-        return (data[item.id] = item.time);
-      });
-
-      setHoraries(data);
     });
 
     await api.get("/broker").then((response) => {

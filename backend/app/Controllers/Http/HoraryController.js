@@ -4,17 +4,19 @@ const Horary = use('App/Models/Horary')
 
 class HoraryController {
   async index({ request, response, view }) {
-    const horary = Horary.query().fetch()
+    const { photographer_id, dia_semana } = request.get()
 
-    return horary
-  }
+    const query = Horary.query()
 
-  async indexActive({ request, response, view }) {
-    const horary = Horary.query()
-      .where('active', true)
-      .fetch()
+    if (photographer_id) {
+      query.where('photographer_id', photographer_id)
+    }
 
-    return horary
+    if (dia_semana) {
+      query.where('dia_semana', dia_semana)
+    }
+
+    return query.fetch()
   }
 
   async show({ params, request, response, view }) {
@@ -26,7 +28,7 @@ class HoraryController {
   }
 
   async store({ request, response }) {
-    const data = request.only(['time', 'sabado'])
+    const data = request.only(['time', 'dia_semana', 'photographer_id'])
 
     const horary = await Horary.create(data)
 
@@ -35,7 +37,7 @@ class HoraryController {
 
   async update({ params, request, response }) {
     const horary = await Horary.findOrFail(params.id)
-    const data = request.only(['time', 'sabado', 'active'])
+    const data = request.only(['time', 'dia_semana', 'photographer_id'])
 
     horary.merge(data)
 

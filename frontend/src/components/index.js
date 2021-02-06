@@ -14,22 +14,24 @@ import SignUp from "./UserRegister/SignUp";
 import ResetPassword from "./UserResetPassword/ResetPassword";
 import Download from "./UserDownload/UserDownload";
 
-import UserHome from "./User/Home/Home";
 import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
 import UserReports from "./User/Reports/Reports";
 import UserProfile from "./User/Profile/Profile";
 
 import AdminCity from "./Admin/City/City";
+import AdminCityServices from "./Admin/City/CityServices";
 import AdminRegion from "./Admin/Region/Region";
 import AdminDistrict from "./Admin/District/District";
 import AdminBroker from "./Admin/Broker/Broker";
+//import AdminBrokerServices from "./Admin/Broker/BrokerServices";
 import AdminClient from "./Admin/Client/Client";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
-import AdminHorary from "./Admin/Horary/Horary";
+import AdminPhotographerHorary from "./Admin/Photographer/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
 import AdminHome from "./Admin/Home/Home";
 import AdminReports from "./Admin/Reports/Reports";
+import AdminService from "./Admin/Service/Service";
 
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
@@ -49,20 +51,22 @@ export {
   LogoutError,
   SignUp,
   AdminCity,
+  AdminCityServices,
   AdminRegion,
   AdminPhotographer,
   AdminBroker,
+  // AdminBrokerServices,
   AdminDistrict,
   AdminClient,
-  AdminHorary,
+  AdminPhotographerHorary,
   AdminScheduling,
   AdminReports,
   AdminHome,
+  AdminService,
   GlobalScheduling,
   GlobalRescheduling,
   GlobalFileManager,
   GlobalFileUploader,
-  UserHome,
   UserScheduling,
   UserContact,
   UserReports,

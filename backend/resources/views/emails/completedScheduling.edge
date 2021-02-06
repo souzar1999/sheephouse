@@ -9,7 +9,7 @@
     <div style="padding:20px 50px;background-color: #fff;color:#444;">
       Olá {{ client.name }}!
       <br/><br/>
-      Sua sessão do dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ horary.time }} horas, 
+      Sua sessão do dia {{ scheduling.date.split("-")[2] }}/{{ scheduling.date.split("-")[1] }}/{{ scheduling.date.split("-")[0] }} às {{ scheduling.horary }} horas, 
       realizada pelo fotógrafo: {{ photographer.name }} (<a href="mailto:{{ photographer.email }}">{{ photographer.email }}</a>) no endereço {{ scheduling.address }}  foi concluída!
       <br/><br/>
       @if(scheduling.photo_link)

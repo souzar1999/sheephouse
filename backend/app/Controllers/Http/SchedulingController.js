@@ -2,7 +2,6 @@
 
 const Mail = use('Mail')
 const Database = use('Database')
-const Horary = use('App/Models/Horary')
 const Client = use('App/Models/Client')
 const Region = use('App/Models/Region')
 const City = use('App/Models/City')
@@ -15,9 +14,9 @@ const User = use('App/Models/User')
 class SchedulingController {
   async index({ request, response, view }) {
     const scheduling = Scheduling.query()
-      .with('horary')
       .with('photographer')
       .with('client')
+      .with('services')
       .fetch()
 
     return scheduling
@@ -26,9 +25,9 @@ class SchedulingController {
   async indexClient({ params, request, response, view }) {
     const scheduling = Scheduling.query()
       .where('client_id', params.client_id)
-      .with('horary')
       .with('photographer')
       .with('client')
+      .with('services')
       .fetch()
 
     return scheduling
@@ -66,18 +65,10 @@ class SchedulingController {
   async show({ params, request, response, view }) {
     const scheduling = await Scheduling.query()
       .where('id', params.id)
-      .with('horary')
       .with('photographer')
       .with('client')
+      .with('services')
       .fetch()
-
-    return scheduling
-  }
-
-  async show({ params, request, response, view }) {
-    const scheduling = await Scheduling.query()
-      .where('id', params.id)
-      .first()
 
     return scheduling
   }
@@ -98,7 +89,7 @@ class SchedulingController {
       'city_id',
       'district_id',
       'photographer_id',
-      'horary_id',
+      'horary',
       'client_id',
       'file_manager_uuid',
       'retirar_chaves',
@@ -106,8 +97,14 @@ class SchedulingController {
       'video_link',
       'tour_link'
     ])
+    const { services } = request.post()
 
     const scheduling = await Scheduling.create(data)
+
+    if (services) {
+      await scheduling.services().attach(services)
+      scheduling.services = await scheduling.services().fetch()
+    }
 
     return scheduling
   }
@@ -128,7 +125,7 @@ class SchedulingController {
       'city_id',
       'district_id',
       'photographer_id',
-      'horary_id',
+      'horary',
       'client_id',
       'actived',
       'changed',
@@ -143,9 +140,17 @@ class SchedulingController {
       'tour_link'
     ])
 
+    const { services } = request.post()
+
     scheduling.merge(data)
 
     await scheduling.save()
+
+    if (services) {
+      await scheduling.services().detach()
+      await scheduling.services().attach(services)
+      scheduling.services = await scheduling.services().fetch()
+    }
 
     return scheduling
   }
@@ -157,10 +162,7 @@ class SchedulingController {
   }
 
   async sendEmailWithoutEvent({ params, request, response, view }) {
-    const { scheduling_id, horary, date } = request.only([
-        'scheduling_id',
-        'horary'
-      ]),
+    const { scheduling_id } = request.only(['scheduling_id']),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
       client = await Client.findOrFail(scheduling.client_id),
@@ -200,7 +202,6 @@ class SchedulingController {
       const client = await Client.findOrFail(scheduling.client_id)
       const user = await User.findOrFail(client.user_id)
       const broker = await Broker.findOrFail(client.broker_id)
-      const horary = await Horary.findOrFail(scheduling.horary_id)
       const admin = await User.findByOrFail('admin', true)
 
       scheduling.completed = true
@@ -212,7 +213,6 @@ class SchedulingController {
           client,
           scheduling,
           photographer,
-          horary,
           admin
         },
         message => {
@@ -238,7 +238,6 @@ class SchedulingController {
     const client = await Client.findOrFail(scheduling.client_id)
     const user = await User.findOrFail(client.user_id)
     const broker = await Broker.findOrFail(client.broker_id)
-    const horary = await Horary.findOrFail(scheduling.horary_id)
     const admin = await User.findByOrFail('admin', true)
 
     await Mail.send(
@@ -247,7 +246,6 @@ class SchedulingController {
         client,
         scheduling,
         photographer,
-        horary,
         admin
       },
       message => {
