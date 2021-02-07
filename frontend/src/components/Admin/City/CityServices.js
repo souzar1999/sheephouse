@@ -65,7 +65,8 @@ function CityServices({ enqueueSnackbar }) {
     });
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(event) {
+    event.preventDefault();
     let codServicos = [];
 
     services.map((service) => {
@@ -139,31 +140,31 @@ function CityServices({ enqueueSnackbar }) {
             </Grid>
           );
         })}
+
+        <Grid item xs={12}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            size="small"
+            className={classes.submit}
+          >
+            Salvar
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            size="small"
+            onClick={() => {
+              history.push("/admin/city");
+            }}
+          >
+            Voltar
+          </Button>
+        </Grid>
       </form>
-      <Grid item xs={12}>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          size="small"
-          className={classes.submit}
-        >
-          Salvar
-        </Button>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="secondary"
-          size="small"
-          onClick={() => {
-            history.push("/admin/city");
-          }}
-        >
-          Voltar
-        </Button>
-      </Grid>
     </Paper>
   );
 }

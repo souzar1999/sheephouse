@@ -308,7 +308,6 @@ function Horary({ enqueueSnackbar }) {
               Adicionar
             </Button>
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               color="secondary"
