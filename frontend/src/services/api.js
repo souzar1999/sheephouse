@@ -9,10 +9,10 @@ require("dotenv").config();
 const localStorage = LocalStorage.getService();
 
 const api = axios.create({
-  baseURL: `${process.env.REACT_APP_API_URL}`
+  baseURL: `${process.env.REACT_APP_API_URL}`,
 });
 
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config) => {
   const token = localStorage.getAccessToken();
 
   document.body.classList.add("loading-indicator");
@@ -24,11 +24,11 @@ api.interceptors.request.use(config => {
 });
 
 api.interceptors.response.use(
-  response => {
+  (response) => {
     document.body.classList.remove("loading-indicator");
     return response;
   },
-  function(error) {
+  (error) => {
     const originalRequest = error.config;
     document.body.classList.remove("loading-indicator");
 
@@ -47,13 +47,13 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getRefreshToken();
       return api
         .post("/refresh", {
-          refreshToken
+          refreshToken,
         })
-        .then(res => {
+        .then((res) => {
           if (res.status === 201) {
-            localStorage.setToken(res.data);
+            localStorage.setToken(res.data.token);
             axios.defaults.headers.common["Authorization"] =
-              "Bearer " + localStorage.getAccessToken();
+              "Bearer " + res.data.token;
             return axios(originalRequest);
           }
         });

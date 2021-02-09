@@ -16,11 +16,9 @@ class SessionController {
   }
 
   async refreshToken({ request, auth }) {
-    const data = request.only(['refreshToken'])
+    const { refreshToken } = request.only(['refreshToken'])
 
-    return await auth
-      .newRefreshToken()
-      .generateForRefreshToken(data.refreshToken)
+    return await auth.generateForRefreshToken(refreshToken)
   }
 }
 

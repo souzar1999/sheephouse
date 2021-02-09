@@ -86,7 +86,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [district, setDistrict] = useState(""),
     [horaryDisable, setHoraryDisable] = useState(true),
     [events, setEvents] = useState([]),
-    [date, setDate] = useState(null),
+    [date, setDate] = useState(moment()),
     [latitude, setLat] = useState(""),
     [longitude, setLng] = useState(""),
     [address, setAddress] = useState(""),
@@ -112,6 +112,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   useEffect(() => {
     if (step === 0) {
       getPhotographerSabado();
+      setServicesSelected("");
+      setServices(city.services);
     }
     if (step === 2) {
       setLabelWidth(inputLabel.current.offsetWidth);
@@ -244,6 +246,63 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       return;
     }
 
+    if (
+      !latitude ||
+      !longitude ||
+      !address ||
+      !region_id ||
+      !city_id ||
+      !district_id ||
+      !photographer_id
+    ) {
+      enqueueSnackbar(
+        "Problemas com o endereço informado, entre em contato com o administrador!",
+        {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        }
+      );
+      return;
+    }
+
+    enqueueSnackbar("Fotográfo foi selecionado pelo endereço informado!", {
+      variant: "success",
+      autoHideDuration: 5000,
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    });
+
+    enqueueSnackbar("Selecione os serviços que deseja para prosseguir!", {
+      variant: "success",
+      autoHideDuration: 5000,
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    });
+
+    setStep(1);
+  }
+
+  async function handleSubmitStep1() {
+    if (service_id.length == 0) {
+      enqueueSnackbar("Necessário selecionar um serviço para prosseguir", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
     if (retirar_chaves) {
       if (
         !latitude ||
@@ -283,6 +342,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           accompanies,
           actived: false,
           retirar_chaves,
+          services: service_id,
         })
         .then(async (response) => {
           enqueueSnackbar("Sessão cadastrada com sucesso!", {
@@ -306,43 +366,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             },
           });
         });
-    } else {
-      enqueueSnackbar("Fotográfo foi selecionado pelo endereço informado!", {
-        variant: "success",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center",
-        },
-      });
-
-      enqueueSnackbar(
-        "Informe a data da sessão para carregar os horários livres!",
-        {
-          variant: "success",
-          autoHideDuration: 5000,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center",
-          },
-        }
-      );
-
-      setStep(1);
-    }
-  }
-
-  async function handleSubmitStep1() {
-    if (service_id.length == 0) {
-      enqueueSnackbar("Necessário selecionar um serviço para prosseguir", {
-        variant: "error",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center",
-        },
-      });
-      return;
     }
 
     let serviceString = "";
@@ -355,11 +378,23 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
     setServicesSelected(serviceString);
 
-    setDate(null);
+    setDate(moment());
     setHoraryDisable(true);
     setHoraryId();
     setEvents([]);
     setStep(2);
+
+    enqueueSnackbar(
+      "Informe a data da sessão para carregar os horários livres!",
+      {
+        variant: "success",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      }
+    );
   }
 
   async function handleSubmitStep2() {
@@ -481,7 +516,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         <div className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Maps addressInfo={getAddress} />
+              <Maps addressInfo={getAddress} address={address} />
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -507,46 +542,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 fullWidth
                 multiline
               />
-            </Grid>
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Retirar chaves na imobiliária"
-                  control={
-                    <Checkbox
-                      checked={retirar_chaves}
-                      onChange={(event) => {
-                        setRetirarChaves(!retirar_chaves);
-                      }}
-                      value={retirar_chaves}
-                    />
-                  }
-                />
-              </FormGroup>
-              <small style={{ float: "left", fontStyle: "italic" }}>
-                Para IMÓVEIS desocupados a Sheep House fornece serviço de
-                retirada de chaves.
-              </small>
-              <br />
-              <small style={{ float: "left", fontStyle: "italic" }}>
-                Para serviços de filmagem interna ou serviços com drone
-              </small>
-              {retirar_chaves && (
-                <>
-                  <br />
-                  <br />
-                  <small
-                    style={{
-                      float: "left",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    O agendamento será confirmado pelo administrador
-                    posteriormente, selecionando um horário adequeado para a
-                    sessão
-                  </small>
-                </>
-              )}
             </Grid>
             <Grid item xs={12}>
               <Button
@@ -614,6 +609,46 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 </div>
               );
             })}
+            <Grid item xs={12}>
+              <FormGroup row>
+                <FormControlLabel
+                  label="Retirar chaves na imobiliária"
+                  control={
+                    <Checkbox
+                      checked={retirar_chaves}
+                      onChange={(event) => {
+                        setRetirarChaves(!retirar_chaves);
+                      }}
+                      value={retirar_chaves}
+                    />
+                  }
+                />
+              </FormGroup>
+              <small style={{ float: "left", fontStyle: "italic" }}>
+                Para IMÓVEIS desocupados a Sheep House fornece serviço de
+                retirada de chaves.
+              </small>
+              <br />
+              <small style={{ float: "left", fontStyle: "italic" }}>
+                Para serviços de filmagem interna ou serviços com drone
+              </small>
+              {retirar_chaves && (
+                <>
+                  <br />
+                  <br />
+                  <small
+                    style={{
+                      float: "left",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    O agendamento será confirmado pelo administrador
+                    posteriormente, selecionando um horário adequeado para a
+                    sessão
+                  </small>
+                </>
+              )}
+            </Grid>
             <Grid item xs={4}>
               <Button
                 variant="contained"
@@ -662,12 +697,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   autoOk
-                  value={date ? moment(date) : ""}
+                  value={date}
                   inputVariant="outlined"
                   fullWidth
                   label="Data da Sessão"
                   onChange={(value) => {
+                    console.log(value);
                     let date = moment(value);
+                    console.log(date);
 
                     if (value && date.isValid()) {
                       if (date.day() === 0) {
@@ -733,6 +770,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                         millisecond: 59,
                       });
 
+                    console.log("horario: " + dateHorary._i);
+
                     events.map((event) => {
                       if (event.status === "confirmed") {
                         const dateStart = moment(event.start.dateTime);
@@ -753,6 +792,11 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                                 " " +
                                 moment(dateEnd).format("HH:mm:ss")
                             );
+
+                        console.log("start: " + eventStart._i);
+                        console.log("end: " + eventEnd._i);
+                        console.log(dateHorary.clone().add(1, "seconds"));
+                        console.log(dateHorary.clone().add(1, "seconds"));
 
                         if (
                           (eventStart.isBefore(

@@ -300,7 +300,7 @@ function Scheduling({ enqueueSnackbar }) {
       <div className={classes.form}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Maps addressInfo={getAddress} />
+            <Maps addressInfo={getAddress} address={address} />
           </Grid>
           <Grid item xs={12}>
             <TextField

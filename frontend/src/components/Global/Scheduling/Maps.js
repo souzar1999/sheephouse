@@ -12,17 +12,17 @@ const MY_API_KEY = process.env.REACT_APP_GAPI_KEY;
 class Maps extends Component {
   state = {
     search: "",
-    address: ""
+    address: this.props.address,
   };
 
-  handleInputChange = e => {
+  handleInputChange = (e) => {
     this.setState({ search: e.target.value, address: e.target.address });
   };
 
-  handleSelectSuggest = suggest => {
+  handleSelectSuggest = (suggest) => {
     this.setState({
       search: "",
-      address: suggest.formatted_address
+      address: suggest.formatted_address,
     });
     const address = suggest.formatted_address,
       lat = suggest.geometry.location.lat(),
@@ -31,18 +31,26 @@ class Maps extends Component {
       .get(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${suggest.geometry.location.lat()},${suggest.geometry.location.lng()}&key=${MY_API_KEY}`
       )
-      .then(response => {
-        const city = response.data.results[0].address_components[3].long_name;
-        const district =
-          response.data.results[0].address_components[2].long_name;
+      .then((response) => {
+        const city = response.data.results[0].address_components.find(
+          (item) => {
+            return item.types.includes("administrative_area_level_2");
+          }
+        );
+
+        const district = response.data.results[0].address_components.find(
+          (item) => {
+            return item.types.includes("sublocality");
+          }
+        );
 
         this.props.enqueueSnackbar("Endereço completo encontrado", {
           variant: "success",
           autoHideDuration: 5000,
           anchorOrigin: {
             vertical: "top",
-            horizontal: "center"
-          }
+            horizontal: "center",
+          },
         });
         this.props.enqueueSnackbar(
           "Por favor, outras informações no campo 'Complemento'",
@@ -51,12 +59,18 @@ class Maps extends Component {
             autoHideDuration: 5000,
             anchorOrigin: {
               vertical: "top",
-              horizontal: "center"
-            }
+              horizontal: "center",
+            },
           }
         );
 
-        this.props.addressInfo(address, lat, lng, city, district);
+        this.props.addressInfo(
+          address,
+          lat,
+          lng,
+          city.long_name,
+          district.long_name
+        );
       });
   };
 
@@ -66,22 +80,22 @@ class Maps extends Component {
       <ReactGoogleMapLoader
         params={{
           key: MY_API_KEY,
-          libraries: "places,geocode"
+          libraries: "places,geocode",
         }}
-        render={googleMaps =>
+        render={(googleMaps) =>
           googleMaps && (
             <ReactGooglePlacesSuggest
               googleMaps={googleMaps}
               autocompletionRequest={{
                 input: search,
-                componentRestrictions: { country: "br" }
+                componentRestrictions: { country: "br" },
               }}
               onNoResult={this.handleNoResult}
               onSelectSuggest={this.handleSelectSuggest}
               onStatusUpdate={this.handleStatusUpdate}
               displayPoweredByGoogle={false}
               textNoResults="Sua pesquisa não teve resultados"
-              customRender={prediction => (
+              customRender={(prediction) => (
                 <div className="customWrapper">
                   {prediction
                     ? prediction.description
