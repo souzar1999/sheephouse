@@ -3,17 +3,16 @@ import axios from "axios";
 import history from "../history";
 
 import LocalStorage from "./localStorage.js";
+const localStorageJs = LocalStorage.getService();
 
 require("dotenv").config();
-
-const localStorage = LocalStorage.getService();
 
 const api = axios.create({
   baseURL: `${process.env.REACT_APP_API_URL}`,
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getAccessToken();
+  const token = localStorageJs.getAccessToken();
 
   document.body.classList.add("loading-indicator");
 
@@ -36,7 +35,7 @@ api.interceptors.response.use(
       error.response.status === 401 &&
       originalRequest.url === `${process.env.REACT_APP_API_URL}/refresh`
     ) {
-      localStorage.clearToken();
+      localStorageJs.clearToken();
       history.push("/logout/e");
       return Promise.reject(error);
     }
@@ -44,14 +43,14 @@ api.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refreshToken = localStorage.getRefreshToken();
-      return api
+      const refreshToken = localStorageJs.getRefreshToken();
+      api
         .post("/refresh", {
           refreshToken,
         })
         .then((res) => {
           if (res.status === 201) {
-            localStorage.setToken(res.data.token);
+            localStorageJs.setToken(res.data);
             axios.defaults.headers.common["Authorization"] =
               "Bearer " + res.data.token;
             return axios(originalRequest);

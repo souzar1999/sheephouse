@@ -17,6 +17,9 @@ import { userLogin, userClient, userAdmin } from "../../store/actions";
 import api from "../../services/api";
 import history from "../../history";
 
+import LocalStorage from "../../services/localStorage.js";
+const localStorageJs = LocalStorage.getService();
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(6),
@@ -86,8 +89,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
     await api
       .post("/sessions", { email, password })
       .then(async (response) => {
-        localStorage.setItem("userToken", response.data.token);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
+        localStorageJs.setToken(response.data);
 
         await api
           .get("/user", {

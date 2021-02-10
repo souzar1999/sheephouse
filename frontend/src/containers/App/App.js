@@ -5,21 +5,23 @@ import { PersistGate } from "redux-persist/integration/react";
 import { SnackbarProvider } from "notistack";
 
 import api from "../../services/api";
-import localStorage from "../../services/localStorage.js";
+import LocalStorage from "../../services/localStorage.js";
 
 import Routes from "../Routes";
 import { store, persistor } from "../../store";
 
+const localStorageJs = LocalStorage.getService();
+
 function App({ enqueueSnackbar }) {
-  const refreshToken = localStorage.getRefreshToken();
-  const dateToken = localStorage.getDateToken();
+  const refreshToken = localStorageJs.getRefreshToken();
+  const dateToken = localStorageJs.getDateToken();
 
   useEffect(() => {
     async function refreshToken() {
       if (dateToken) {
-        if (43200000 + Date.parse(dateToken) > Date.parse(new Date())) {
+        if (300000 + Date.parse(dateToken) > Date.parse(new Date())) {
           api.post("/refresh", { refreshToken }).then((res) => {
-            localStorage.setToken(res.data);
+            localStorageJs.setToken(res.data);
           });
         }
       }
