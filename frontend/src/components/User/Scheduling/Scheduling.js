@@ -615,6 +615,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   label="Retirar chaves na imobiliária"
                   control={
                     <Checkbox
+                      color="primary"
                       checked={retirar_chaves}
                       onChange={(event) => {
                         setRetirarChaves(!retirar_chaves);

@@ -49,23 +49,31 @@ class GapiCalendarController {
         Env.get('GCLIENT_ID'),
         Env.get('GCLIENT_SECRET')
       ),
-      scheduling = await Scheduling.findOrFail(scheduling_id),
+      scheduling = await Scheduling.query()
+        .where('id', scheduling_id)
+        .with('services')
+        .firstOrFail(),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
-      admin = await User.findByOrFail('admin', true),
-      calendarId = photographer.email,
-      title = scheduling.drone
-        ? 'Filmagem/Drone'
-        : scheduling.tour360
-        ? 'Tour 360°'
-        : 'Fotografia',
+      services = await scheduling.services().fetch(),
+      admin = await User.findByOrFail('admin', true)
+
+    let servicesName = ''
+
+    services.toJSON().map(service => {
+      if (servicesName != '') servicesName += ' + '
+      servicesName += `${service.name}`
+    })
+
+    const calendarId = photographer.email,
+      eventId = scheduling.google_event_id,
       retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirar_chaves}${title} - (${user.email} | ${broker.name})`,
+      summary = `${retirar_chaves}${servicesName} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
-      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -92,7 +100,8 @@ class GapiCalendarController {
           client,
           scheduling,
           photographer,
-          admin
+          admin,
+          servicesName
         },
         message => {
           message
@@ -123,24 +132,31 @@ class GapiCalendarController {
         Env.get('GCLIENT_ID'),
         Env.get('GCLIENT_SECRET')
       ),
-      scheduling = await Scheduling.findOrFail(scheduling_id),
+      scheduling = await Scheduling.query()
+        .where('id', scheduling_id)
+        .with('services')
+        .firstOrFail(),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
-      admin = await User.findByOrFail('admin', true),
-      calendarId = photographer.email,
+      services = await scheduling.services().fetch(),
+      admin = await User.findByOrFail('admin', true)
+
+    let servicesName = ''
+
+    services.toJSON().map(service => {
+      if (servicesName != '') servicesName += ' + '
+      servicesName += `${service.name}`
+    })
+
+    const calendarId = photographer.email,
       eventId = scheduling.google_event_id,
-      title = scheduling.drone
-        ? 'Filmagem/Drone'
-        : scheduling.tour360
-        ? 'Tour 360°'
-        : 'Fotografia',
       retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirar_chaves}${title} - (${user.email} | ${broker.name})`,
+      summary = `${retirar_chaves}${servicesName} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
-      description = `--- Serviço ---\n${title}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -164,7 +180,8 @@ class GapiCalendarController {
             client,
             scheduling,
             photographer,
-            admin
+            admin,
+            servicesName
           },
           message => {
             message
@@ -182,7 +199,8 @@ class GapiCalendarController {
           client,
           scheduling,
           photographer,
-          admin
+          admin,
+          servicesName
         },
         message => {
           message

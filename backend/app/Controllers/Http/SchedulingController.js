@@ -163,11 +163,22 @@ class SchedulingController {
 
   async sendEmailWithoutEvent({ params, request, response, view }) {
     const { scheduling_id } = request.only(['scheduling_id']),
-      scheduling = await Scheduling.findOrFail(scheduling_id),
+      scheduling = await Scheduling.query()
+        .where('id', scheduling_id)
+        .with('services')
+        .firstOrFail(),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
       client = await Client.findOrFail(scheduling.client_id),
       user = await User.findOrFail(client.user_id),
-      admin = await User.findByOrFail('admin', true)
+      admin = await User.findByOrFail('admin', true),
+      services = await scheduling.services().fetch()
+
+    let servicesName = ''
+
+    services.toJSON().map(service => {
+      if (servicesName != '') servicesName += ' + '
+      servicesName += `${service.name}`
+    })
 
     await Mail.send(
       'emails.addEvent',
@@ -175,7 +186,8 @@ class SchedulingController {
         client,
         scheduling,
         photographer,
-        admin
+        admin,
+        servicesName
       },
       message => {
         message
