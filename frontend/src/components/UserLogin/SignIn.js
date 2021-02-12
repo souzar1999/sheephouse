@@ -100,7 +100,7 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
               onUserAdmin();
               onUserLogin();
 
-              enqueueSnackbar("Seja bem vindo!", {
+              enqueueSnackbar(`Seja bem vindo!`, {
                 variant: "success",
                 autoHideDuration: 5000,
                 anchorOrigin: {
@@ -125,14 +125,17 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
                     onUserClient(response.data[0].id);
                     onUserLogin();
 
-                    enqueueSnackbar("Seja bem vindo!", {
-                      variant: "success",
-                      autoHideDuration: 5000,
-                      anchorOrigin: {
-                        vertical: "top",
-                        horizontal: "center",
-                      },
-                    });
+                    enqueueSnackbar(
+                      `Seja bem vindo ${response.data[0].name}!`,
+                      {
+                        variant: "success",
+                        autoHideDuration: 5000,
+                        anchorOrigin: {
+                          vertical: "top",
+                          horizontal: "center",
+                        },
+                      }
+                    );
 
                     history.push("/home");
 
