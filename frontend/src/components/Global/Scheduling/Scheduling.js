@@ -301,6 +301,27 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               render: (rowData) => {
                 return (
                   <div style={{ margin: "0 50px" }}>
+                    {rowData.photo_link && (
+                      <p>
+                        <a href={rowData.photo_link}>
+                          <strong>Baixar Fotos</strong>
+                        </a>
+                      </p>
+                    )}
+                    {rowData.video_link && (
+                      <p>
+                        <a href={rowData.video_link}>
+                          <strong>Baixar Videos</strong>
+                        </a>
+                      </p>
+                    )}
+                    {rowData.tour_link && (
+                      <p>
+                        <a href={rowData.tour_link}>
+                          <strong>Baixar Tour</strong>
+                        </a>
+                      </p>
+                    )}
                     {small && (
                       <p>
                         <strong>Status:</strong>
@@ -383,22 +404,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               icon: "photo_library",
               tooltip: "Fotos",
               onClick: (event, rowData) => {
-                if (clientCode) {
-                  downlaodZipFile(
-                    "Scheduling",
-                    rowData.file_manager_uuid,
-                    rowData.id
-                  );
-                } else {
+                if (!clientCode) {
                   history.push(
                     `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
                   );
                 }
               },
-              hidden:
-                (clientCode && !rowData.completed) ||
-                !rowData.actived ||
-                !rowData.date,
+              hidden: clientCode || !rowData.actived || !rowData.date,
             }),
             (rowData) => ({
               icon: "event",
