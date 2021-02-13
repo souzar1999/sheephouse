@@ -449,7 +449,6 @@ function Scheduling({ enqueueSnackbar }) {
                     }
                   }
                 }}
-                minDate={moment()}
                 format="dd/MM/yyyy"
                 cancelLabel="Cancelar"
                 invalidDateMessage="Data em formato inválido."

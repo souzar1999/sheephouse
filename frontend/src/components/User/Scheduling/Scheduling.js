@@ -132,40 +132,42 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     setDistrict(district);
     setLat(lat);
     setLng(lng);
-    await api.post(`/city/byName`, { city }).then(async (response) => {
-      setCityId(response.data[0].id);
-      setServices(response.data[0].services);
-      await api
-        .post(`/district/byName`, {
-          district,
-          city_id: response.data[0].id,
-        })
-        .then(async (response) => {
-          setDistrictId(response.data[0].id);
-          setRegionId(response.data[0].region_id);
-          await api
-            .post(`/photographer/byRegion`, {
-              region_id: response.data[0].region_id,
-            })
-            .then(async (response) => {
-              setPhotographer(response.data[0]);
-              setPhotographerId(response.data[0].id);
-            });
-        })
-        .catch((error) => {
-          enqueueSnackbar(
-            "Problemas com endereço informado! Entre em contato pelo email sheeephouse@gmail.com relatando o acontecimento.",
-            {
-              variant: "error",
-              autoHideDuration: 5000,
-              anchorOrigin: {
-                vertical: "top",
-                horizontal: "center",
-              },
-            }
-          );
-        });
-    });
+    await api
+      .post(`/city/byName`, { city })
+      .then(async (response) => {
+        setCityId(response.data[0].id);
+        setServices(response.data[0].services);
+        await api
+          .post(`/district/byName`, {
+            district,
+            city_id: response.data[0].id,
+          })
+          .then(async (response) => {
+            setDistrictId(response.data[0].id);
+            setRegionId(response.data[0].region_id);
+            await api
+              .post(`/photographer/byRegion`, {
+                region_id: response.data[0].region_id,
+              })
+              .then(async (response) => {
+                setPhotographer(response.data[0]);
+                setPhotographerId(response.data[0].id);
+              });
+          });
+      })
+      .catch((error) => {
+        enqueueSnackbar(
+          "Problemas com endereço informado! Entre em contato pelo email sheeephouse@gmail.com relatando o acontecimento.",
+          {
+            variant: "error",
+            autoHideDuration: 5000,
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center",
+            },
+          }
+        );
+      });
   }
 
   async function getHoraries(date, dia_semana, photographer_id) {
