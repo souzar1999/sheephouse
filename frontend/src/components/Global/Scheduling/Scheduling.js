@@ -404,23 +404,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               icon: "photo_library",
               tooltip: "Fotos",
               onClick: (event, rowData) => {
-                if (!clientCode) {
-                  history.push(
-                    `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
-                  );
-                } else {
-                  window.open(rowData.photo_link);
-                }
-              },
-              hidden:
-                (clientCode && rowData.photo_link) ||
-                !rowData.actived ||
-                !rowData.date,
-            }),
-            (rowData) => ({
-              icon: "photo_library",
-              tooltip: "Fotos",
-              onClick: (event, rowData) => {
                 console.log(rowData);
                 if (!clientCode) {
                   history.push(
