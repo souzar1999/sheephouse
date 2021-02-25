@@ -4,9 +4,14 @@
 const Model = use('Model')
 
 class Broker extends Model {
-
-  client () {
+  client() {
     return this.hasMany('App/Models/Client')
+  }
+
+  services() {
+    return this.belongsToMany('App/Models/Service')
+      .pivotTable('broker_service')
+      .withPivot(['price'])
   }
 }
 

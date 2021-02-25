@@ -408,9 +408,53 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   history.push(
                     `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
                   );
+                } else {
+                  window.open(rowData.photo_link);
                 }
               },
-              hidden: clientCode || !rowData.actived || !rowData.date,
+              hidden:
+                (clientCode && rowData.photo_link) ||
+                !rowData.actived ||
+                !rowData.date,
+            }),
+            (rowData) => ({
+              icon: "photo_library",
+              tooltip: "Fotos",
+              onClick: (event, rowData) => {
+                console.log(rowData);
+                if (!clientCode) {
+                  history.push(
+                    `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
+                  );
+                } else {
+                  window.open(rowData.photo_link);
+                }
+              },
+              hidden:
+                (clientCode && !rowData.photo_link) ||
+                !rowData.actived ||
+                !rowData.date,
+            }),
+            (rowData) => ({
+              icon: "videocam",
+              tooltip: "Vídeos",
+              onClick: (event, rowData) => {
+                if (clientCode) {
+                  window.open(rowData.video_link);
+                }
+              },
+              hidden: (clientCode && !rowData.video_link) || !clientCode,
+            }),
+            (rowData) => ({
+              icon: "camera_enhance",
+              tooltip: "Tour 360",
+              onClick: (event, rowData) => {
+                console.log(rowData);
+                if (clientCode) {
+                  window.open(rowData.tour_link);
+                }
+              },
+              hidden: (clientCode && !rowData.tour_link) || !clientCode,
             }),
             (rowData) => ({
               icon: "event",

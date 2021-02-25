@@ -24,7 +24,7 @@ import AdminCityServices from "./Admin/City/CityServices";
 import AdminRegion from "./Admin/Region/Region";
 import AdminDistrict from "./Admin/District/District";
 import AdminBroker from "./Admin/Broker/Broker";
-//import AdminBrokerServices from "./Admin/Broker/BrokerServices";
+import AdminBrokerServices from "./Admin/Broker/BrokerServices";
 import AdminClient from "./Admin/Client/Client";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminPhotographerHorary from "./Admin/Photographer/Horary";
@@ -55,7 +55,7 @@ export {
   AdminRegion,
   AdminPhotographer,
   AdminBroker,
-  // AdminBrokerServices,
+  AdminBrokerServices,
   AdminDistrict,
   AdminClient,
   AdminPhotographerHorary,

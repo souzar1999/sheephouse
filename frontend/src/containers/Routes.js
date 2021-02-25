@@ -37,7 +37,7 @@ import AdminPhotographerHorary from "./Admin/Photographer/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
 import AdminReports from "./Admin/Reports/Reports";
 import AdminService from "./Admin/Service/Service";
-//import AdminBrokerServices from "./Admin/Broker/BrokerServices";
+import AdminBrokerServices from "./Admin/Broker/BrokerServices";
 
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
@@ -66,6 +66,10 @@ export default function Routes() {
             component={AdminCityServices}
           />
           <AdminRequeredRoute exact path="/admin/city" component={AdminCity} />
+          <AdminRequeredRoute
+            path="/admin/broker/:broker_id/services"
+            component={AdminBrokerServices}
+          />
           <AdminRequeredRoute
             exact
             path="/admin/broker"
@@ -125,4 +129,3 @@ export default function Routes() {
     </Router>
   );
 }
-//<AdminRequeredRoute path="/admin/broker/:broker_id/services"component={AdminBrokerServices} />

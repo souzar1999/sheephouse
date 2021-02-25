@@ -12,7 +12,6 @@ import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import DateFnsUtils from "@date-io/date-fns";
-import WhatsAppIcon from "@material-ui/icons/WhatsApp";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
@@ -705,9 +704,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   fullWidth
                   label="Data da Sessão"
                   onChange={(value) => {
-                    console.log(value);
                     let date = moment(value);
-                    console.log(date);
 
                     if (value && date.isValid()) {
                       if (date.day() === 0) {

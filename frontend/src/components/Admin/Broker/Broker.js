@@ -5,6 +5,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 
+import history from "../../../history";
+
 const useStyles = makeStyles((theme) => ({
   main: {
     [theme.breakpoints.down("sm")]: {
@@ -20,6 +22,20 @@ function Broker({ enqueueSnackbar }) {
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
     { title: "E-mail", field: "email" },
+    {
+      title: "Serviços",
+      field: "services",
+      editable: "never",
+      render: (rowData) => {
+        let services = "";
+        rowData.services.map((service) => {
+          if (services != "") services += ", ";
+
+          services += service.name;
+        });
+        return services;
+      },
+    },
     { title: "Ativo", field: "active", type: "boolean", editable: "onUpdate" },
   ];
 
@@ -181,6 +197,15 @@ function Broker({ enqueueSnackbar }) {
               handleUpdate(newData, oldData);
             }),
         }}
+        actions={[
+          (rowData) => ({
+            icon: "monetization_on_icon",
+            tooltip: "Editar informações de cobrança",
+            onClick: (event, rowData) => {
+              history.push(`/admin/broker/${rowData.id}/services/`);
+            },
+          }),
+        ]}
         localization={{
           body: {
             editRow: {
