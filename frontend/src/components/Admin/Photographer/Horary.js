@@ -156,7 +156,6 @@ function Horary({ enqueueSnackbar }) {
   }
 
   function editHorary(horary) {
-    console.log(horary);
     setId(horary.id);
     setTime(horary.time);
     setDiaSemana(horary.dia_semana);

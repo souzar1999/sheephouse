@@ -76,8 +76,11 @@ function BrokerServices({ enqueueSnackbar }) {
       setEnviarRelatorio(response.data[0].enviar_relatorio);
       setDiaVencimento(response.data[0].dia_vencimento);
       brokerServices.map((service, index) => {
-        service.price = response.data[0].services[index].pivot.price;
+        if (response.data[0].services[index]) {
+          service.price = response.data[0].services[index].pivot.price;
+        }
       });
+
       setServices(brokerServices);
     });
   }

@@ -770,8 +770,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                         millisecond: 59,
                       });
 
-                    console.log("horario: " + dateHorary._i);
-
                     events.map((event) => {
                       if (event.status === "confirmed") {
                         const dateStart = moment(event.start.dateTime);
@@ -792,11 +790,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                                 " " +
                                 moment(dateEnd).format("HH:mm:ss")
                             );
-
-                        console.log("start: " + eventStart._i);
-                        console.log("end: " + eventEnd._i);
-                        console.log(dateHorary.clone().add(1, "seconds"));
-                        console.log(dateHorary.clone().add(1, "seconds"));
 
                         if (
                           (eventStart.isBefore(

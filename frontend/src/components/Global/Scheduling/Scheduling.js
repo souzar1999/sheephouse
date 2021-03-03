@@ -404,7 +404,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               icon: "photo_library",
               tooltip: "Fotos",
               onClick: (event, rowData) => {
-                console.log(rowData);
                 if (!clientCode) {
                   history.push(
                     `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
@@ -432,7 +431,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               icon: "camera_enhance",
               tooltip: "Tour 360",
               onClick: (event, rowData) => {
-                console.log(rowData);
                 if (clientCode) {
                   window.open(rowData.tour_link);
                 }
