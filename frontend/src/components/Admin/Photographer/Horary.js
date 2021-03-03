@@ -34,6 +34,12 @@ const useStyles = makeStyles((theme) => ({
   grid: {
     marginBottom: theme.spacing(2),
   },
+  cellItem: {
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#eee",
+    },
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
@@ -49,6 +55,7 @@ function Horary({ enqueueSnackbar }) {
   const [sexta, setSexta] = useState([]);
   const [sabado, setSabado] = useState([]);
   const [domingo, setDomingo] = useState([]);
+  const [id, setId] = useState();
   const [time, setTime] = useState();
   const [dia_semana, setDiaSemana] = useState();
   const [maior, setMaior] = useState([]);
@@ -68,14 +75,6 @@ function Horary({ enqueueSnackbar }) {
         const dia5 = response.data.filter((horary) => horary.dia_semana === 5);
         const dia6 = response.data.filter((horary) => horary.dia_semana === 6);
         const dia0 = response.data.filter((horary) => horary.dia_semana === 0);
-
-        console.log(dia1);
-        console.log(dia2);
-        console.log(dia3);
-        console.log(dia4);
-        console.log(dia5);
-        console.log(dia6);
-        console.log(dia0);
 
         let maiorDia = [];
 
@@ -156,6 +155,92 @@ function Horary({ enqueueSnackbar }) {
       });
   }
 
+  function editHorary(horary) {
+    console.log(horary);
+    setId(horary.id);
+    setTime(horary.time);
+    setDiaSemana(horary.dia_semana);
+  }
+
+  async function handleDelete() {
+    await api
+      .delete(`/horary/${id}`)
+      .then((response) => {
+        enqueueSnackbar("Horário removido com sucesso!", {
+          variant: "success",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+
+        handleLoad();
+      })
+      .catch((error) => {
+        enqueueSnackbar("Erro ao remover horário!", {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+      });
+  }
+
+  async function handleEdit(event) {
+    event.preventDefault();
+    if (!time) {
+      enqueueSnackbar("Informe o horário!", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
+    if (!dia_semana) {
+      enqueueSnackbar("Informe o dia da semana!", {
+        variant: "error",
+        autoHideDuration: 5000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      return;
+    }
+
+    await api
+      .put(`/horary/${id}`, { time, dia_semana, photographer_id })
+      .then((response) => {
+        enqueueSnackbar("Horário editado com sucesso!", {
+          variant: "success",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+
+        handleLoad();
+      })
+      .catch((error) => {
+        enqueueSnackbar("Erro ao editar horário!", {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+      });
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     if (!time) {
@@ -227,25 +312,67 @@ function Horary({ enqueueSnackbar }) {
             {maior.map((element, index) => {
               return (
                 <TableRow>
-                  <TableCell align="center">
+                  <TableCell
+                    className={classes.cellItem}
+                    onClick={() => {
+                      editHorary(segunda[index]);
+                    }}
+                    align="center"
+                  >
                     {segunda[index] ? segunda[index].time : ""}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell
+                    className={classes.cellItem}
+                    onClick={() => {
+                      editHorary(terca[index]);
+                    }}
+                    align="center"
+                  >
                     {terca[index] ? terca[index].time : ""}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell
+                    className={classes.cellItem}
+                    onClick={() => {
+                      editHorary(quarta[index]);
+                    }}
+                    align="center"
+                  >
                     {quarta[index] ? quarta[index].time : ""}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell
+                    className={classes.cellItem}
+                    onClick={() => {
+                      editHorary(quinta[index]);
+                    }}
+                    align="center"
+                  >
                     {quinta[index] ? quinta[index].time : ""}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell
+                    className={classes.cellItem}
+                    onClick={() => {
+                      editHorary(sexta[index]);
+                    }}
+                    align="center"
+                  >
                     {sexta[index] ? sexta[index].time : ""}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell
+                    className={classes.cellItem}
+                    onClick={() => {
+                      editHorary(sabado[index]);
+                    }}
+                    align="center"
+                  >
                     {sabado[index] ? sabado[index].time : ""}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell
+                    className={classes.cellItem}
+                    onClick={() => {
+                      editHorary(domingo[index]);
+                    }}
+                    align="center"
+                  >
                     {domingo[index] ? domingo[index].time : ""}
                   </TableCell>
                 </TableRow>
@@ -258,13 +385,13 @@ function Horary({ enqueueSnackbar }) {
         <Typography className={classes.title} component="h5" variant="h5">
           Adicionar Horário
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={!id ? handleSubmit : handleEdit}>
           <Grid className={classes.grid} item xs={12}>
             <FormControl variant="outlined" fullWidth>
               <TextField
                 id="time"
                 label="Horário"
-                value={time}
+                value={time ? time : ""}
                 type="time"
                 onChange={(event) => {
                   setTime(event.target.value);
@@ -279,7 +406,7 @@ function Horary({ enqueueSnackbar }) {
                 id="dia_semana"
                 select
                 label="Dia da Semana"
-                value={dia_semana}
+                value={dia_semana ? dia_semana : ""}
                 onChange={(event) => {
                   setDiaSemana(event.target.value);
                 }}
@@ -296,29 +423,56 @@ function Horary({ enqueueSnackbar }) {
               </TextField>
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              size="small"
-              className={classes.submit}
-            >
-              Adicionar
-            </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              color="secondary"
-              size="small"
-              onClick={() => {
-                history.push("/admin/photographer");
-              }}
-            >
-              Voltar
-            </Button>
-          </Grid>
+          {!id && (
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                size="small"
+                className={classes.submit}
+              >
+                Adicionar
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                color="secondary"
+                size="small"
+                onClick={() => {
+                  history.push("/admin/photographer");
+                }}
+              >
+                Voltar
+              </Button>
+            </Grid>
+          )}
+          {id && (
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                size="small"
+                className={classes.submit}
+              >
+                Salvar Edição
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                color="secondary"
+                size="small"
+                onClick={() => {
+                  handleDelete();
+                }}
+              >
+                Excluir registro
+              </Button>
+            </Grid>
+          )}
         </form>
       </Paper>
     </>
