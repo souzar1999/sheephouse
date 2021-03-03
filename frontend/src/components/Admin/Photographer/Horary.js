@@ -226,6 +226,9 @@ function Horary({ enqueueSnackbar }) {
           },
         });
 
+        setId();
+        setTime();
+        setDiaSemana();
         handleLoad();
       })
       .catch((error) => {
