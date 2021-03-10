@@ -15,10 +15,3 @@ services:
         links:
             - sheephouse-backend
         command: npm start
-        
-    sheephouse-zipper:
-            build: ./zipper
-            container_name: sheephouse-zipper
-            ports:
-             - "3001:3001"
-            command: go run zipper.go
