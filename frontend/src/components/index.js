@@ -29,6 +29,7 @@ import AdminClient from "./Admin/Client/Client";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminPhotographerHorary from "./Admin/Photographer/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
+import AdminEditScheduling from "./Admin/Scheduling/EditScheduling";
 import AdminHome from "./Admin/Home/Home";
 import AdminReports from "./Admin/Reports/Reports";
 import AdminService from "./Admin/Service/Service";
@@ -36,7 +37,6 @@ import AdminService from "./Admin/Service/Service";
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
 import GlobalFileManager from "./Global/FileManager/FileManager";
-import GlobalFileUploader from "./Global/FileManager/FileUploader";
 
 export {
   SidebarLayout,
@@ -60,13 +60,13 @@ export {
   AdminClient,
   AdminPhotographerHorary,
   AdminScheduling,
+  AdminEditScheduling,
   AdminReports,
   AdminHome,
   AdminService,
   GlobalScheduling,
   GlobalRescheduling,
   GlobalFileManager,
-  GlobalFileUploader,
   UserScheduling,
   UserContact,
   UserReports,

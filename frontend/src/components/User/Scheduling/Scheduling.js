@@ -97,10 +97,13 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [service_id, setServiceId] = useState([]),
     [district_id, setDistrictId] = useState(""),
     [photographer, setPhotographer] = useState([]),
+    [broker, setBroker] = useState([]),
     [photographer_sabado, setPhotographerSabado] = useState([]),
     [photographer_id, setPhotographerId] = useState(""),
     [horary_id, setHoraryId] = useState(""),
-    [servicesSelected, setServicesSelected] = useState(""),
+    [servicesSelected, setServicesSelected] = useState([]),
+    [servicesString, setServicesString] = useState(""),
+    [valorTotal, setValorTotal] = useState(),
     client_id = clientCode,
     [labelWidth, setLabelWidth] = useState(0),
     inputLabel = React.useRef(null),
@@ -111,13 +114,35 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   useEffect(() => {
     if (step === 0) {
       getPhotographerSabado();
-      setServicesSelected("");
-      setServices(city.services);
+      setServicesString("");
+    }
+    if (step === 1) {
+      getBroker();
     }
     if (step === 2) {
       setLabelWidth(inputLabel.current.offsetWidth);
     }
   }, [step]);
+
+  async function getBroker() {
+    await api.get(`/client/${client_id}`).then(async (response) => {
+      await api.get(`/broker/${response.data[0].broker_id}`).then((response) => {
+
+        let newServices = []
+
+        services.map((service, index) => {
+          newServices.push({
+            ...service,
+            price: response.data[0].services[index].pivot.price
+          })
+        })
+
+        setServices(newServices);
+
+        setBroker(response.data[0]);
+      });
+    });
+  }
 
   async function getPhotographerSabado() {
     await api.get("/photographer/sabado").then((response) => {
@@ -292,7 +317,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   }
 
   async function handleSubmitStep1() {
-    if (service_id.length == 0) {
+    if (servicesSelected.length == 0) {
       enqueueSnackbar("Necessário selecionar um serviço para prosseguir", {
         variant: "error",
         autoHideDuration: 5000,
@@ -343,7 +368,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           accompanies,
           actived: false,
           retirar_chaves,
-          services: service_id,
+          services: servicesSelected,
         })
         .then(async (response) => {
           enqueueSnackbar("Sessão cadastrada com sucesso!", {
@@ -369,15 +394,18 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         });
     }
 
-    let serviceString = "";
+    let serviceString = "",
+      valorTotal = 0;
 
     services.map((service) => {
       if (service.checked) {
-        serviceString += ` ${service.name},`;
+        valorTotal += service.price;
+        serviceString += ` ${service.name} (R$ ${service.price}),`;
       }
     });
 
-    setServicesSelected(serviceString);
+    setValorTotal(valorTotal);
+    setServicesString(serviceString);
 
     setDate(moment());
     setHoraryDisable(true);
@@ -454,6 +482,14 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       return;
     }
 
+    let codServicos = [],
+      prices = [];
+
+    servicesSelected.map((service) => {
+      codServicos.push(service.service_id);
+      prices.push(service.price);
+    });
+
     await api
       .post(`/scheduling`, {
         date: date.format("YYYY-MM-DD"),
@@ -469,7 +505,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         photographer_id,
         horary,
         client_id,
-        services: service_id,
+        services: codServicos,
+        prices,
       })
       .then(async (response) => {
         const scheduling_id = response.data.id;
@@ -581,25 +618,35 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   className={classes.service}
                   onClick={() => {
                     let newServices = services;
-                    let newServiceId = service_id;
+                    let newServiceSelected = servicesSelected;
+
+                    let removeu = false;
 
                     newServices[index].checked = !service.checked;
 
-                    if (newServiceId.includes(service.id)) {
-                      newServiceId = newServiceId.filter((item) => {
-                        return item != service.id;
-                      });
-                    } else {
-                      newServiceId.push(service.id);
+                    newServiceSelected = newServiceSelected.filter((item) => {
+                      if(item.service_id == service.id){
+                        removeu = true;
+                      }
+                      return item.service_id != service.id;
+                    });
+
+                    if(!removeu)  {
+                      newServiceSelected.push(
+                        {
+                          'service_id': service.id, 
+                          'price': service.price
+                        }
+                      );
                     }
 
                     setServices([...newServices]);
-                    setServiceId([...newServiceId]);
+                    setServicesSelected(newServiceSelected);
                   }}
                 >
                   <div className={classes.serviceContent}>
                     <Typography component="h5" variant="h6" align="left">
-                      {service.name}
+                      {service.name} (R$ {service.price})
                     </Typography>
                     {service.checked ? (
                       <CheckBoxIcon />
@@ -900,8 +947,21 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
             <Grid item xs={12}>
               <TextField
                 type="text"
-                value={servicesSelected.slice(0, -1)}
+                value={servicesString.slice(0, -1)}
                 label="Serviços"
+                variant="outlined"
+                size="small"
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                type="text"
+                value={`R$ ${valorTotal}`}
+                label="Valor Total"
                 variant="outlined"
                 size="small"
                 fullWidth

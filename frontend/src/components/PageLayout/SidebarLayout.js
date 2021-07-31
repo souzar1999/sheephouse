@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
+import ListItemText from "@material-ui/core/ListItemText"
+import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItem from "@material-ui/core/ListItem";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 import Sidebar from "./Sidebar";
 import Sideitem from "./Sideitem";
 
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { withSnackbar } from "notistack";
+
 import api from "../../services/api";
 
-const SidebarLayout = ({ isUserAdmin }) => {
+const SidebarLayout = ({ enqueueSnackbar, isUserAdmin }) => {
   const [maintenance, setMaintenance] = useState({});
 
   useEffect(() => {
@@ -33,6 +39,33 @@ const SidebarLayout = ({ isUserAdmin }) => {
       .then((response) => {
         handleLoad();
       });
+  }
+
+  async function handleBoletos() {
+    if (window.confirm('Você quer gerar os boletos?')) {
+      await api
+      .get("/boleto")
+      .then(async (response) => {
+        enqueueSnackbar("Boletos gerados e enviados.", {
+          variant: "success",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+      })
+      .catch((error) => {
+        enqueueSnackbar("Problemas ao gerar boletos!", {
+          variant: "error",
+          autoHideDuration: 5000,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
+        });
+      });
+    }
   }
 
   if (isUserAdmin) {
@@ -73,6 +106,12 @@ const SidebarLayout = ({ isUserAdmin }) => {
               label="Manutenção"
             />
           </ListItem>
+          { /*<ListItem button onClick={handleBoletos} style={{width: 250,color: "#fff"}}>
+            <ListItemIcon style={{color: "#fff"}}>
+              <AttachMoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Gerar boletos'} />
+            </ListItem> */}
         </List>
       </Sidebar>
     );
@@ -100,4 +139,6 @@ const mapStateToProps = (state) => ({
   isUserAdmin: state.isUserAdmin,
 });
 
-export default connect(mapStateToProps, {})(SidebarLayout);
+const withConnect = connect(mapStateToProps, {});
+
+export default compose(withSnackbar, withConnect)(SidebarLayout);

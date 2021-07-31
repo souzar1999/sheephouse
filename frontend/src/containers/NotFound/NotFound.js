@@ -1,6 +1,5 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles(theme => ({
   image: {
@@ -17,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 function NotFound() {
   const classes = useStyles();
-  return <img className={classes.image} src="/assets/404.jpg" />;
+  return <img className={classes.image} alt='Página não foi encontrada' src="/assets/404.jpg" />;
 }
 
 export default NotFound;

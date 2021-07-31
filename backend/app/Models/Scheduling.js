@@ -13,9 +13,9 @@ class Scheduling extends Model {
   }
 
   services() {
-    return this.belongsToMany('App/Models/Service').pivotTable(
-      'scheduling_service'
-    )
+    return this.belongsToMany('App/Models/Service')
+    .pivotTable('scheduling_service')
+    .withPivot(['price'])
   }
 }
 

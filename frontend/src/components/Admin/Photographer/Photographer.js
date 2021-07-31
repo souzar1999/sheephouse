@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
-import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 import history from "../../../history";
 
-const useStyles = makeStyles((theme) => ({
-  main: {
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: 375,
-      marginTop: theme.spacing(8),
-    },
-  },
-}));
-
 function Photographer({ enqueueSnackbar }) {
-  const classes = useStyles();
   const [photographers, setPhotographers] = useState([]);
   const [regions, setRegions] = useState([]);
   const columns = [
@@ -260,7 +249,7 @@ function Photographer({ enqueueSnackbar }) {
   }
 
   return (
-    <div className={classes.main}>
+    <div>
       <MaterialTable
         title="Fotógrafos"
         columns={columns}

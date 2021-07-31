@@ -3,23 +3,91 @@
 const Mail = use('Mail')
 const Database = use('Database')
 const Client = use('App/Models/Client')
-const Region = use('App/Models/Region')
-const City = use('App/Models/City')
 const Broker = use('App/Models/Broker')
-const District = use('App/Models/District')
 const Photographer = use('App/Models/Photographer')
 const Scheduling = use('App/Models/Scheduling')
 const User = use('App/Models/User')
+const moment = require('moment')
 
 class SchedulingController {
   async index({ request, response, view }) {
-    const scheduling = Scheduling.query()
+    const {
+      photographersId,
+      address,
+      statusId,
+      servicesId,
+      clientsId,
+      dateIni,
+      dateEnd,
+      page,
+      rowsPerPage
+    } = request.get()
+
+    const query = Scheduling.query()
       .with('photographer')
       .with('client')
       .with('services')
-      .fetch()
+      .orderBy('date', 'horary')
 
-    return scheduling
+    if (photographersId) {
+      if(photographersId.length > 1 && Array.isArray(photographersId)) {
+        query.whereIn('photographer_id', photographersId)
+      } else {
+        query.where('photographer_id', photographersId)
+      }
+    }
+
+    if (clientsId) {
+      if(clientsId.length > 1 && Array.isArray(clientsId)) {
+        query.whereIn('client_id', clientsId)
+      } else {
+        query.where('client_id', clientsId)
+      }
+    }
+
+    if (address) {
+      query.whereRaw('address like %?%', [address])
+    }
+
+    if (dateIni) {
+      query.where('date', '>=', dateIni)
+    }
+
+    if (dateEnd) {
+      query.where('date', '<=', dateEnd)
+    }
+
+    if (statusId == 0) {
+      query.where('actived', '=', 0)
+    } else if (statusId == 4) {
+      query.where('downloaded', '=', 1)
+      query.where('actived', '=', 1)
+    } else if (statusId == 3) {
+      query.where('completed', '=', 1)
+      query.where('actived', '=', 1)
+    } else if (statusId == 1) {
+      query.where('date', '=', moment().format("YYYY-MM-DD"))
+      query.where('actived', '=', 1)
+    } else if(statusId == 2) {
+      query.where('actived', '=', 1)
+      query.where('completed', '=', 0)
+      query.where('downloaded', '=', 0)
+    }
+
+    if(servicesId) {
+      if(servicesId.length > 1 && Array.isArray(servicesId)) {
+        query.whereHas('services', (builder) => {
+          builder.whereIn('service_id', servicesId)
+        })
+      } else {
+        query.whereHas('services', (builder) => {
+          builder.where('service_id', servicesId)
+        })
+      }
+
+    }
+
+    return query.paginate(parseInt(page) + 1, rowsPerPage)
   }
 
   async indexClient({ params, request, response, view }) {
@@ -97,12 +165,20 @@ class SchedulingController {
       'video_link',
       'tour_link'
     ])
-    const { services } = request.post()
+    const { services, prices } = request.post()
 
     const scheduling = await Scheduling.create(data)
 
     if (services) {
       await scheduling.services().attach(services)
+
+      services.map(async (service_id, index) => {
+        await Database.table('scheduling_service')
+          .where('service_id', service_id)
+          .where('scheduling_id', scheduling.id)
+          .update('price', prices[index])
+      })
+
       scheduling.services = await scheduling.services().fetch()
     }
 
@@ -140,7 +216,7 @@ class SchedulingController {
       'tour_link'
     ])
 
-    const { services } = request.post()
+    const { services, prices } = request.post()
 
     scheduling.merge(data)
 
@@ -149,6 +225,14 @@ class SchedulingController {
     if (services) {
       await scheduling.services().detach()
       await scheduling.services().attach(services)
+
+      services.map(async (service_id, index) => {
+        await Database.table('scheduling_service')
+          .where('service_id', service_id)
+          .where('scheduling_id', params.id)
+          .update('price', prices[index])
+      })
+
       scheduling.services = await scheduling.services().fetch()
     }
 

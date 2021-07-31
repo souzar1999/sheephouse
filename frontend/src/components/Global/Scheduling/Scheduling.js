@@ -1,267 +1,117 @@
 import React, { useEffect, useState } from "react";
-import MaterialTable, { MTableCell } from "material-table";
-import Container from "@material-ui/core/Container";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import DateFnsUtils from "@date-io/date-fns";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import AddIcon from "@material-ui/icons/Add";
+import SendIcon from "@material-ui/icons/Send";
+import PhotoLibraryIcon from "@material-ui/icons/PhotoLibrary";
+import VideocamIcon from "@material-ui/icons/Videocam";
+import CameraEnhanceIcon from "@material-ui/icons/CameraEnhance";
+import EventIcon from "@material-ui/icons/Event";
 
-import axios from "axios";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+
 import api from "../../../services/api";
 import { withSnackbar } from "notistack";
 import { compose } from "redux";
 
 import { connect } from "react-redux";
 
+import moment from "moment";
+
 import history from "../../../history";
-import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
-  main: {
-    [theme.breakpoints.down("sm")]: {
-      width: "100vw",
-      marginTop: theme.spacing(8),
+  paper: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+    padding: theme.spacing(2),
+    width: `100%`,
+  },
+  filter: {
+    marginTop: theme.spacing(2),
+  },
+  submit: {
+    padding: theme.spacing(1, 1),
+  },
+  tableRow: {
+    "&:nth-of-type(4n+1)": {
+      backgroundColor: "#eee",
+    },
+    "&:nth-of-type(4n+2)": {
+      backgroundColor: "#eee",
     },
   },
-  imgDialog: {
-    [theme.breakpoints.down("sm")]: {
-      paddingTop: theme.spacing(8),
-    },
+  tableCell: {
+    borderBottom: 0,
   },
 }));
 
 function Scheduling({ enqueueSnackbar, clientCode }) {
   const classes = useStyles();
-  const theme = useTheme();
-  const [open, setOpen] = useState(false);
-  const small = useMediaQuery(theme.breakpoints.down("sm"));
-  const [Schedulings, setScheduling] = useState([]),
-    [Photographers, setPhotographers] = useState([]),
-    columns = [
-      {
-        title: "Serviço",
-        field: "serviceName",
-      },
-      {
-        title: "Cliente",
-        field: "clientName",
-        defaultSort: "asc",
-        hidden: clientCode,
-      },
-      {
-        title: "Dia",
-        field: "day",
-        defaultSort: "asc",
-        type: "numeric",
-        cellStyle: {
-          textAlign: "right",
-        },
-        filterCellStyle: {
-          paddingLeft: 2,
-          paddingRight: 2,
-        },
-      },
-      {
-        title: "Mês",
-        field: "month",
-        lookup: {
-          1: "Janeiro",
-          2: "Fevereiro",
-          3: "Março",
-          4: "Abril",
-          5: "Maio",
-          6: "Junho",
-          7: "Julho",
-          8: "Agosto",
-          9: "Setembro",
-          10: "Outubro",
-          11: "Novembro",
-          12: "Dezembro",
-          "": "Administrador irá agendar",
-        },
-      },
-      {
-        title: "Ano",
-        field: "year",
-        defaultSort: "asc",
-        filterPlaceholder: "9999",
-        cellStyle: {
-          textAlign: "right",
-        },
-        filterCellStyle: {
-          paddingLeft: 2,
-          paddingRight: 2,
-        },
-      },
-      {
-        title: "Horario",
-        field: "horary",
-        defaultSort: "asc",
-        cellStyle: {
-          textAlign: "center",
-        },
-      },
-      {
-        title: "Fotografo",
-        field: "photographer_id",
-        defaultSort: "asc",
-        render: (rowData) => {
-          const name = rowData.photographer.name.split(" ");
-          return name[0];
-        },
-        lookup: { ...Photographers },
-        hidden: small,
-      },
-      {
-        title: "Status",
-        field: "status",
-        lookup: {
-          0: "Cancelado",
-          1: "Pendente",
-          2: "Ativo",
-          3: "Enviado",
-          4: "Concluído",
-        },
-        hidden: small,
-      },
-      { title: "UUID", field: "file_manager_uuid", type: "text", hidden: true },
-    ];
+  const [clients, setClients] = useState([]);
+  const [photographers, setPhotographers] = useState([]);
+  const [services, setServices] = useState([]);
+  const [status, setStatus] = useState([
+    "Cancelado",
+    "Pendente",
+    "Ativo",
+    "Enviado",
+    "Concluído",
+  ]);
+  const [schedulings, setScheduling] = useState([]);
+  const [totalRows, setTotalRows] = useState(0);
+
+  const [address, setAddress] = useState("");
+  const [dateIni, setDateIni] = useState(null);
+  const [dateEnd, setDateEnd] = useState(null);
+  const [statusId, setStatusId] = useState([]);
+  const [clientsId, setClientsId] = useState([]);
+  const [servicesId, setServicesId] = useState([]);
+  const [photographersId, setPhotographersId] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [labelWidth, setLabelWidth] = useState(0);
+  const inputLabel = React.useRef(null);
 
   useEffect(() => {
-    handleLoad();
+    setLabelWidth(inputLabel.current.offsetWidth);
+    handleFilter();
     handleLoadLookup();
   }, []);
 
-  const handleClose = () => {
-    setOpen(false);
+  useEffect(() => {
+    handleFilter();
+  }, [page, rowsPerPage]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  const FileDownload = require("js-file-download");
-
-  async function downlaodZipFile(uploadType, folderName, SchedulingId) {
-    setOpen(true);
-
-    await api.put(`/scheduling/${SchedulingId}`, { downloaded: 1 });
-    var responseZip = await api.get(
-      "/storages/storage/" + uploadType + "/folder/" + folderName + "/zip"
-    );
-    window.open(
-      "https://zipper.sheephouse.com.br" + "/?ref=" + responseZip.data.result,
-      "_blank"
-    );
-  }
-
-  async function handleLoad() {
-    if (clientCode) {
-      await api.get(`/Scheduling/byclient/${clientCode}`).then((response) => {
-        let schedulingsData = [];
-
-        response.data.forEach((item) => {
-          if (item.date) {
-            const date = item.date.split("-");
-            item.day = date[2];
-            item.month = parseInt(date[1]);
-            item.year = parseInt(date[0]);
-          } else {
-            item.day = "";
-            item.month = "";
-            item.year = "";
-          }
-
-          if (!item.actived) {
-            item.status = 0;
-          } else if (item.downloaded) {
-            item.status = 4;
-          } else if (item.completed) {
-            item.status = 3;
-          } else if (
-            new Date(`${item.date}T00:00:00-03:00`) <= new Date() &&
-            new Date(`${item.date}T23:59:59-03:00`) >= new Date()
-          ) {
-            item.status = 1;
-          } else {
-            item.status = 2;
-          }
-
-          if (item.drone) {
-            item.tipo = 1;
-          } else if (item.tour360) {
-            item.tipo = 2;
-          } else {
-            item.tipo = 0;
-          }
-
-          let serviceString = "";
-
-          item.services.map((service) => {
-            serviceString += ` ${service.name},`;
-          });
-
-          item.serviceName = serviceString.slice(0, -1);
-
-          schedulingsData.push(item);
-        });
-
-        setScheduling(schedulingsData);
-      });
-    } else {
-      await api.get("/Scheduling").then((response) => {
-        let schedulingsData = [];
-
-        response.data.forEach((item) => {
-          if (item.date) {
-            const date = item.date.split("-");
-            item.day = date[2];
-            item.month = parseInt(date[1]);
-            item.year = parseInt(date[0]);
-          } else {
-            item.day = "";
-            item.month = "";
-            item.year = "";
-          }
-
-          if (!item.actived) {
-            item.status = 0;
-          } else if (item.downloaded) {
-            item.status = 4;
-          } else if (item.completed) {
-            item.status = 3;
-          } else if (
-            new Date(`${item.date}T00:00:00-03:00`) <= new Date() &&
-            new Date(`${item.date}T23:59:59-03:00`) >= new Date()
-          ) {
-            item.status = 1;
-          } else {
-            item.status = 2;
-          }
-
-          if (item.drone) {
-            item.tipo = 1;
-          } else if (item.tour360) {
-            item.tipo = 2;
-          } else {
-            item.tipo = 0;
-          }
-
-          let serviceString = "";
-
-          item.services.map((service) => {
-            serviceString += ` ${service.name},`;
-          });
-
-          item.serviceName = serviceString.slice(0, -1);
-
-          item.clientName = item.client.name;
-
-          schedulingsData.push(item);
-        });
-
-        setScheduling(schedulingsData);
-      });
-    }
-  }
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   async function handleLoadLookup() {
     await api.get("/photographer").then((response) => {
@@ -273,6 +123,80 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
       setPhotographers(data);
     });
+
+    if(!clientCode) {
+      await api.get("/client").then((response) => {
+        let data = [];
+  
+        response.data.map((item) => {
+          return (data[item.id] = item.name);
+        });
+  
+        setClients(data);
+      });  
+    }
+    
+    await api.get("/service").then((response) => {
+      let data = [];
+
+      response.data.map((item) => {
+        return (data[item.id] = item.name);
+      });
+
+      setServices(data);
+    });
+  }
+
+  async function handleFilter() {
+    await api
+      .get("/scheduling", {
+        params: {
+          photographersId,
+          address,
+          statusId,
+          clientsId: clientCode ? clientCode : clientsId,
+          servicesId,
+          dateIni,
+          dateEnd,
+          page,
+          rowsPerPage,
+        },
+      })
+      .then((response) => {
+        let schedulingsData = [];
+
+        response.data.data.forEach((item) => {
+          if (!item.actived) {
+            item.status = 0;
+          } else if (item.downloaded) {
+            item.status = 4;
+          } else if (item.completed) {
+            item.status = 3;
+          } else if (
+            new Date(`${item.date}T00:00:00-03:00`) <= new Date() &&
+            new Date(`${item.date}T23:59:59-03:00`) >= new Date()
+          ) {
+            item.status = 1;
+          } else {
+            item.status = 2;
+          }
+
+          schedulingsData.push(item);
+        });
+
+        setScheduling(schedulingsData);
+        setTotalRows(response.data.total);
+      });
+  }
+
+  function handleClean() {
+    setAddress("");
+    setClientsId([]);
+    setDateIni(null);
+    setDateEnd(null);
+    setPhotographersId([]);
+    setStatusId([]);
+    setServicesId([]);
   }
 
   async function resendEmail(id) {
@@ -290,250 +214,379 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
   return (
     <>
-      <div className={classes.main}>
-        <MaterialTable
-          title="Agendamentos"
-          columns={columns}
-          data={Schedulings}
-          detailPanel={[
-            {
-              tooltip: "Mais informações",
-              render: (rowData) => {
-                return (
-                  <div style={{ margin: "0 50px" }}>
-                    {rowData.photo_link && (
-                      <p>
-                        <a href={rowData.photo_link}>
-                          <strong>Baixar Fotos</strong>
-                        </a>
-                      </p>
-                    )}
-                    {rowData.video_link && (
-                      <p>
-                        <a href={rowData.video_link}>
-                          <strong>Baixar Videos</strong>
-                        </a>
-                      </p>
-                    )}
-                    {rowData.tour_link && (
-                      <p>
-                        <a href={rowData.tour_link}>
-                          <strong>Baixar Tour</strong>
-                        </a>
-                      </p>
-                    )}
-                    {small && (
-                      <p>
-                        <strong>Status:</strong>
-                        {rowData.status == 0
-                          ? " Cancelado"
-                          : rowData.status == 1
-                          ? " Pendente"
-                          : rowData.status == 2
-                          ? " Ativo"
-                          : rowData.status == 3
-                          ? " Enviado"
-                          : " Concluído"}
-                      </p>
-                    )}
-                    {small && (
-                      <p>
-                        <strong>Fotógrafo:</strong>
-                        {" " + rowData.photographer.name}
-                      </p>
-                    )}
-                    <p>
-                      <strong>Endereço:</strong> {rowData.address}
-                    </p>
-                    <p>
-                      <strong>Complemento:</strong> {rowData.complement}
-                    </p>
-                    <p>
-                      <strong>Observações:</strong> {rowData.comments}
-                    </p>
-                    {rowData.date_cancel && (
-                      <p>
-                        <strong>Cancelamento:</strong>
-                        {" " +
-                          new Date(rowData.date_cancel)
-                            .toISOString()
-                            .split("T")[0]
-                            .split("-")[2] +
-                          "/" +
-                          new Date(rowData.date_cancel)
-                            .toISOString()
-                            .split("T")[0]
-                            .split("-")[1] +
-                          "/" +
-                          new Date(rowData.date_cancel)
-                            .toISOString()
-                            .split("T")[0]
-                            .split("-")[0] +
-                          " " +
-                          new Date(rowData.date_cancel)
-                            .toTimeString()
-                            .split(" ")[0]}
-                      </p>
-                    )}
-                    {rowData.reason && !clientCode && (
-                      <p>
-                        <strong>Motivo reagendamento:</strong>
-                        {" " + rowData.reason}
-                      </p>
-                    )}
-                  </div>
-                );
-              },
-            },
-          ]}
-          actions={[
-            (rowData) => ({
-              icon: "send",
-              tooltip: "Reenviar email",
-              onClick: (event, rowData) => {
-                resendEmail(rowData.id);
-              },
-              hidden:
-                clientCode ||
-                !rowData.completed ||
-                !rowData.actived ||
-                !rowData.date ||
-                rowData.downloaded,
-            }),
-            (rowData) => ({
-              icon: "photo_library",
-              tooltip: "Fotos",
-              onClick: (event, rowData) => {
-                if (!clientCode) {
-                  history.push(
-                    `filemanager/Scheduling/${rowData.file_manager_uuid}/${rowData.id}`
+      <Paper className={classes.paper}>
+        <Typography component="h2" variant="h4">
+          Agendamentos
+        </Typography>
+
+        <Grid className={classes.filter} container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              type="text"
+              onChange={(event) => {
+                setAddress(event.target.value);
+              }}
+              value={address}
+              label="Endereço"
+              variant="outlined"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                autoOk
+                value={dateIni ? moment(dateIni) : null}
+                inputVariant="outlined"
+                fullWidth
+                label="Data da Inicial"
+                onChange={(value) => {
+                  let date = moment(value).format("YYYY-MM-DD");
+                  setDateIni(date);
+                }}
+                format="dd/MM/yyyy"
+                cancelLabel="Cancelar"
+                invalidDateMessage="Data em formato inválido."
+              />
+            </MuiPickersUtilsProvider>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                autoOk
+                value={dateEnd ? moment(dateEnd) : null}
+                inputVariant="outlined"
+                fullWidth
+                label="Data da Final"
+                onChange={(value) => {
+                  console.log(value);
+                  let date = moment(value).format("YYYY-MM-DD");
+                  setDateEnd(date);
+                }}
+                format="dd/MM/yyyy"
+                cancelLabel="Cancelar"
+                invalidDateMessage="Data em formato inválido."
+              />
+            </MuiPickersUtilsProvider>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="statusSelect">
+                Status
+              </InputLabel>
+              <Select
+                id="statusSelect"
+                labelWidth={labelWidth}
+                value={statusId}
+                multiple
+                onChange={(event) => {
+                  setStatusId(event.target.value);
+                }}
+              >
+                {status.map((item, index) => {
+                  return (
+                    <MenuItem key={index} value={index}>
+                      {item}
+                    </MenuItem>
                   );
-                } else {
-                  window.open(rowData.photo_link);
-                }
-              },
-              hidden:
-                (clientCode && !rowData.photo_link) ||
-                !rowData.actived ||
-                !rowData.date,
-            }),
-            (rowData) => ({
-              icon: "videocam",
-              tooltip: "Vídeos",
-              onClick: (event, rowData) => {
-                if (clientCode) {
-                  window.open(rowData.video_link);
-                }
-              },
-              hidden: (clientCode && !rowData.video_link) || !clientCode,
-            }),
-            (rowData) => ({
-              icon: "camera_enhance",
-              tooltip: "Tour 360",
-              onClick: (event, rowData) => {
-                if (clientCode) {
-                  window.open(rowData.tour_link);
-                }
-              },
-              hidden: (clientCode && !rowData.tour_link) || !clientCode,
-            }),
-            (rowData) => ({
-              icon: "event",
-              tooltip: "Reagendar/Cancelar",
-              onClick: (event, rowData) => {
-                history.push(`/scheduling/${rowData.id}`);
-              },
-              hidden: rowData.completed || !rowData.actived || !rowData.date,
-            }),
-            (rowData) => ({
-              icon: "event",
-              tooltip: "Agendar",
-              onClick: (event, rowData) => {
-                history.push(`/scheduling/${rowData.id}`);
-              },
-              hidden: rowData.date || clientCode,
-            }),
-            {
-              icon: "add",
-              tooltip: "Agendar",
-              isFreeAction: true,
-              onClick: (event) => history.push(`/admin/scheduling/`),
-              hidden: clientCode,
-            },
-          ]}
-          components={{
-            Cell: (props) => {
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="servicesSelect">
+                Serviços
+              </InputLabel>
+              <Select
+                id="servicesSelect"
+                labelWidth={labelWidth}
+                value={servicesId}
+                multiple
+                onChange={(event) => {
+                  setServicesId(event.target.value);
+                }}
+              >
+                {services.map((item, index) => {
+                  return (
+                    <MenuItem key={index} value={index}>
+                      {item}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="photographerSelect">
+                Fotógrafos
+              </InputLabel>
+              <Select
+                id="photographerSelect"
+                labelWidth={labelWidth}
+                value={photographersId}
+                multiple
+                onChange={(event) => {
+                  setPhotographersId(event.target.value);
+                }}
+              >
+                {photographers.map((item, index) => {
+                  return (
+                    <MenuItem key={index} value={index}>
+                      {item}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid style={{ display: clientCode ? "none" : "inline-flex" }} item xs={12} sm={6}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="clientsSelect">
+                Clientes
+              </InputLabel>
+              <Select
+                id="clientsSelect"
+                labelWidth={labelWidth}
+                value={clientsId}
+                multiple
+                onChange={(event) => {
+                  setClientsId(event.target.value);
+                }}
+              >
+                {clients.map((item, index) => {
+                  return (
+                    <MenuItem key={index} value={index}>
+                      {item}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid container item xs={12}>
+            <Grid item xs={4} className={classes.submit}>
+              <Button
+                variant="contained"
+                size="small"
+                fullWidth
+                onClick={() => {
+                  handleClean();
+                }}
+              >
+                Limpar
+              </Button>
+            </Grid>
+            <Grid item xs={8} className={classes.submit}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="small"
+                fullWidth
+                onClick={() => {
+                  handleFilter();
+                }}
+              >
+                Filtrar
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Paper>
+      <Paper className={classes.paper}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">
+                <IconButton
+                  style={{ display: clientCode ? "none" : "inline-flex" }}
+                  title="Agendar"
+                  onClick={() => history.push(`/admin/scheduling/`)}
+                  component="span"
+                >
+                  <AddIcon />
+                </IconButton>
+              </TableCell>
+              <TableCell align="left">Serviço</TableCell>
+              <TableCell align="center">Data/Hora</TableCell>
+              <TableCell align="left">Cliente</TableCell>
+              <TableCell align="left">Fotógrafo</TableCell>
+              <TableCell align="center">Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {schedulings.map((scheduling) => {
               return (
-                <MTableCell
-                  style={{
-                    background: !props.rowData.date
-                      ? "#ddd"
-                      : props.rowData.downloaded
-                      ? "#bbbbff"
-                      : props.rowData.completed
-                      ? "#bbffbb"
-                      : !props.rowData.actived
-                      ? "#ffbbbb"
-                      : props.rowData.changed
-                      ? "#ffffbb"
-                      : "inherit",
-                  }}
-                  {...props}
-                />
+                <>
+                  <TableRow className={classes.tableRow}>
+                    <TableCell className={classes.tableCell} style={{display: 'flex', justifyContent: 'space-evenly'}} align="center">
+                      <IconButton
+                        style={{ display: clientCode ? "none" : "inline-flex" }}
+                        title="Editar"
+                        onClick={() =>
+                          history.push(`admin/edit/scheduling/${scheduling.id}`)
+                        }
+                        component="span"
+                        size="small"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        style={{
+                          display:
+                            clientCode ||
+                            !scheduling.completed ||
+                            !scheduling.actived ||
+                            !scheduling.date ||
+                            scheduling.downloaded
+                              ? "none"
+                              : "inline-flex",
+                        }}
+                        title="Reenviar email"
+                        onClick={() => resendEmail(scheduling.id)}
+                        component="span"
+                        size="small"
+                      >
+                        <SendIcon />
+                      </IconButton>
+                      <IconButton
+                        style={{
+                          display:
+                            (clientCode && !scheduling.photo_link) ||
+                            !scheduling.actived ||
+                            !scheduling.date
+                              ? "none"
+                              : "inline-flex",
+                        }}
+                        title="Fotos"
+                        onClick={() => {
+                          if (!clientCode) {
+                            history.push(
+                              `filemanager/${scheduling.id}`
+                            );
+                          } else {
+                            window.open(scheduling.photo_link);
+                          }
+                        }}
+                        component="span"
+                        size="small"
+                      >
+                        <PhotoLibraryIcon />
+                      </IconButton>
+                      <IconButton
+                        style={{
+                          display:
+                            (clientCode && !scheduling.video_link) || !clientCode
+                              ? "none"
+                              : "inline-flex",
+                        }}
+                        title="Videos"
+                        onClick={() => {
+                          window.open(scheduling.video_link);
+                        }}
+                        component="span"
+                        size="small"
+                      >
+                        <VideocamIcon />
+                      </IconButton>
+                      <IconButton
+                        style={{
+                          display:
+                            (clientCode && !scheduling.video_link) || !clientCode
+                              ? "none"
+                              : "inline-flex",
+                        }}
+                        title="Tour 360"
+                        onClick={() => {
+                          window.open(scheduling.tour_link);
+                        }}
+                        component="span"
+                        size="small"
+                      >
+                        <CameraEnhanceIcon />
+                      </IconButton>
+                      <IconButton
+                        style={{
+                          display: scheduling.completed || !scheduling.actived || !scheduling.date
+                              ? "none"
+                              : "inline-flex",
+                        }}
+                        title="Reagendar/Cancelar"
+                        onClick={() => {
+                          history.push(`/scheduling/${scheduling.id}`)
+                        }}
+                        component="span"
+                        size="small"
+                      >
+                        <EventIcon />
+                      </IconButton>
+                      <IconButton
+                        style={{
+                          display: scheduling.date || clientCode
+                              ? "none"
+                              : "inline-flex",
+                        }}
+                        title="Agendar"
+                        onClick={() => {
+                          history.push(`/scheduling/${scheduling.id}`);
+                        }}
+                        component="span"
+                        size="small"
+                      >
+                        <EventIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell className={classes.tableCell} align="left">
+                      {scheduling.services
+                        .map((service) => `${service.name} (R$ ${service.pivot.price})`)
+                        .join(", ")}
+                    </TableCell>
+                    <TableCell className={classes.tableCell} align="center">
+                      {moment(scheduling.date).format("DD/MM/YYYY")} -{" "}
+                      {scheduling.horary}
+                    </TableCell>
+                    <TableCell className={classes.tableCell} align="left">
+                      {scheduling.client.name}
+                    </TableCell>
+                    <TableCell className={classes.tableCell} align="left">
+                      {scheduling.photographer.name}
+                    </TableCell>
+                    <TableCell className={classes.tableCell} align="center">
+                      {status[scheduling.status]}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className={classes.tableRow}>
+                    <TableCell></TableCell>
+                    <TableCell colSpan="5">
+                      Endereço: {scheduling.address}
+                      <br/>
+                      {scheduling.complement ?
+                          `Complemento: ${scheduling.complement}` : ''
+                      }
+                      <br/>
+                      {scheduling.comments ? 
+                          `Observações: ${scheduling.comments}` : ''
+                      }
+                    </TableCell>
+                  </TableRow>
+                </>
               );
-            },
-          }}
-          localization={{
-            body: {
-              filterRow: {
-                filterTooltip: "Filtro",
-              },
-              emptyDataSourceMessage: "Sem registros para mostrar",
-            },
-            header: {
-              actions: "",
-            },
-            pagination: {
-              labelRowsSelect: "Registros",
-              labelRowsPerPage: "Registros por página",
-              firstAriaLabel: "Primeira Página",
-              firstTooltip: "Primeira Página",
-              previousAriaLabel: "Página Anterior",
-              previousTooltip: "Página Anterior",
-              nextAriaLabel: "Página Seguinte",
-              nextTooltip: "Página Seguinte",
-              lastAriaLabel: "Última Página",
-              lastTooltip: "Última Página",
-            },
-          }}
-          options={{
-            search: false,
-            pageSize: 20,
-            filtering: true,
-            emptyRowsWhenPaging: false,
-          }}
+            })}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={totalRows}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+          labelRowsPerPage="Registros por Página"
         />
-      </div>
-      <Dialog
-        fullScreen={small}
-        fullWidth={true}
-        open={open}
-        onClose={handleClose}
-      >
-        <DialogContent>
-          <img
-            src="../../assets/dicas_descompactar_sheephouse.jpg"
-            alt="Sheep House"
-            width={"100%"}
-            className={classes.imgDialog}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      </Paper>
     </>
   );
 }

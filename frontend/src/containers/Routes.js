@@ -35,6 +35,7 @@ import AdminBroker from "./Admin/Broker/Broker";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminPhotographerHorary from "./Admin/Photographer/Horary";
 import AdminScheduling from "./Admin/Scheduling/Scheduling";
+import AdminEditScheduling from "./Admin/Scheduling/EditScheduling";
 import AdminReports from "./Admin/Reports/Reports";
 import AdminService from "./Admin/Service/Service";
 import AdminBrokerServices from "./Admin/Broker/BrokerServices";
@@ -42,7 +43,6 @@ import AdminBrokerServices from "./Admin/Broker/BrokerServices";
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
 import GlobalFileManager from "./Global/Scheduling/FileManager";
-import GlobalFileUploader from "./Global/Scheduling/FileUploader";
 
 export default function Routes() {
   return (
@@ -87,6 +87,10 @@ export default function Routes() {
             component={AdminScheduling}
           />
           <AdminRequeredRoute
+            path="/admin/edit/scheduling/:id"
+            component={AdminEditScheduling}
+          />
+          <AdminRequeredRoute
             path="/admin/photographer/:photographer_id/horary"
             component={AdminPhotographerHorary}
           />
@@ -109,20 +113,9 @@ export default function Routes() {
           />
           <LoginRequeredRoute
             exact
-            path="/filemanager/:uploadType/:folderName/:dbCode"
+            path="/filemanager/:id"
             component={GlobalFileManager}
           />
-          <LoginRequeredRoute
-            exact
-            path="/fileuploader/:uploadType/:folderName/:dbCode"
-            component={GlobalFileUploader}
-          />
-
-          <Route
-            path="/download/:uploadType/:folderName/:dbCode"
-            component={UserDownload}
-          />
-
           <Route component={NotFound} />
         </Switch>
       </PageLayout>

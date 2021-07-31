@@ -23,9 +23,6 @@ function Home({ enqueueSnackbar }) {
   const classes = useStyles(),
     [today, setToday] = useState([]),
     [tomorrow, setTomorrow] = useState([]),
-    [completedPhoto, setCompletedPhoto] = useState(0),
-    [completedDrone, setCompletedDrone] = useState(0),
-    [canceled, setCanceled] = useState(0),
     [Clients, setClients] = useState([]),
     [Photographers, setPhotographers] = useState([]),
     [dateToday, setDateToday] = useState(""),
@@ -64,8 +61,6 @@ function Home({ enqueueSnackbar }) {
       year = date.getFullYear(),
       mn = date.getMonth(),
       day = date.getDate(),
-      dayIni = new Date(year, mn, 1).getDate(),
-      dayEnd = new Date(year, mn + 1, 0).getDate(),
       td = new Date(year, mn, day).getDate(),
       tm = new Date(year, mn, day + 1).getDate(),
       today = td < 10 ? `0${td}` : td,
@@ -75,8 +70,6 @@ function Home({ enqueueSnackbar }) {
     setDateToday(`${today}/${month}/${year}`);
     setDateTomorrow(`${tomorrow}/${month}/${year}`);
 
-    handleLoadMonthCompleted(year, month, dayIni, dayEnd);
-    handleLoadMonthCanceled(year, month, dayIni, dayEnd);
     handleLoadToday(year, month, today);
     handleLoadTomorrow(year, month, tomorrow);
     handleLoadLookup();
@@ -104,37 +97,6 @@ function Home({ enqueueSnackbar }) {
     });
   }
 
-  async function handleLoadMonthCompleted(year, month, dayIni, dayEnd) {
-    await api
-      .get(
-        `/scheduling/completed/month/${year}-${month}-0${dayIni}/${year}-${month}-${dayEnd}`
-      )
-      .then((response) => {
-        let drone = 0,
-          photo = 0;
-        response.data.forEach((item, index) => {
-          if (item.drone) {
-            drone++;
-          } else {
-            photo++;
-          }
-        });
-
-        setCompletedDrone(drone);
-        setCompletedPhoto(photo);
-      });
-  }
-
-  async function handleLoadMonthCanceled(year, month, dayIni, dayEnd) {
-    await api
-      .get(
-        `/scheduling/canceled/month/${year}-${month}-0${dayIni}/${year}-${month}-${dayEnd}`
-      )
-      .then((response) => {
-        setCanceled(response.data);
-      });
-  }
-
   async function handleLoadToday(year, month, today) {
     await api
       .get(`/scheduling/day/${year}-${month}-${today}`)
@@ -154,24 +116,6 @@ function Home({ enqueueSnackbar }) {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <h1>Sessões do mês</h1>
-              </Grid>
-              <Grid item xs={4}>
-                <h3>Fotos: {completedPhoto}</h3>
-              </Grid>
-              <Grid item xs={4}>
-                <h3>Drone: {completedDrone}</h3>
-              </Grid>
-              <Grid item xs={4}>
-                <h3>Canceladas: {canceled}</h3>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
         <Grid item sm={6} xs={12}>
           <Paper className={classes.paper}>
             <MaterialTable

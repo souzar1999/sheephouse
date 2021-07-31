@@ -7,7 +7,9 @@ Route.post('/users', 'UserController.create')
 Route.post('/sessions', 'SessionController.create')
 Route.post('/refresh', 'SessionController.refreshToken')
 
-Route.get('/user', 'SessionController.show')
+Route.get('/user', 'SessionController.show').middleware('auth')
+
+Route.get('/boleto', 'JunoController.makeCharges')
 
 Route.get('/client/user/:user_id', 'ClientController.showClient')
 

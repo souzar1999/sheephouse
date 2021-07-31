@@ -9,17 +9,19 @@ const useStyles = makeStyles((theme) => ({
   container: {
     height: "100vh",
     textAlign: "center",
-    display: "flex",
     margin: "auto",
-    padding: "0 30px",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    [theme.breakpoints.up("md")]: {
-      paddingTop: "70px",
+    paddingTop: "70px",
+    width: "1440px",
+    [theme.breakpoints.down("lg")]: {
+      width: "960px",
     },
     [theme.breakpoints.down("md")]: {
+      width: "720px",
+    },
+    [theme.breakpoints.down("sm")]: {
       width: "100vw",
       padding: "0",
+      marginTop: "70px"
     },
   },
 }));

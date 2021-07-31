@@ -57,18 +57,6 @@ class BrokerController {
       dia_vencimento
     })
 
-    if (services) {
-      await broker.services().attach(services)
-
-      services.map(async (service_id, index) => {
-        await Database.table('broker_service')
-          .where('service_id', service_id)
-          .update('price', prices[index])
-      })
-
-      broker.services = await broker.services().fetch()
-    }
-
     return broker
   }
 
@@ -109,6 +97,7 @@ class BrokerController {
       services.map(async (service_id, index) => {
         await Database.table('broker_service')
           .where('service_id', service_id)
+          .where('broker_id', params.id)
           .update('price', prices[index])
       })
 

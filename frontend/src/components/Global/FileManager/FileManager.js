@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 
@@ -17,6 +14,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 
 import api from "../../../services/api";
+
 import history from "../../../history";
 
 const useStyles = makeStyles((theme) => ({
@@ -34,16 +32,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    padding: theme.spacing(1, 1),
   },
 }));
 
 function FileDownloader({ enqueueSnackbar, clientCode }) {
   const classes = useStyles();
 
-  const { uploadType, folderName, dbCode } = useParams();
-  const [photographers, setPhotographers] = useState([]);
-  const [photographer_id, setPhotographerId] = useState("");
+  const { id } = useParams();
   const [photo_link, setPhotoLink] = useState("");
   const [video_link, setVideoLink] = useState("");
   const [tour_link, setTourLink] = useState("");
@@ -53,54 +49,23 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
   }, []);
 
   async function handleLoad() {
-    await api.get("/scheduling/" + dbCode).then((response) => {
+    await api.get("/scheduling/" + id).then((response) => {
       setPhotoLink(response.data.photo_link);
       setVideoLink(response.data.video_link);
       setTourLink(response.data.tour_link);
     });
-
-    await api.get("/photographer").then((response) => {
-      setPhotographers(response.data);
-    });
-  }
-
-  async function handleChangePhotographer() {
-    await api
-      .put(`/scheduling/${dbCode}`, {
-        photographer_id,
-      })
-      .then((response) => {
-        enqueueSnackbar("Fotógrafo alterado com sucesso", {
-          variant: "success",
-          autoHideDuration: 5000,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center",
-          },
-        });
-      })
-      .catch((error) => {
-        enqueueSnackbar("Erro ao cadastrar registro!", {
-          variant: "error",
-          autoHideDuration: 5000,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center",
-          },
-        });
-      });
   }
 
   async function handleUploadLinks() {
     await api
-      .put(`/scheduling/${dbCode}`, {
+      .put(`/scheduling/${id}`, {
         photo_link,
         tour_link,
         video_link,
       })
       .then(async (response) => {
         await api
-          .get("/scheduling/" + dbCode + "/complete")
+          .get("/scheduling/" + id + "/complete")
           .then(async (response) => {
             enqueueSnackbar("Sessão finalizada", {
               variant: "success",
@@ -181,60 +146,30 @@ function FileDownloader({ enqueueSnackbar, clientCode }) {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="small"
-            className={classes.submit}
-            onClick={() => {
-              handleUploadLinks();
-            }}
-          >
-            Salvar
-          </Button>
-        </Grid>
-      </Paper>
-      <Paper className={classes.paper}>
-        <Typography className={classes.title} component="h5" variant="h5">
-          Altere o fotógrafo
-        </Typography>
-        <Grid item xs={12}>
-          <FormControl variant="outlined" fullWidth>
-            <Select
-              id="photographerSelect"
-              value={photographer_id}
-              onChange={(event) => {
-                setPhotographerId(event.target.value);
+        <Grid container item xs={12}>
+          <Grid item xs={4} className={classes.submit}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="secondary"
+              onClick={() => history.push(`/scheduling`)}
+            >
+              Voltar
+            </Button>
+          </Grid>
+          <Grid item xs={8} className={classes.submit}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                handleUploadLinks();
               }}
             >
-              <MenuItem value="">-- Selecione --</MenuItem>
-              {photographers.map((item) => {
-                return (
-                  <MenuItem id={item.id} key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="small"
-            className={classes.submit}
-            onClick={() => {
-              handleChangePhotographer();
-            }}
-          >
-            Salvar
-          </Button>
+              Salvar
+            </Button>
+          </Grid>
         </Grid>
       </Paper>
     </>

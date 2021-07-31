@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
-import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 
-const useStyles = makeStyles((theme) => ({
-  main: {
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: 375,
-      marginTop: theme.spacing(8),
-    },
-  },
-}));
-
 function District({ enqueueSnackbar }) {
-  const classes = useStyles();
   const [districts, setDistricts] = useState([]);
   const [regions, setRegions] = useState([]);
   const [cities, setCities] = useState([]);
@@ -191,7 +180,7 @@ function District({ enqueueSnackbar }) {
   }
 
   return (
-    <div className={classes.main}>
+    <div>
       <MaterialTable
         title="Bairros"
         columns={columns}

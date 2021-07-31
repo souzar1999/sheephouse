@@ -1,23 +1,12 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { withSnackbar } from "notistack";
-import { makeStyles } from "@material-ui/core/styles";
 
 import api from "../../../services/api";
 
 import history from "../../../history";
 
-const useStyles = makeStyles((theme) => ({
-  main: {
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: 375,
-      marginTop: theme.spacing(8),
-    },
-  },
-}));
-
 function Broker({ enqueueSnackbar }) {
-  const classes = useStyles();
   const [brokers, setBrokers] = useState([]);
   const columns = [
     { title: "Nome", field: "name", defaultSort: "asc" },
@@ -182,7 +171,7 @@ function Broker({ enqueueSnackbar }) {
   }
 
   return (
-    <div className={classes.main}>
+    <div>
       <MaterialTable
         title="Imobiliárias"
         columns={columns}
