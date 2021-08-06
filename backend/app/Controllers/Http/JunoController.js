@@ -17,7 +17,8 @@ const Env = use('Env'),
     }
   },
   printer = new PdfPrinter(fonts),
-  fs = require('fs')
+  fs = require('fs'),
+  Helpers = use('Helpers')
 
 class JunoController {
   async makeCharges({ request, response }) {
@@ -48,7 +49,6 @@ class JunoController {
         console.log('------')
         console.log(count)
         console.log(`${broker.id} - ${broker.name}`)
-        console.log(value)
         console.log(clients)
 
         bodyText.push([
@@ -169,42 +169,34 @@ class JunoController {
           pageOrientation: 'landscape',
           pageMargins: [ 20, 20, 20, 20 ]
         };
-        /*
+
         if(value > 0) {
           console.log('entrou')
           console.log(value)
 
-          const pdfDoc = printer.createPdfKitDocument(docDefinition);
+          var pdfDoc = printer.createPdfKitDocument(docDefinition);
+          pdfDoc.pipe(fs.createWriteStream(Helpers.tmpPath(`pdfs/relatorio-sheephouse${count}.pdf`)));
 
-          let chunks = [],
-              result = null;
-
-          pdfDoc.on('data', (chunk) => {
-            chunks.push(chunk);
-          });
-
-          pdfDoc.on('end', async () => {
-            result = Buffer.concat(chunks);
-
-            await Mail.send(
-              'emails.boleto',
-              {
-                broker,
-                startDate: moment(firstDay).format('DD/MM/YYYY'),
-                endDate: moment(lastDay).format('DD/MM/YYYY')
-              },
-              message => {
-                message
-                  .to('victorsouzar1999@gmail.com')
-                  .from('noreply@sheephouse.com.br', 'Sheep House')
-                  .subject('Sheep House - Relatório mensal para cobrança')
-                  .attachData('data:application/pdf;base64,' + result.toString('base64'), `relatorio_sheephouse.pdf`,{encoding: 'base64'})
-              }
-            )
-          });
+          await Mail.send(
+            'emails.boleto',
+            {
+              broker,
+              startDate: moment(firstDay).format('DD/MM/YYYY'),
+              endDate: moment(lastDay).format('DD/MM/YYYY')
+            },
+            message => {
+              message
+                .to('victorsouzar1999@gmail.com')
+                .from('noreply@sheephouse.com.br', 'Sheep House')
+                .subject('Sheep House - Relatório mensal para cobrança')
+                .attach(Helpers.tmpPath(`pdfs/relatorio-sheephouse${count}.pdf'), {
+                  filename: 'Relatório-Sheephouse.pdf'
+                })
+            }
+          )
 
           pdfDoc.end();
-
+/*
           axios.post(Env.get('JURL') + 'charges',
           {
             charge: {
@@ -227,8 +219,8 @@ class JunoController {
               'X-Resource-Token': Env.get('JRESOURCE_TOKEN'),
               'Authorization': `Bearer ${token.access_token}`
             }
-          })
-        }*/
+          }) */
+        }
       })
     } catch (error) {
       console.log(error)

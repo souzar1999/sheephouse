@@ -17,6 +17,7 @@ class SchedulingController {
       statusId,
       servicesId,
       clientsId,
+      brokersId,
       dateIni,
       dateEnd,
       page,
@@ -27,7 +28,7 @@ class SchedulingController {
       .with('photographer')
       .with('client')
       .with('services')
-      .orderBy('date', 'horary')
+      .orderByRaw('date IS NULL DESC, date DESC, horary desc')
 
     if (photographersId) {
       if(photographersId.length > 1 && Array.isArray(photographersId)) {
@@ -45,8 +46,20 @@ class SchedulingController {
       }
     }
 
+    if (brokersId) {
+      if(brokersId.length > 1 && Array.isArray(brokersId)) {
+        query.whereHas('client', (builder) => {
+          builder.whereIn('broker_id', brokersId)
+        })
+      } else {
+        query.whereHas('client', (builder) => {
+          builder.where('broker_id', brokersId)
+        })
+      }
+    }
+
     if (address) {
-      query.whereRaw('address like %?%', [address])
+      query.where('address', 'like', '%' + address + '%')
     }
 
     if (dateIni) {
@@ -65,13 +78,6 @@ class SchedulingController {
     } else if (statusId == 3) {
       query.where('completed', '=', 1)
       query.where('actived', '=', 1)
-    } else if (statusId == 1) {
-      query.where('date', '=', moment().format("YYYY-MM-DD"))
-      query.where('actived', '=', 1)
-    } else if(statusId == 2) {
-      query.where('actived', '=', 1)
-      query.where('completed', '=', 0)
-      query.where('downloaded', '=', 0)
     }
 
     if(servicesId) {
@@ -170,9 +176,8 @@ class SchedulingController {
     const scheduling = await Scheduling.create(data)
 
     if (services) {
-      await scheduling.services().attach(services)
-
       services.map(async (service_id, index) => {
+        await scheduling.services().attach(service_id)
         await Database.table('scheduling_service')
           .where('service_id', service_id)
           .where('scheduling_id', scheduling.id)
@@ -224,9 +229,8 @@ class SchedulingController {
 
     if (services) {
       await scheduling.services().detach()
-      await scheduling.services().attach(services)
-
       services.map(async (service_id, index) => {
+        await scheduling.services().attach(service_id)
         await Database.table('scheduling_service')
           .where('service_id', service_id)
           .where('scheduling_id', params.id)

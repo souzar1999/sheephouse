@@ -10,6 +10,7 @@ class ClientController {
     const clients = Client.query()
       .with('broker')
       .with('user')
+      .orderBy('name', 'asc')
       .fetch()
 
     return clients
@@ -20,6 +21,7 @@ class ClientController {
       .with('broker')
       .with('user')
       .where('actived', true)
+      .orderBy('name', 'asc')
       .fetch()
 
     return clients

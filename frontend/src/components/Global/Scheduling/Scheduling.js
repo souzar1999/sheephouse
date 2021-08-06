@@ -23,6 +23,10 @@ import SendIcon from "@material-ui/icons/Send";
 import PhotoLibraryIcon from "@material-ui/icons/PhotoLibrary";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import CameraEnhanceIcon from "@material-ui/icons/CameraEnhance";
+import FirstPageIcon from "@material-ui/icons/FirstPage";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import LastPageIcon from "@material-ui/icons/LastPage";
 import EventIcon from "@material-ui/icons/Event";
 
 import {
@@ -66,11 +70,62 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function TablePaginationActions (props) {
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onChangePage } = props;
+
+  const handleFirstPageButtonClick = (event) => {
+    onChangePage(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onChangePage(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onChangePage(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    <div style={{flexShrink: 0, marginLeft: theme.spacing(2.5)}}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="Primeira página"
+      >
+        <FirstPageIcon />
+      </IconButton>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="Página anterior">
+        <KeyboardArrowLeft />
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="Próxima página"
+      >
+        <KeyboardArrowRight />
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="Última página"
+      >
+        <LastPageIcon />
+      </IconButton>
+    </div>
+  );
+}
+
 function Scheduling({ enqueueSnackbar, clientCode }) {
   const classes = useStyles();
   const [clients, setClients] = useState([]);
   const [photographers, setPhotographers] = useState([]);
   const [services, setServices] = useState([]);
+  const [brokers, setBrokers] = useState([]);
   const [status, setStatus] = useState([
     "Cancelado",
     "Pendente",
@@ -86,6 +141,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   const [dateEnd, setDateEnd] = useState(null);
   const [statusId, setStatusId] = useState([]);
   const [clientsId, setClientsId] = useState([]);
+  const [brokersId, setBrokersId] = useState([]);
   const [servicesId, setServicesId] = useState([]);
   const [photographersId, setPhotographersId] = useState([]);
   const [page, setPage] = useState(0);
@@ -115,24 +171,16 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
   async function handleLoadLookup() {
     await api.get("/photographer").then((response) => {
-      let data = [];
-
-      response.data.map((item) => {
-        return (data[item.id] = item.name);
-      });
-
-      setPhotographers(data);
+      setPhotographers(response.data);
     });
 
     if(!clientCode) {
       await api.get("/client").then((response) => {
-        let data = [];
-  
-        response.data.map((item) => {
-          return (data[item.id] = item.name);
-        });
-  
-        setClients(data);
+        setClients(response.data);
+      });  
+
+      await api.get("/broker").then((response) => {
+        setBrokers(response.data);
       });  
     }
     
@@ -155,6 +203,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           address,
           statusId,
           clientsId: clientCode ? clientCode : clientsId,
+          brokersId: clientCode ? [] : brokersId,
           servicesId,
           dateIni,
           dateEnd,
@@ -192,6 +241,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
   function handleClean() {
     setAddress("");
     setClientsId([]);
+    setBrokersId([]);
     setDateIni(null);
     setDateEnd(null);
     setPhotographersId([]);
@@ -259,7 +309,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                 fullWidth
                 label="Data da Final"
                 onChange={(value) => {
-                  console.log(value);
                   let date = moment(value).format("YYYY-MM-DD");
                   setDateEnd(date);
                 }}
@@ -331,10 +380,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   setPhotographersId(event.target.value);
                 }}
               >
-                {photographers.map((item, index) => {
+                {photographers.map((item) => {
                   return (
-                    <MenuItem key={index} value={index}>
-                      {item}
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
                     </MenuItem>
                   );
                 })}
@@ -355,10 +404,34 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                   setClientsId(event.target.value);
                 }}
               >
-                {clients.map((item, index) => {
+              {clients.map((item) => {
                   return (
-                    <MenuItem key={index} value={index}>
-                      {item}
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                  </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid style={{ display: clientCode ? "none" : "inline-flex" }} item xs={12} sm={6}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel ref={inputLabel} id="brokersSelect">
+                Imobiliárias
+              </InputLabel>
+              <Select
+                id="brokersSelect"
+                labelWidth={labelWidth}
+                value={brokersId}
+                multiple
+                onChange={(event) => {
+                  setBrokersId(event.target.value);
+                }}
+              >
+                {brokers.map((item) => {
+                  return (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
                     </MenuItem>
                   );
                 })}
@@ -544,8 +617,10 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                         .join(", ")}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="center">
-                      {moment(scheduling.date).format("DD/MM/YYYY")} -{" "}
-                      {scheduling.horary}
+                      {(scheduling.date ? 
+                        `${moment(scheduling.date).format("DD/MM/YYYY")} - ${scheduling.horary}` : 
+                        'Administrador irá agendar'
+                      )}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="left">
                       {scheduling.client.name}
@@ -585,6 +660,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
           labelRowsPerPage="Registros por Página"
+          ActionsComponent={TablePaginationActions}
         />
       </Paper>
     </>

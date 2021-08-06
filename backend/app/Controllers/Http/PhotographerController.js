@@ -8,6 +8,7 @@ class PhotographerController {
     const photographers = Photographer.query()
       .with('region')
       .with('scheduling')
+      .orderBy('name', 'asc')
       .fetch()
 
     return photographers
@@ -18,6 +19,7 @@ class PhotographerController {
       .with('region')
       .with('scheduling')
       .where('active', true)
+      .orderBy('name', 'asc')
       .fetch()
 
     return photographers

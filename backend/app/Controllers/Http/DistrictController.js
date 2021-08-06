@@ -7,6 +7,7 @@ class DistrictController {
   async index({ request, response, view }) {
     const districts = District.query()
       .with('city')
+      .orderBy('name', 'asc')
       .fetch()
 
     return districts
@@ -16,6 +17,7 @@ class DistrictController {
     const districts = District.query()
       .with('city')
       .where('active', true)
+      .orderBy('name', 'asc')
       .fetch()
 
     return districts

@@ -7,6 +7,7 @@ class BrokerController {
     const broker = Broker.query()
       .with('client')
       .with('services')
+      .orderBy('name', 'asc')
       .fetch()
 
     return broker
@@ -17,6 +18,7 @@ class BrokerController {
       .with('client')
       .with('services')
       .where('active', true)
+      .orderBy('name', 'asc')
       .fetch()
 
     return broker
@@ -92,9 +94,9 @@ class BrokerController {
 
     if (services) {
       await broker.services().detach()
-      await broker.services().attach(services)
 
       services.map(async (service_id, index) => {
+        await broker.services().attach(service_id)
         await Database.table('broker_service')
           .where('service_id', service_id)
           .where('broker_id', params.id)
