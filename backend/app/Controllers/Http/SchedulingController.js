@@ -78,6 +78,13 @@ class SchedulingController {
     } else if (statusId == 3) {
       query.where('completed', '=', 1)
       query.where('actived', '=', 1)
+    } else if (statusId == 1) {
+      query.where('date', '=', moment().format("YYYY-MM-DD"))
+      query.where('actived', '=', 1)
+    } else if(statusId == 2) {
+      query.where('actived', '=', 1)
+      query.where('completed', '=', 0)
+      query.where('downloaded', '=', 0)
     }
 
     if(servicesId) {
