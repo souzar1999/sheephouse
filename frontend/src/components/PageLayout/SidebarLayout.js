@@ -106,12 +106,12 @@ const SidebarLayout = ({ enqueueSnackbar, isUserAdmin }) => {
               label="Manutenção"
             />
           </ListItem>
-          { /*<ListItem button onClick={handleBoletos} style={{width: 250,color: "#fff"}}>
+          <ListItem button onClick={handleBoletos} style={{width: 250,color: "#fff"}}>
             <ListItemIcon style={{color: "#fff"}}>
               <AttachMoneyIcon />
             </ListItemIcon>
             <ListItemText primary={'Gerar boletos'} />
-            </ListItem> */}
+          </ListItem>
         </List>
       </Sidebar>
     );

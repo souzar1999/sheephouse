@@ -85,6 +85,8 @@ class SchedulingController {
       query.where('actived', '=', 1)
       query.where('completed', '=', 0)
       query.where('downloaded', '=', 0)
+    } else if(statusId == 5) {
+      query.where('date', '=', null)
     }
 
     if(servicesId) {

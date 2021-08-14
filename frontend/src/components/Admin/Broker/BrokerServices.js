@@ -75,10 +75,13 @@ function BrokerServices({ enqueueSnackbar }) {
       setEnviarNf(response.data[0].enviar_nf);
       setEnviarRelatorio(response.data[0].enviar_relatorio);
       setDiaVencimento(response.data[0].dia_vencimento);
+
       brokerServices.map((service, index) => {
-        if (response.data[0].services[index]) {
-          service.price = response.data[0].services[index].pivot.price;
-        }
+        const priceService = response.data[0].services.filter(serviceBroker => {
+          return serviceBroker.pivot.service_id == service.service_id
+        })[0].pivot.price; 
+        
+        service.price = priceService ? priceService : 0;
       });
 
       setServices(brokerServices);

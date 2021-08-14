@@ -132,6 +132,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     "Ativo",
     "Enviado",
     "Concluído",
+    "Administrador irá agendar",
   ]);
   const [schedulings, setScheduling] = useState([]);
   const [totalRows, setTotalRows] = useState(0);

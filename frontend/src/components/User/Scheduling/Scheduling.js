@@ -129,11 +129,17 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       await api.get(`/broker/${response.data[0].broker_id}`).then((response) => {
 
         let newServices = []
-
         services.map((service, index) => {
+          const brokerService = response.data[0].services.filter(serviceBroker => {
+            return serviceBroker.pivot.service_id == service.pivot.service_id
+          }) 
+
+          console.log(service)          
+          console.log(brokerService)
+
           newServices.push({
             ...service,
-            price: response.data[0].services[index].pivot.price
+            price: brokerService[0] ? brokerService[0].pivot.price : 0
           })
         })
 
@@ -612,50 +618,52 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         <div className={classes.form}>
           <Grid container spacing={2}>
             {services.map((service, index) => {
-              return (
-                <div
-                  key={service.id}
-                  className={classes.service}
-                  onClick={() => {
-                    let newServices = services;
-                    let newServiceSelected = servicesSelected;
+              if(service.price) {
+                return (
+                  <div
+                    key={service.id}
+                    className={classes.service}
+                    onClick={() => {
+                      let newServices = services;
+                      let newServiceSelected = servicesSelected;
 
-                    let removeu = false;
+                      let removeu = false;
 
-                    newServices[index].checked = !service.checked;
+                      newServices[index].checked = !service.checked;
 
-                    newServiceSelected = newServiceSelected.filter((item) => {
-                      if(item.service_id == service.id){
-                        removeu = true;
-                      }
-                      return item.service_id != service.id;
-                    });
-
-                    if(!removeu)  {
-                      newServiceSelected.push(
-                        {
-                          'service_id': service.id, 
-                          'price': service.price
+                      newServiceSelected = newServiceSelected.filter((item) => {
+                        if(item.service_id == service.id){
+                          removeu = true;
                         }
-                      );
-                    }
+                        return item.service_id != service.id;
+                      });
 
-                    setServices([...newServices]);
-                    setServicesSelected(newServiceSelected);
-                  }}
-                >
-                  <div className={classes.serviceContent}>
-                    <Typography component="h5" variant="h6" align="left">
-                      {service.name} (R$ {service.price})
-                    </Typography>
-                    {service.checked ? (
-                      <CheckBoxIcon />
-                    ) : (
-                      <CheckBoxOutlineBlankIcon />
-                    )}
+                      if(!removeu)  {
+                        newServiceSelected.push(
+                          {
+                            'service_id': service.id, 
+                            'price': service.price
+                          }
+                        );
+                      }
+
+                      setServices([...newServices]);
+                      setServicesSelected(newServiceSelected);
+                    }}
+                  >
+                    <div className={classes.serviceContent}>
+                      <Typography component="h5" variant="h6" align="left">
+                        {service.name} (R$ {service.price})
+                      </Typography>
+                      {service.checked ? (
+                        <CheckBoxIcon />
+                      ) : (
+                        <CheckBoxOutlineBlankIcon />
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
+                );
+              }
             })}
             <Grid item xs={12}>
               <FormGroup row>

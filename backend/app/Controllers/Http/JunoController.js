@@ -45,12 +45,6 @@ class JunoController {
           dueDate =  moment().date(broker.dia_vencimento).format('YYYY-MM-DD'),
           bodyText = [];
 
-        count = count + 1;
-        console.log('------')
-        console.log(count)
-        console.log(`${broker.id} - ${broker.name}`)
-        console.log(clients)
-
         bodyText.push([
           {
             text: 'Data',
@@ -171,11 +165,11 @@ class JunoController {
         };
 
         if(value > 0) {
-          console.log('entrou')
-          console.log(value)
-
+          count = count + 1;
+          const path = `relatorio-sheephouse${count}.pdf`;
           var pdfDoc = printer.createPdfKitDocument(docDefinition);
-          pdfDoc.pipe(fs.createWriteStream(Helpers.tmpPath(`pdfs/relatorio-sheephouse${count}.pdf`)));
+          pdfDoc.pipe(fs.createWriteStream(path));
+          pdfDoc.end();
 
           await Mail.send(
             'emails.boleto',
@@ -189,37 +183,39 @@ class JunoController {
                 .to('victorsouzar1999@gmail.com')
                 .from('noreply@sheephouse.com.br', 'Sheep House')
                 .subject('Sheep House - Relatório mensal para cobrança')
-                .attach(Helpers.tmpPath(`pdfs/relatorio-sheephouse${count}.pdf'), {
+                .attach(path, {
                   filename: 'Relatório-Sheephouse.pdf'
                 })
             }
           )
 
-          pdfDoc.end();
-/*
-          axios.post(Env.get('JURL') + 'charges',
-          {
-            charge: {
-              description,
-              amount: value,
-              dueDate,
-              installments: 1,
-              maxOverdueDays: 29,
-              paymentTypes: ['BOLETO'],
-            },
-            billing: {
-              name: broker.name,
-              document: broker.cnpj,
-              email: broker.email,
-              notify: true
-            }
-          }, {
-            headers: {
-              'X-Api-Version': 2,
-              'X-Resource-Token': Env.get('JRESOURCE_TOKEN'),
-              'Authorization': `Bearer ${token.access_token}`
-            }
-          }) */
+          fs.unlinkSync(path);
+
+          if(broker.id == 1) {
+            axios.post(Env.get('JURL') + 'charges',
+            {
+              charge: {
+                description,
+                amount: value,
+                dueDate,
+                installments: 1,
+                maxOverdueDays: 29,
+                paymentTypes: ['BOLETO'],
+              },
+              billing: {
+                name: broker.name,
+                document: broker.cnpj,
+                email: broker.email,
+                notify: true
+              }
+            }, {
+              headers: {
+                'X-Api-Version': 2,
+                'X-Resource-Token': Env.get('JRESOURCE_TOKEN'),
+                'Authorization': `Bearer ${token.access_token}`
+              }
+            })
+          }
         }
       })
     } catch (error) {
