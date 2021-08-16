@@ -132,10 +132,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         services.map((service, index) => {
           const brokerService = response.data[0].services.filter(serviceBroker => {
             return serviceBroker.pivot.service_id == service.pivot.service_id
-          }) 
-
-          console.log(service)          
-          console.log(brokerService)
+          })
 
           newServices.push({
             ...service,

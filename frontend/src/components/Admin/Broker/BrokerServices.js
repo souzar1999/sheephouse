@@ -77,11 +77,11 @@ function BrokerServices({ enqueueSnackbar }) {
       setDiaVencimento(response.data[0].dia_vencimento);
 
       brokerServices.map((service, index) => {
-        const priceService = response.data[0].services.filter(serviceBroker => {
-          return serviceBroker.pivot.service_id == service.service_id
-        })[0].pivot.price; 
+        const brokerService = response.data[0].services.filter(serviceBroker => {
+          return serviceBroker.pivot.service_id == service.pivot.service_id
+        }) 
         
-        service.price = priceService ? priceService : 0;
+        service.price = brokerService[0] ? brokerService[0].pivot.price : 0
       });
 
       setServices(brokerServices);
