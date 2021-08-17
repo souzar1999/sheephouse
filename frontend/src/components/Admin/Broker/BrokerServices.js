@@ -78,7 +78,7 @@ function BrokerServices({ enqueueSnackbar }) {
 
       brokerServices.map((service, index) => {
         const brokerService = response.data[0].services.filter(serviceBroker => {
-          return serviceBroker.pivot.service_id == service.pivot.service_id
+          return serviceBroker.pivot.service_id == service.service_id
         }) 
         
         service.price = brokerService[0] ? brokerService[0].pivot.price : 0
