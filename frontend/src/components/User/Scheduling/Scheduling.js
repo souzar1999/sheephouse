@@ -356,6 +356,15 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         );
         return;
       }
+
+      let codServicos = [],
+        prices = [];
+  
+      servicesSelected.map((service) => {
+        codServicos.push(service.service_id);
+        prices.push(service.price);
+      });
+  
       await api
         .post(`/scheduling`, {
           latitude,
@@ -371,7 +380,8 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           accompanies,
           actived: false,
           retirar_chaves,
-          services: servicesSelected,
+          services: codServicos,
+          prices,
         })
         .then(async (response) => {
           enqueueSnackbar("Sessão cadastrada com sucesso!", {
