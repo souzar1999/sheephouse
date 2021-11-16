@@ -30,7 +30,7 @@
     "@adonisjs/mail": "^3.0.10",
     "adonis-scheduler": "^3.0.2",
     "aws-s3-zipper": "^1.3.1",
-    "aws-sdk": "^2.611.0",
+    "aws-sdk": "^2.814.0",
     "axios": "^0.21.1",
     "googleapis": "^47.0.0",
     "juno-api": "^0.2.1",
