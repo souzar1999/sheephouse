@@ -13,6 +13,8 @@
 
 # Environment variables, never commit this file
 .env
+dev.env
+prod.env
 
 # misc
 .DS_Store
