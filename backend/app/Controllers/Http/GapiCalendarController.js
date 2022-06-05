@@ -173,7 +173,16 @@ class GapiCalendarController {
         end,
         start,
         summary,
-        description
+        description,
+        location: `${scheduling.address} - ${complement}`,
+        attendees: [
+          {
+            email: user.email,
+            displayName: `${client.name} / ${broker.name}`,
+            responseStatus: 'accepted',
+            organizer: false
+          }
+        ]
       },
       tokens = JSON.parse(photographer.tokens)
 
