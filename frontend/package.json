@@ -30,7 +30,7 @@
     "redux-thunk": "^2.3.0",
     "serve": "^11.3.2",
     "uuid": "^7.0.1",
-    "xlsx": "^0.15.5"
+    "xlsx": "^0.17.0"
   },
   "scripts": {
     "start": "serve -s build -l 3000",
