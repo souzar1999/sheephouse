@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItem from "@material-ui/core/ListItem";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 import Sidebar from "./Sidebar";
@@ -19,28 +16,6 @@ import { withSnackbar } from "notistack";
 import api from "../../services/api";
 
 const SidebarLayout = ({ enqueueSnackbar, isUserAdmin }) => {
-  const [maintenance, setMaintenance] = useState({});
-
-  useEffect(() => {
-    handleLoad();
-  }, []);
-
-  async function handleLoad() {
-    await api.get("/configuration/1").then((response) => {
-      setMaintenance(response.data[0].maintenance);
-    });
-  }
-
-  async function handleMaintenance() {
-    setMaintenance(!maintenance);
-
-    await api
-      .put(`/configuration/1`, { maintenance: !maintenance })
-      .then((response) => {
-        handleLoad();
-      });
-  }
-
   async function handleBoletos() {
     if (window.confirm('Você quer gerar os boletos?')) {
       await api
@@ -90,22 +65,6 @@ const SidebarLayout = ({ enqueueSnackbar, isUserAdmin }) => {
         <Divider />
         <Sideitem link="/logout" icon="exit_to_app" label="Sair" />
         <List>
-          <ListItem>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={maintenance}
-                  onChange={handleMaintenance}
-                  name="maintenance"
-                  defaultChecked
-                  color="default"
-                  inputProps={{ "aria-label": "checkbox with default color" }}
-                />
-              }
-              style={{ color: "#fff" }}
-              label="Manutenção"
-            />
-          </ListItem>
           <ListItem button onClick={handleBoletos} style={{width: 250,color: "#fff"}}>
             <ListItemIcon style={{color: "#fff"}}>
               <AttachMoneyIcon />

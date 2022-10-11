@@ -16,24 +16,57 @@ import history from "../../history";
 import api from "../../services/api";
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(-7),
-    padding: theme.spacing(4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    [theme.breakpoints.down("sm")]: {
-      marginTop: theme.spacing(1),
+    paper: {
+      padding: theme.spacing(4),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "40px",
+      backgroundColor: "rgba(255, 255, 255, .75)",
+      boxShadow: 'none'
     },
-  },
-  form: {
-    width: "100%",
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+    form: {
+      width: "100%",
+      marginTop: theme.spacing(4),
+    },
+    submit: {
+      width: "50%",
+      margin: theme.spacing(3, 0, 2),
+      textTransform: 'none',
+      backgroundColor: '#051673'
+    },
+    container: {
+      marginRight: "unset",
+    },
+    logo: {
+      position: "absolute",
+      top: "31px",
+      left: "24px",
+      display: "block",
+      [theme.breakpoints.down("sm")]: {
+        display: "none"
+      },
+    },
+    logoPaper: {
+      position: "relative",
+      display: "none",
+      marginBottom: theme.spacing(8),
+      [theme.breakpoints.down("sm")]: {
+        display: "block"
+      },
+    },
+    input: {
+      borderRadius: "9px",
+      marginTop: theme.spacing(1),
+      '& .MuiOutlinedInput-root': {
+        borderRadius: "9px",
+        '& .MuiOutlinedInput-input': {
+          borderRadius: "9px",
+        },
+      },
+    },
+  }));
 
 function SignUp({ enqueueSnackbar }) {
   const classes = useStyles();
@@ -43,7 +76,6 @@ function SignUp({ enqueueSnackbar }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
   const [termsOfUse, setTermsOfUse] = useState(false);
 
   async function handleSubmit(event) {
@@ -109,30 +141,6 @@ function SignUp({ enqueueSnackbar }) {
       return;
     }
 
-    if (!password2) {
-      enqueueSnackbar("Informe a senha novamente para prosseguir!", {
-        variant: "error",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center",
-        },
-      });
-      return;
-    }
-
-    if (password !== password2) {
-      enqueueSnackbar("As senhas não conferem!", {
-        variant: "error",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center",
-        },
-      });
-      return;
-    }
-
     if (!termsOfUse) {
       enqueueSnackbar("Aceite os termos de uso para prosseguir!", {
         variant: "error",
@@ -187,124 +195,130 @@ function SignUp({ enqueueSnackbar }) {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          <img src="./assets/logo.png" alt="Sheep House" height={100} />
-        </Typography>
-        <form className={classes.form} onSubmit={handleSubmit} noValidate>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="name"
-                name="userName"
-                variant="outlined"
-                required
-                fullWidth
-                id="name"
-                label="Nome"
-                autoFocus
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-              />
+    <>
+      <img src="./assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logo}/>
+      <Container component="main" maxWidth="xs" className={classes.container}>
+        <Paper 
+          className={classes.paper} 
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Grid 
+            container
+            justifyContent="space-between"
+          >
+            <Grid item>
+              <img src="./assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logoPaper}/>
+              <Typography component="h6" variant="caption" align="left">
+                Seja Bem Vindo
+              </Typography>
+              <Typography component="h6" variant="h3" align="left">
+                Cadastro
+              </Typography>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  setUsername(event.target.value);
-                }}
-              />
+            <Grid item style={{whiteSpace: 'nowrap'}}>
+              <Typography component="caption" variant="caption" align="left" style={{fontSize: '.6rem'}}>
+                Já possui uma conta?
+                <br/>
+                <LinkMaterial component={Link} to="/" variant="body2" style={{fontSize: '.6rem'}}>
+                  Entrar
+                </LinkMaterial>
+              </Typography>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="phone"
-                label="Telefone (xx)xxxxx-xxxx"
-                name="phone"
-                autoComplete="phone"
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Senha"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password2"
-                label="Repita a Senha"
-                type="password"
-                id="password2"
-                value={password2}
-                onChange={(event) => setPassword2(event.target.value)}
-                autoComplete="current-password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
+          </Grid>
+          <form className={classes.form} onSubmit={handleSubmit} noValidate>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                    Insira sua Email
+                </Typography>
+                <TextField
+                    variant="outlined"
                     required
-                    value={termsOfUse}
-                    onClick={(event) => setTermsOfUse(event.target.value)}
-                    color="primary"
-                  />
-                }
-                label="Eu li e concordo com os termos de uso"
-              />
+                    fullWidth
+                    id="email"
+                    name="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(event) => {
+                    setEmail(event.target.value);
+                    setUsername(event.target.value);
+                    }}
+                />
+                </Grid>
+                <Grid item xs={6}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                    Nome
+                </Typography>
+                <TextField
+                    autoComplete="name"
+                    name="userName"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="name"
+                    autoFocus
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                />
+                </Grid>
+                <Grid item xs={6}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                    Telefone
+                </Typography>
+                <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="phone"
+                    name="phone"
+                    autoComplete="phone"
+                    value={phone}
+                    onChange={(event) => setPhone(event.target.value)}
+                />
+                </Grid>
+                <Grid item xs={12}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                    Cadastre uma Senha
+                </Typography>
+                <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    name="password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                />
+                </Grid>
+            </Grid>
+            <Grid container style={{width: '100%',  marginTop: '5px', marginBottom: '10px', justifyContent: "end" }}>
               <small style={{ float: "left", fontStyle: "italic" }}>
-                Clique aqui para ver os{" "}
                 <Link
                   target="_blank"
                   to="./assets/termos-de-uso-sheephouse.pdf"
                 >
-                  termos
+                  Termos
                 </Link>
+                {" "} de uso
               </small>
             </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Cadastrar
-          </Button>
-          <Grid container justify="center">
-            <LinkMaterial component={Link} to="/" variant="body2">
-              {"Já possui uma conta? Faça Login!"}
-            </LinkMaterial>
-          </Grid>
-        </form>
-      </Paper>
-    </Container>
+            <Grid container style={{width: '100%', marginBottom: '10px', justifyContent: "end" }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Cadastrar
+              </Button>
+            </Grid>
+          </form>
+        </Paper>
+      </Container>
+    </>
   );
 }
 

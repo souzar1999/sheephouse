@@ -156,9 +156,11 @@ function Horary({ enqueueSnackbar }) {
   }
 
   function editHorary(horary) {
-    setId(horary.id);
-    setTime(horary.time);
-    setDiaSemana(horary.dia_semana);
+    if(horary){
+      setId(horary.id);
+      setTime(horary.time);
+      setDiaSemana(horary.dia_semana);
+    }
   }
 
   async function handleDelete() {

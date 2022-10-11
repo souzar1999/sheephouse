@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -12,8 +11,7 @@ import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import DateFnsUtils from "@date-io/date-fns";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import Container from "@material-ui/core/Container";
 
 import {
   MuiPickersUtilsProvider,
@@ -37,16 +35,33 @@ import Maps from "../../Global/Scheduling/Maps";
 const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%",
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
   paper: {
-    marginTop: theme.spacing(8),
     padding: theme.spacing(4),
+    paddingBottom: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "40px",
+    backgroundColor: "rgba(255, 255, 255, .75)",
+    boxShadow: 'none'
   },
   submit: {
+    width: "100%",
     margin: theme.spacing(3, 0, 2),
+    textTransform: 'none',
+    backgroundColor: '#051673'
+  },
+  submitBack: {
+    width: "100%",
+    margin: theme.spacing(3, 0, 2),
+    textTransform: 'none',
+    backgroundColor: '#e0e0e0'
+  },
+  container: {
+    marginRight: "unset",
   },
   service: {
     width: "100%",
@@ -72,6 +87,27 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "50px",
     marginRight: "50px",
   },
+  logo: {
+    position: "relative",
+    display: "block",
+    [theme.breakpoints.down("sm")]: {
+      display: "none"
+    },
+  },
+  input: {
+    borderRadius: "9px",
+    marginTop: theme.spacing(1),
+    '& .MuiOutlinedInput-root': {
+      borderRadius: "9px",
+      '& .MuiOutlinedInput-input': {
+        borderRadius: "9px",
+      },
+    },
+  },
+  checkServices: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+  }
 }));
 
 function Scheduling({ enqueueSnackbar, clientCode }) {
@@ -104,10 +140,12 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [servicesSelected, setServicesSelected] = useState([]),
     [servicesString, setServicesString] = useState(""),
     [valorTotal, setValorTotal] = useState(),
-    client_id = clientCode,
+    [client_id, setClientId] = useState(clientCode),
     [labelWidth, setLabelWidth] = useState(0),
-    inputLabel = React.useRef(null),
-    script = document.createElement("script");
+    script = document.createElement("script"),
+    queryString = window.location.search,
+    urlParams = new URLSearchParams(queryString),
+    loginEmail = urlParams.get("login");
 
   script.src = "https://apis.google.com/js/client.js";
 
@@ -119,10 +157,17 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     if (step === 1) {
       getBroker();
     }
-    if (step === 2) {
-      setLabelWidth(inputLabel.current.offsetWidth);
-    }
   }, [step]);
+
+  useEffect(() => {
+    getClientByEmail(loginEmail);
+  }, [loginEmail]);
+
+  async function getClientByEmail(loginEmail) {
+    await api.get(`/client/email/${loginEmail}`).then((response) => {
+      setClientId(response.data.id);
+    });
+  }
 
   async function getBroker() {
     await api.get(`/client/${client_id}`).then(async (response) => {
@@ -381,7 +426,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           actived: false,
           retirar_chaves,
           services: codServicos,
-          prices,
+          prices
         })
         .then(async (response) => {
           enqueueSnackbar("Sessão cadastrada com sucesso!", {
@@ -413,7 +458,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     services.map((service) => {
       if (service.checked) {
         valorTotal += service.price;
-        serviceString += ` ${service.name} (R$ ${service.price}),`;
+        serviceString += ` ${service.name},`;
       }
     });
 
@@ -519,7 +564,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         horary,
         client_id,
         services: codServicos,
-        prices,
+        prices
       })
       .then(async (response) => {
         const scheduling_id = response.data.id;
@@ -559,490 +604,536 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
   if (step === 0) {
     return (
-      <Paper className={classes.paper}>
-        <Typography component="h2" variant="h4">
-          Insira os dados da sua sessão
-        </Typography>
-
-        <div className={classes.form}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Maps addressInfo={getAddress} address={address} />
+      <Container component="main" maxWidth="xs" className={classes.container}>
+        <Paper 
+          className={classes.paper} 
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Grid 
+            container
+            justifyContent="space-between"
+          >
+            <Grid item>
+              <Typography component="h6" variant="caption" align="left">
+                Insira os dados do seu
+              </Typography>
+              <Typography component="h6" variant="h3" align="left">
+                Imóvel
+              </Typography>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                onChange={(event) => {
-                  setComplement(event.target.value);
-                }}
-                value={complement}
-                label="Complemento"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                onChange={(event) => {
-                  setComments(event.target.value);
-                }}
-                value={comments}
-                label="Observações"
-                variant="outlined"
-                rows="3"
-                fullWidth
-                multiline
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                size="small"
-                className={classes.submit}
-                onClick={() => {
-                  handleSubmitStep0();
-                }}
-              >
-                Continuar
-              </Button>
+            <Grid item>
+              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
             </Grid>
           </Grid>
-        </div>
-      </Paper>
+
+          <div className={classes.form}>
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                  Qual o endereço do imóvel?
+                </Typography>
+                <Maps className={classes.input} addressInfo={getAddress} address={address} />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                  Complemento
+                </Typography>
+                <TextField
+                  type="text"
+                  onChange={(event) => {
+                    setComplement(event.target.value);
+                  }}
+                  className={classes.input} 
+                  value={complement}
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                  Observações
+                </Typography>
+                <TextField
+                  onChange={(event) => {
+                    setComments(event.target.value);
+                  }}
+                  className={classes.input} 
+                  value={comments}
+                  variant="outlined"
+                  rows="3"
+                  fullWidth
+                  multiline
+                />
+              </Grid>
+              <Grid container style={{width: '100%', marginBottom: '10px', justifyContent: "end" }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  style={{ width: "50% "}}
+                  onClick={() => {
+                    handleSubmitStep0();
+                  }}
+                >
+                  Continuar
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+        </Paper>
+      </Container>
     );
   }
 
   if (step === 1) {
     return (
-      <Paper className={classes.paper}>
-        <Typography component="h2" variant="h4">
-          Selecione os serviços
-        </Typography>
-
-        <div className={classes.form}>
-          <Grid container spacing={2}>
-            {services.map((service, index) => {
-              if(service.price) {
-                return (
-                  <div
-                    key={service.id}
-                    className={classes.service}
-                    onClick={() => {
-                      let newServices = services;
-                      let newServiceSelected = servicesSelected;
-
-                      let removeu = false;
-
-                      newServices[index].checked = !service.checked;
-
-                      newServiceSelected = newServiceSelected.filter((item) => {
-                        if(item.service_id == service.id){
-                          removeu = true;
-                        }
-                        return item.service_id != service.id;
-                      });
-
-                      if(!removeu)  {
-                        newServiceSelected.push(
-                          {
-                            'service_id': service.id, 
-                            'price': service.price
-                          }
-                        );
-                      }
-
-                      setServices([...newServices]);
-                      setServicesSelected(newServiceSelected);
-                    }}
-                  >
-                    <div className={classes.serviceContent}>
-                      <Typography component="h5" variant="h6" align="left">
-                        {service.name} (R$ {service.price})
-                      </Typography>
-                      {service.checked ? (
-                        <CheckBoxIcon />
-                      ) : (
-                        <CheckBoxOutlineBlankIcon />
-                      )}
-                    </div>
-                  </div>
-                );
-              }
-            })}
-            <Grid item xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Retirar chaves na imobiliária"
-                  control={
-                    <Checkbox
-                      color="primary"
-                      checked={retirar_chaves}
-                      onChange={(event) => {
-                        setRetirarChaves(!retirar_chaves);
-                      }}
-                      value={retirar_chaves}
-                    />
-                  }
-                />
-              </FormGroup>
-              <small style={{ float: "left", fontStyle: "italic" }}>
-                Para IMÓVEIS desocupados a Sheep House fornece serviço de
-                retirada de chaves.
-              </small>
-              <br />
-              <small style={{ float: "left", fontStyle: "italic" }}>
-                Para serviços de filmagem interna ou serviços com drone
-              </small>
-              {retirar_chaves && (
-                <>
-                  <br />
-                  <br />
-                  <small
-                    style={{
-                      float: "left",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    O agendamento será confirmado pelo administrador
-                    posteriormente, selecionando um horário adequeado para a
-                    sessão
-                  </small>
-                </>
-              )}
+      <Container component="main" maxWidth="xs" className={classes.container}>
+        <Paper 
+          className={classes.paper} 
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Grid 
+            container
+            justifyContent="space-between"
+          >
+            <Grid item>
+              <Typography component="h6" variant="caption" align="left">
+                Selecione o
+              </Typography>
+              <Typography component="h6" variant="h3" align="left">
+                Serviço
+              </Typography>
             </Grid>
-            <Grid item xs={4}>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleReturnStep();
-                }}
-              >
-                Voltar
-              </Button>
-            </Grid>
-            <Grid item xs={8}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleSubmitStep1();
-                }}
-              >
-                Continuar
-              </Button>
+            <Grid item>
+              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
             </Grid>
           </Grid>
-        </div>
-      </Paper>
+
+          <div className={classes.form}>
+            <Grid container>
+              {services.map((service, index) => {
+                console.log(service);
+                if(service.price) {
+                  return (
+                    <Grid 
+                      item 
+                      xs={12}
+                      key={service.id}
+                    >
+                      <FormGroup row className={classes.checkServices}>
+                        <FormControlLabel
+                          label={service.name}
+                          control={
+                            <Checkbox
+                              color="primary"
+                              checked={service.checked}
+                              onChange={(event) => {
+                                let newServices = services;
+                                let newServiceSelected = servicesSelected;
+        
+                                let removeu = false;
+        
+                                newServices[index].checked = !service.checked;
+        
+                                newServiceSelected = newServiceSelected.filter((item) => {
+                                  if(item.service_id == service.id){
+                                    removeu = true;
+                                  }
+                                  return item.service_id != service.id;
+                                });
+        
+                                if(!removeu)  {
+                                  newServiceSelected.push(
+                                    {
+                                      'service_id': service.id, 
+                                      'price': service.price
+                                    }
+                                  );
+                                }
+        
+                                console.log(newServices);
+                                setServices([...newServices]);
+                                setServicesSelected(newServiceSelected);
+                              }}
+                              value={service.checked}
+                            />
+                          }
+                        />
+                      </FormGroup>
+                    </Grid>
+                  );
+                }
+              })}
+              <Grid item xs={12}>
+                <FormGroup row className={classes.checkServices}>
+                  <FormControlLabel
+                    label="Retirada de Chaves"
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={retirar_chaves}
+                        onChange={(event) => {
+                          setRetirarChaves(!retirar_chaves);
+                        }}
+                        value={retirar_chaves}
+                      />
+                    }
+                  />
+                </FormGroup>
+              </Grid>
+            </Grid>
+            <Grid container spacing={1}>
+              <Grid item xs={4}>
+                <Button
+                  variant="contained"
+                  color="info"
+                  className={classes.submitBack}
+                  onClick={() => {
+                    handleReturnStep();
+                  }}
+                >
+                  Voltar
+                </Button>
+              </Grid>
+              <Grid item xs={8}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  onClick={() => {
+                    handleSubmitStep1();
+                  }}
+                >
+                  Continuar
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+        </Paper>
+      </Container>
     );
   }
 
   if (step === 2) {
     return (
-      <Paper className={classes.paper}>
-        <Typography component="h2" variant="h4">
-          Quando será a sessão de fotos
-        </Typography>
-
-        <div className={classes.form}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
-                  autoOk
-                  value={date}
-                  inputVariant="outlined"
-                  fullWidth
-                  label="Data da Sessão"
-                  onChange={(value) => {
-                    let date = moment(value);
-
-                    if (value && date.isValid()) {
-                      if (date.day() === 0) {
-                        enqueueSnackbar(
-                          "A data informada é um domingo! Por favor, selecione outra data.",
-                          {
-                            variant: "error",
-                            autoHideDuration: 5000,
-                            anchorOrigin: {
-                              vertical: "top",
-                              horizontal: "center",
-                            },
-                          }
-                        );
-                      } else {
-                        setDate(date);
-                        getHoraries(date, date.day(), photographer_id);
-                      }
-                    }
-                  }}
-                  minDate={moment()}
-                  format="dd/MM/yyyy"
-                  cancelLabel="Cancelar"
-                  invalidDateMessage="Data em formato inválido."
-                  minDateMessage={`A data deve ser maior que ${moment().format(
-                    "DD/MM/YYYY"
-                  )}.`}
-                />
-              </MuiPickersUtilsProvider>
+      <Container component="main" maxWidth="xs" className={classes.container}>
+        <Paper 
+          className={classes.paper} 
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Grid 
+            container
+            justifyContent="space-between"
+          >
+            <Grid item>
+              <Typography component="h6" variant="caption" align="left">
+                Selecione o
+              </Typography>
+              <Typography component="h6" variant="h3" align="left">
+                Dia
+              </Typography>
             </Grid>
-            <Grid item xs={12}>
-              <FormControl variant="outlined" fullWidth>
-                <InputLabel ref={inputLabel} id="horarySelect">
-                  Horários
-                </InputLabel>
-                <Select
-                  id="horarySelect"
-                  labelWidth={labelWidth}
-                  value={horary_id}
-                  disabled={horaryDisable}
-                  onChange={(event) => {
-                    setHoraryId(event.target.value);
-                    setHorary(event.nativeEvent.target.id);
-                  }}
-                >
-                  <MenuItem value="">-- Selecione --</MenuItem>
-                  {horaries.map((item) => {
-                    let validHorary = true;
+            <Grid item>
+              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
+            </Grid>
+          </Grid>
 
-                    const dateHorary = moment(
-                        moment(date).format("YYYY-MM-DD") + " " + item.time
-                      ),
-                      initDay = moment(date).set({
-                        hour: 0,
-                        minute: 0,
-                        second: 0,
-                        millisecond: 0,
-                      }),
-                      endDay = moment(date).set({
-                        hour: 23,
-                        minute: 59,
-                        second: 59,
-                        millisecond: 59,
-                      });
+          <div className={classes.form}>
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                  Selecione a Data
+                </Typography>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <KeyboardDatePicker
+                    autoOk
+                    value={date}
+                    inputVariant="outlined"
+                    fullWidth
+                    className={classes.input} 
+                    onChange={(value) => {
+                      let date = moment(value);
 
-                    events.map((event) => {
-                      if (event.status === "confirmed") {
-                        const dateStart = moment(event.start.dateTime);
-                        const dateEnd = moment(event.end.dateTime);
+                      if (value && date.isValid()) {
+                        if (date.day() === 0) {
+                          enqueueSnackbar(
+                            "A data informada é um domingo! Por favor, selecione outra data.",
+                            {
+                              variant: "error",
+                              autoHideDuration: 5000,
+                              anchorOrigin: {
+                                vertical: "top",
+                                horizontal: "center",
+                              },
+                            }
+                          );
+                        } else {
+                          setDate(date);
+                          getHoraries(date, date.day(), photographer_id);
+                        }
+                      }
+                    }}
+                    minDate={moment()}
+                    format="dd/MM/yyyy"
+                    cancelLabel="Cancelar"
+                    invalidDateMessage="Data em formato inválido."
+                    minDateMessage={`A data deve ser maior que ${moment().format(
+                      "DD/MM/YYYY"
+                    )}.`}
+                  />
+                </MuiPickersUtilsProvider>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+                  Selecione o Horário
+                </Typography>
+                <FormControl variant="outlined" fullWidth>
+                  <Select
+                    id="horarySelect"
+                    labelWidth={labelWidth}
+                    value={horary_id}
+                    disabled={horaryDisable}
+                    className={classes.input} 
+                    onChange={(event) => {
+                      setHoraryId(event.target.value);
+                      setHorary(event.nativeEvent.target.id);
+                    }}
+                  >
+                    <MenuItem value="">-- Selecione --</MenuItem>
+                    {horaries.map((item) => {
+                      let validHorary = true;
 
-                        const eventStart = event.start.date
-                          ? initDay
-                          : moment(
-                              moment(date).format("YYYY-MM-DD") +
-                                " " +
-                                moment(dateStart).format("HH:mm:ss")
-                            );
+                      const dateHorary = moment(
+                          moment(date).format("YYYY-MM-DD") + " " + item.time
+                        ),
+                        initDay = moment(date).set({
+                          hour: 0,
+                          minute: 0,
+                          second: 0,
+                          millisecond: 0,
+                        }),
+                        endDay = moment(date).set({
+                          hour: 23,
+                          minute: 59,
+                          second: 59,
+                          millisecond: 59,
+                        });
 
-                        const eventEnd = event.end.date
-                          ? endDay
-                          : moment(
-                              moment(date).format("YYYY-MM-DD") +
-                                " " +
-                                moment(dateEnd).format("HH:mm:ss")
-                            );
+                      events.map((event) => {
+                        if (event.status === "confirmed") {
+                          const dateStart = moment(event.start.dateTime);
+                          const dateEnd = moment(event.end.dateTime);
 
-                        if (
-                          (eventStart.isBefore(
-                            dateHorary.clone().add(1, "seconds")
-                          ) &&
-                            eventEnd.isAfter(
+                          const eventStart = event.start.date
+                            ? initDay
+                            : moment(
+                                moment(date).format("YYYY-MM-DD") +
+                                  " " +
+                                  moment(dateStart).format("HH:mm:ss")
+                              );
+
+                          const eventEnd = event.end.date
+                            ? endDay
+                            : moment(
+                                moment(date).format("YYYY-MM-DD") +
+                                  " " +
+                                  moment(dateEnd).format("HH:mm:ss")
+                              );
+
+                          if (
+                            (eventStart.isBefore(
                               dateHorary.clone().add(1, "seconds")
-                            )) ||
-                          (eventStart.isBefore(
-                            dateHorary
-                              .clone()
-                              .add(photographer.intervalo, "minutes")
-                              .subtract(1, "seconds")
-                          ) &&
-                            eventEnd.isAfter(
+                            ) &&
+                              eventEnd.isAfter(
+                                dateHorary.clone().add(1, "seconds")
+                              )) ||
+                            (eventStart.isBefore(
                               dateHorary
                                 .clone()
                                 .add(photographer.intervalo, "minutes")
                                 .subtract(1, "seconds")
-                            ))
-                        ) {
-                          validHorary = false;
+                            ) &&
+                              eventEnd.isAfter(
+                                dateHorary
+                                  .clone()
+                                  .add(photographer.intervalo, "minutes")
+                                  .subtract(1, "seconds")
+                              ))
+                          ) {
+                            validHorary = false;
+                          }
                         }
-                      }
-                    });
+                      });
 
-                    if (validHorary) {
-                      return (
-                        <MenuItem id={item.time} key={item.id} value={item.id}>
-                          {item.time}
-                        </MenuItem>
-                      );
-                    }
-                  })}
-                </Select>
-              </FormControl>
+                      if (validHorary) {
+                        return (
+                          <MenuItem id={item.time} key={item.id} value={item.id}>
+                            {item.time}
+                          </MenuItem>
+                        );
+                      }
+                    })}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={4}>
+                <Button
+                  variant="contained"
+                  color="info"
+                  className={classes.submitBack}
+                  onClick={() => {
+                    handleReturnStep();
+                  }}
+                >
+                  Voltar
+                </Button>
+              </Grid>
+              <Grid item xs={8}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  onClick={() => {
+                    handleSubmitStep2();
+                  }}
+                >
+                  Continuar
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={4}>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleReturnStep();
-                }}
-              >
-                Voltar
-              </Button>
-            </Grid>
-            <Grid item xs={8}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleSubmitStep2();
-                }}
-              >
-                Continuar
-              </Button>
-            </Grid>
-          </Grid>
-        </div>
-      </Paper>
+          </div>
+        </Paper>
+      </Container>
     );
   }
 
   if (step === 3) {
     return (
-      <Paper className={classes.paper}>
-        <Typography component="h2" variant="h4">
-          Confirme as informações do agendamento
-        </Typography>
-
-        <div className={classes.form}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={address}
-                label="Endereço"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
+      <Container component="main" maxWidth="xs" className={classes.container}>
+        <Paper 
+          className={classes.paper} 
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Grid 
+            container
+            justifyContent="space-between"
+          >
+            <Grid item>
+              <Typography component="h6" variant="caption" align="left">
+                Complete o agendamento da
+              </Typography>
+              <Typography component="h6" variant="h3" align="left">
+                Sessão
+              </Typography>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={complement}
-                label="Complemento"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={servicesString.slice(0, -1)}
-                label="Serviços"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={`R$ ${valorTotal}`}
-                label="Valor Total"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={moment(date).format("DD/MM/YYYY")}
-                label="Data da Sessão"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                value={horary}
-                label="Horário da Sessão"
-                variant="outlined"
-                size="small"
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleReturnStep();
-                }}
-              >
-                Voltar
-              </Button>
-            </Grid>
-            <Grid item xs={8}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="small"
-                fullWidth
-                className={classes.submit}
-                onClick={() => {
-                  handleSubmitStep3();
-                }}
-              >
-                Agendar
-              </Button>
+            <Grid item>
+              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
             </Grid>
           </Grid>
-        </div>
-      </Paper>
+
+          <div className={classes.form}>
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  value={address}
+                  label="Endereço"
+                  variant="outlined"
+                  className={classes.input} 
+                  fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  value={complement}
+                  label="Complemento"
+                  variant="outlined"
+                  className={classes.input} 
+                  fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  value={servicesString.slice(0, -1)}
+                  label="Serviços"
+                  variant="outlined"
+                  className={classes.input} 
+                  fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  value={moment(date).format("DD/MM/YYYY")}
+                  label="Data da Sessão"
+                  variant="outlined"
+                  className={classes.input} 
+                  fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  value={horary}
+                  label="Horário da Sessão"
+                  variant="outlined"
+                  className={classes.input} 
+                  fullWidth
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <Button
+                  variant="contained"
+                  color="info"
+                  className={classes.submitBack}
+                  onClick={() => {
+                    handleReturnStep();
+                  }}
+                >
+                  Voltar
+                </Button>
+              </Grid>
+              <Grid item xs={8}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  onClick={() => {
+                    handleSubmitStep3();
+                  }}
+                >
+                  Agendar
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+        </Paper>
+      </Container>
     );
   }
 }

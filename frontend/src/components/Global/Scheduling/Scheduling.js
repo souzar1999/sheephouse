@@ -614,7 +614,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                     </TableCell>
                     <TableCell className={classes.tableCell} align="left">
                       {scheduling.services
-                        .map((service) => `${service.name} (R$ ${service.pivot.price})`)
+                        .map((service) => `${service.name}`)
                         .join(", ")}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="center">

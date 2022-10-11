@@ -128,10 +128,11 @@ class GapiCalendarController {
   }
 
   async editEvent({ request, response }) {
-    const { scheduling_id, horary, date } = request.only([
+    const { scheduling_id, horary, date, old_photographer_id } = request.only([
         'scheduling_id',
         'horary',
-        'date'
+        'date',
+        'old_photographer_id'
       ]),
       numTime = Date.parse(`1970-01-01T${horary}Z`),
       numDate = Date.parse(`${date}T00:00:00Z`),
@@ -146,6 +147,7 @@ class GapiCalendarController {
         .with('services')
         .firstOrFail(),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
+      oldPhotographer = await Photographer.findOrFail(old_photographer_id),
       client = await Client.findOrFail(scheduling.client_id),
       broker = await Broker.findOrFail(client.broker_id),
       user = await User.findOrFail(client.user_id),
@@ -159,7 +161,8 @@ class GapiCalendarController {
       servicesName += `${service.name}`
     })
 
-    const calendarId = photographer.email,
+    const oldCalendarId = oldPhotographer.email,
+      calendarId = photographer.email,
       eventId = scheduling.google_event_id,
       retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
       summary = `${retirar_chaves}${servicesName} - (${user.email} | ${broker.name})`,
@@ -184,31 +187,40 @@ class GapiCalendarController {
           }
         ]
       },
+      oldTokens = JSON.parse(oldPhotographer.tokens),
       tokens = JSON.parse(photographer.tokens)
 
     if (eventId) {
-      oauth2Client.setCredentials(tokens)
+      oauth2Client.setCredentials(oldTokens)
+      const oldParams = { calendarId: oldCalendarId, eventId, auth: oauth2Client };
 
-      const params = { calendarId, eventId, auth: oauth2Client, requestBody }
+      await calendar.events.delete(oldParams).then(async res => {
 
-      await calendar.events.update(params).then(async res => {
-        await Mail.send(
-          'emails.reschedulingEventCalendar',
-          {
-            client,
-            scheduling,
-            photographer,
-            admin,
-            servicesName
-          },
-          message => {
-            message
-              .to(user.email)
-              .cc(admin.email)
-              .from('noreply@sheephouse.com.br', 'Sheep House')
-              .subject('Sheep House - Sessão reagendada')
-          }
-        )
+        oauth2Client.setCredentials(tokens)
+        const params = { calendarId, auth: oauth2Client, requestBody }
+
+        await calendar.events.insert(params).then(async res => {
+          scheduling.google_event_id = res.data.id
+
+          await scheduling.save()
+          await Mail.send(
+            'emails.reschedulingEventCalendar',
+            {
+              client,
+              scheduling,
+              photographer,
+              admin,
+              servicesName
+            },
+            message => {
+              message
+                .to(user.email)
+                .cc(admin.email)
+                .from('noreply@sheephouse.com.br', 'Sheep House')
+                .subject('Sheep House - Sessão reagendada')
+            }
+          )
+        })
       })
     } else {
       await Mail.send(

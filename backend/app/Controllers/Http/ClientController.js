@@ -3,7 +3,8 @@
 const Client = use('App/Models/Client'),
   User = use('App/Models/User'),
   Broker = use('App/Models/Broker'),
-  Mail = use('Mail')
+  Mail = use('Mail'),
+  Database = use('Database')
 
 class ClientController {
   async index({ request, response, view }) {
@@ -43,6 +44,21 @@ class ClientController {
       .where('user_id', params.user_id)
       .where('actived', true)
       .fetch()
+
+    return client
+  }
+
+  async showClientByEmail({ params, request, response }) {
+    const user = await Database
+      .table('users')
+      .where('email', params.email)
+      .first()
+
+    const client = await Database
+      .table('clients')
+      .where('user_id', user.id)
+      .where('actived', true)
+      .first()
 
     return client
   }

@@ -52,6 +52,7 @@ export default function Routes() {
           <LogoutRequeredRoute path="/" exact component={UserLogin} />
           <LogoutRequeredRoute path="/signup" component={UserRegister} />
           <LogoutRequeredRoute path="/reset" component={UserResetPassword} />
+          <LogoutRequeredRoute path="/scheduling" component={UserScheduling} />
           <LoginRequeredRoute path="/logout" component={UserLogout} />
           <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
 
@@ -95,7 +96,6 @@ export default function Routes() {
             component={AdminPhotographerHorary}
           />
           <AdminRequeredRoute
-            exact
             path="/admin/photographer"
             component={AdminPhotographer}
           />

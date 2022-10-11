@@ -12,6 +12,7 @@ Route.get('/user', 'SessionController.show').middleware('auth')
 Route.get('/boleto', 'JunoController.makeCharges')
 
 Route.get('/client/user/:user_id', 'ClientController.showClient')
+Route.get('/client/email/:email', 'ClientController.showClientByEmail')
 
 Route.post('/city/byName', 'CityController.showCity')
 

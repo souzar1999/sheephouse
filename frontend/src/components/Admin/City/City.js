@@ -17,11 +17,13 @@ function City({ enqueueSnackbar }) {
       editable: "never",
       render: (rowData) => {
         let services = "";
-        rowData.services.map((service) => {
-          if (services != "") services += ", ";
+        if(rowData){
+          rowData.services.map((service) => {
+            if (services != "") services += ", ";
 
-          services += service.name;
-        });
+            services += service.name;
+          });  
+        }
         return services;
       },
     },

@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
     textAlign: "center",
     margin: "auto",
-    paddingTop: "70px",
+    paddingTop: "50px",
     width: "1440px",
     [theme.breakpoints.down("lg")]: {
       width: "960px",
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       width: "100vw",
       padding: "0",
-      marginTop: "70px"
+      paddingTop: "70px"
     },
   },
 }));

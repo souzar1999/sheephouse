@@ -22,18 +22,54 @@ const localStorageJs = LocalStorage.getService();
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(6),
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "40px",
+    backgroundColor: "rgba(255, 255, 255, .75)",
+    boxShadow: 'none'
   },
   form: {
     width: "100%",
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(10),
   },
   submit: {
+    width: "50%",
     margin: theme.spacing(3, 0, 2),
+    textTransform: 'none',
+    backgroundColor: '#051673'
+  },
+  container: {
+    marginRight: "unset",
+  },
+  logo: {
+    position: "absolute",
+    top: "31px",
+    left: "24px",
+    display: "block",
+    [theme.breakpoints.down("sm")]: {
+      display: "none"
+    },
+  },
+  logoPaper: {
+    position: "relative",
+    display: "none",
+    marginBottom: theme.spacing(8),
+    [theme.breakpoints.down("sm")]: {
+      display: "block"
+    },
+  },
+  input: {
+    borderRadius: "9px",
+    marginTop: theme.spacing(1),
+    '& .MuiOutlinedInput-root': {
+      borderRadius: "9px",
+      '& .MuiOutlinedInput-input': {
+        borderRadius: "9px",
+      },
+    },
   },
 }));
 
@@ -225,61 +261,89 @@ function SignIn({ enqueueSnackbar, onUserLogin, onUserClient, onUserAdmin }) {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          <img src="./assets/logo.png" alt="Sheep House" height={100} />
-        </Typography>
-        <form className={classes.form} onSubmit={handleSubmit} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Senha"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
+    <>
+      <img src="./assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logo}/>
+      <Container component="main" maxWidth="xs" className={classes.container}>
+        <Paper 
+          className={classes.paper} 
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Grid 
+            container
+            justifyContent="space-between"
           >
-            Entrar
-          </Button>
-          <Grid container justify="center">
-            <LinkMaterial component={Link} to="/signup" variant="body2">
-              Não possui uma conta? Cadastre-se!
-            </LinkMaterial>
+            <Grid item>
+              <img src="./assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logoPaper}/>
+              <Typography component="h6" variant="caption" align="left">
+                Seja Bem Vindo
+              </Typography>
+              <Typography component="h6" variant="h3" align="left">
+                Entrar
+              </Typography>
+            </Grid>
+            <Grid item style={{whiteSpace: 'nowrap'}}>
+              <Typography component="caption" variant="caption" align="left" style={{fontSize: '.6rem'}}>
+                Não possui conta?
+                <br/>
+                <LinkMaterial component={Link} to="/signup" variant="body2" style={{fontSize: '.6rem'}}>
+                  Cadastrar
+                </LinkMaterial>
+              </Typography>
+            </Grid>
           </Grid>
-          <br />
-          <Grid container justify="center">
-            <LinkMaterial onClick={handleForgotPassword} variant="body2">
-              Esqueci minha senha!
-            </LinkMaterial>
-          </Grid>
-        </form>
-      </Paper>
-    </Container>
+          <form className={classes.form} onSubmit={handleSubmit} noValidate>
+            <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
+              Insira seu Email
+            </Typography>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              className={classes.input} 
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem', marginTop: '20px'}}>
+              Insira sua Senha
+            </Typography>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              className={classes.input} 
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            <Grid container style={{width: '100%', marginBottom: '10px', justifyContent: "end" }}>
+              <LinkMaterial onClick={handleForgotPassword} variant="body2" style={{fontSize: '.6rem'}}>
+                Esqueci minha senha
+              </LinkMaterial>
+            </Grid>
+            <Grid container style={{width: '100%', marginBottom: '10px', justifyContent: "end" }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Entrar
+              </Button>
+            </Grid>
+          </form>
+        </Paper>
+      </Container>
+    </>
   );
 }
 

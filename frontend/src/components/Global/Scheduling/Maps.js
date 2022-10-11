@@ -76,6 +76,7 @@ class Maps extends Component {
 
   render() {
     const { search, address } = this.state;
+
     return (
       <ReactGoogleMapLoader
         params={{
@@ -107,7 +108,7 @@ class Maps extends Component {
                 type="text"
                 onChange={this.handleInputChange}
                 value={address}
-                label="Pesquise o endereço"
+                className={this.props.className} 
                 variant="outlined"
                 fullWidth
               />

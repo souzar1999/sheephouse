@@ -77,6 +77,7 @@ function EditScheduling({ enqueueSnackbar }) {
     [service_id, setServiceId] = useState([]),
     [photographer, setPhotographer] = useState([]),
     [photographer_id, setPhotographerId] = useState(""),
+    [old_photographer_id, setOldPhotographerId] = useState(""),
     [horary, setHorary] = useState(""),
     [client_id, setClientId] = useState(""),
     [labelWidth, setLabelWidth] = useState(0),
@@ -100,6 +101,7 @@ function EditScheduling({ enqueueSnackbar }) {
       setComments(scheduling.data[0].comments);
       setClientId(scheduling.data[0].client_id);
       setPhotographerId(scheduling.data[0].photographer_id);
+      setOldPhotographerId(scheduling.data[0].photographer_id);
       setScheduling(scheduling.data[0]);
       setDate(scheduling.data[0].date);
       setHorary(scheduling.data[0].horary);
@@ -200,19 +202,28 @@ function EditScheduling({ enqueueSnackbar }) {
         prices,
       })
       .then(async (response) => {
-        enqueueSnackbar("Sessão editada com sucesso!", {
-          variant: "success",
-          autoHideDuration: 5000,
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center",
-          },
-        });
+        await api
+          .post(`/google/event/editEvent`, {
+            scheduling_id,
+            old_photographer_id,
+            horary,
+            date
+          })
+          .then((response2) => {
+            enqueueSnackbar("Sessão editada com sucesso!", {
+              variant: "success",
+              autoHideDuration: 5000,
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center",
+              },
+            });
 
-        history.push(`/scheduling`);
+            history.push(`/scheduling`);
+          });
       })
       .catch((error) => {
-        enqueueSnackbar("Erro ao agendar sessão!", {
+        enqueueSnackbar("Problemas ao editar sessão!", {
           variant: "error",
           autoHideDuration: 5000,
           anchorOrigin: {
