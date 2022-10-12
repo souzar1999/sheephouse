@@ -1,6 +1,7 @@
 version: '3'
 services:
     sheephouse-backend:
+        restart: always
         networks:
             - web
         labels:
@@ -13,6 +14,7 @@ services:
         command: npm start
 
     sheephouse-frontend:
+        restart: always
         networks:
             - web
         labels:
@@ -27,6 +29,7 @@ services:
         command: npm start
 
     reverse-proxy:
+        restart: always
         networks:
           - web
         build: ./traefik
