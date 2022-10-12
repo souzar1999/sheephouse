@@ -68,7 +68,7 @@ services:
       - --interactive-timeout=28800
       - --slave-skip-errors=all  
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - '3306:3306'
     networks:
