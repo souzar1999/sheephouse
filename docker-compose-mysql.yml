@@ -1,0 +1,78 @@
+---
+version: '3'
+
+networks:
+    web:
+        external: true
+
+services:
+  mysql1:
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - mysql:/var/lib/mysql
+    restart: always
+    command: 
+      - --binlog_format=MIXED
+      - --binlog_cache_size=32768
+      - --innodb_log_file_size=134217728
+      - --max_binlog_size=134217728
+      - --max_digest_length=1024
+      - --explicit_defaults_for_timestamp=1
+      - --innodb_purge_threads=1
+      - --table_open_cache_instances=16
+      - --innodb_log_buffer_size=8388608
+      - --innodb-log-file-size=512M
+      - --innodb-buffer-pool-size=3G
+      - --innodb-buffer-pool-size=2G
+      - --innodb-log-file-size=512M
+      - --innodb-log-buffer-size=512M
+      - --innodb-file-per-table=1
+      - --performance-schema=0
+      - --explicit-defaults-for-timestamp=1
+      - --innodb-purge-threads=24
+      - --thread-cache-size=24
+      - --local-infile=1
+      - --local-infile=1
+      - --loose-local-infile=1
+      - --relay-log-recovery=1
+      - --slow-query-log=1
+      - --wait-timeout=28800
+      - --table-open-cache-instances=24
+      - --key-buffer-size=16777216
+      - --slow-launch-time=2
+      - --read-buffer-size=262144
+      - --thread-stack=262144
+      - --key-buffer-size=16777216
+      - --slow-launch-time=2
+      - --read-buffer-size=262144
+      - --thread-stack=262144
+      - --innodb-lock-wait-timeout= 28800
+      - --long-query-time=28800
+      - --read_rnd_buffer_size=524288
+      - --max-allowed-packet=64M
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+      - --default-storage-engine=InnoDB
+      - --gtid-mode=OFF
+      - --event-scheduler=ON
+      - --innodb-flush-method=O_DIRECT
+      - --log-output=TABLE
+      - --master-info-repository=TABLE
+      - --relay-log-info-repository=TABLE
+      - --innodb-fast-shutdown=0
+      - --max-connections=6144
+      - --expire-logs-days=3
+      - --server-id=7
+      - --log-bin-trust-function-creators=1
+      - --innodb-strict-mode=0
+      - --interactive-timeout=28800
+      - --slave-skip-errors=all  
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+    networks:
+      - web
+
+volumes:
+  mysql:

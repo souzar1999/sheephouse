@@ -1,3 +1,4 @@
 docker-production.yml
 backend/.env*
 frontend/.env*
+*.sql

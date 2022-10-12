@@ -1,6 +1,11 @@
 version: '3'
 services:
     sheephouse-backend:
+        networks:
+            - web
+        labels:
+            - "traefik.enable=true"
+            - "traefik.frontend.rule=Host:api.sheephouse.com.br"
         build: ./backend
         container_name: sheephouse-backend
         ports:
@@ -8,6 +13,11 @@ services:
         command: npm start
 
     sheephouse-frontend:
+        networks:
+            - web
+        labels:
+            - "traefik.enable=true"
+            - "traefik.frontend.rule=Host:app.sheephouse.com.br"
         build: ./frontend
         container_name: sheephouse-frontend
         ports:
@@ -15,3 +25,37 @@ services:
         links:
             - sheephouse-backend
         command: npm start
+
+    reverse-proxy:
+        networks:
+          - web
+        build: ./traefik
+        container_name: reverse-proxy  
+        command:
+         - --api
+         - --debug=false
+         - --logLevel=ERROR
+         - --defaultentrypoints=https,http
+         - --entryPoints=Name:http Address::80 Redirect.EntryPoint:https
+         - --entryPoints=Name:https Address::443 TLS
+         - --retry
+         - --docker.endpoint=unix:///var/run/docker.sock
+         - --docker.domain=sheephouse.com.br
+         - --docker.watch=true
+         - --docker.exposedbydefault=false
+         - --acme.email=contato@sheephouse.com.br
+         - --acme.storage=acme.json
+         - --acme.entryPoint=https
+         - --acme.onHostRule=true
+         - --acme.httpchallenge.entrypoint=http
+        ports:
+         - "80:80"
+         - "8080:8080"
+         - "443:443"
+        volumes:
+         - /var/run/docker.sock:/var/run/docker.sock    
+#                - /traefik.toml:/traefik.toml
+#                - /acme.json:/acme.json
+networks:
+    web:
+        external: true
