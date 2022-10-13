@@ -178,10 +178,8 @@ class SchedulingController {
       'retirar_chaves',
       'photo_link',
       'video_link',
-      'tour_link',
-      'loginEmail'
+      'tour_link'
     ])
-
     const { services, prices } = request.post()
 
     const scheduling = await Scheduling.create(data)
