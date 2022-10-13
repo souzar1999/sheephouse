@@ -76,7 +76,6 @@ function SignUp({ enqueueSnackbar }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [termsOfUse, setTermsOfUse] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -140,19 +139,7 @@ function SignUp({ enqueueSnackbar }) {
       });
       return;
     }
-
-    if (!termsOfUse) {
-      enqueueSnackbar("Aceite os termos de uso para prosseguir!", {
-        variant: "error",
-        autoHideDuration: 5000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center",
-        },
-      });
-      return;
-    }
-
+    
     await api
       .post("/users", { username, email, password })
       .then(async (response) => {
