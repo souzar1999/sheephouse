@@ -393,6 +393,7 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
         await api
           .post(`/google/event/editEvent`, {
             scheduling_id,
+            old_photographer_id: photographer_id,
             horary,
             date: date.format("YYYY-MM-DD"),
           })

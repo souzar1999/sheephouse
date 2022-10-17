@@ -217,7 +217,7 @@ function SignUp({ enqueueSnackbar }) {
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                 <Typography component="caption" variant="caption" align="left" style={{whiteSpace: 'nowrap', color: '#000', fontSize: '.9rem'}}>
-                    Insira sua Email
+                    Insira seu Email
                 </Typography>
                 <TextField
                     variant="outlined"

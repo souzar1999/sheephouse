@@ -715,7 +715,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           <div className={classes.form}>
             <Grid container>
               {services.map((service, index) => {
-                console.log(service);
                 if(service.price) {
                   return (
                     <Grid 
@@ -754,7 +753,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                                   );
                                 }
         
-                                console.log(newServices);
                                 setServices([...newServices]);
                                 setServicesSelected(newServiceSelected);
                               }}
