@@ -73,7 +73,7 @@ class GapiCalendarController {
       summary = `${retirar_chaves}${servicesName} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
-      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -90,7 +90,11 @@ class GapiCalendarController {
             responseStatus: 'accepted',
             organizer: false
           }
-        ]
+        ],
+        source: {
+          title: 'Reagendar',
+          url: `https://app2.sheephouse.com.br/scheduling/${scheduling_id}`
+        }
       },
       tokens = JSON.parse(photographer.tokens)
 
@@ -168,7 +172,7 @@ class GapiCalendarController {
       summary = `${retirar_chaves}${servicesName} - (${user.email} | ${broker.name})`,
       complement = scheduling.complement ? scheduling.complement : '',
       comments = scheduling.comments ? scheduling.comments : '',
-      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -185,7 +189,11 @@ class GapiCalendarController {
             responseStatus: 'accepted',
             organizer: false
           }
-        ]
+        ],
+        source: {
+          title: 'Reagendar',
+          url: `https://app2.sheephouse.com.br/scheduling/${scheduling_id}`
+        }
       },
       oldTokens = JSON.parse(oldPhotographer.tokens),
       tokens = JSON.parse(photographer.tokens)

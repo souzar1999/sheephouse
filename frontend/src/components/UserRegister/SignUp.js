@@ -183,7 +183,7 @@ function SignUp({ enqueueSnackbar }) {
 
   return (
     <>
-      <img src="./assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logo}/>
+      <img src="/assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logo}/>
       <Container component="main" maxWidth="xs" className={classes.container}>
         <Paper 
           className={classes.paper} 
@@ -195,7 +195,7 @@ function SignUp({ enqueueSnackbar }) {
             justifyContent="space-between"
           >
             <Grid item>
-              <img src="./assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logoPaper}/>
+              <img src="/assets/sheephouse.png" alt="Sheep House" height={60} className={classes.logoPaper}/>
               <Typography component="h6" variant="caption" align="left">
                 Seja Bem Vindo
               </Typography>

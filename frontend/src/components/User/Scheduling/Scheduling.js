@@ -623,7 +623,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               </Typography>
             </Grid>
             <Grid item>
-              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
+              <img src="/assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
             </Grid>
           </Grid>
 
@@ -708,7 +708,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               </Typography>
             </Grid>
             <Grid item>
-              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
+              <img src="/assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
             </Grid>
           </Grid>
 
@@ -837,7 +837,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               </Typography>
             </Grid>
             <Grid item>
-              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
+              <img src="/assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
             </Grid>
           </Grid>
 
@@ -1032,7 +1032,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               </Typography>
             </Grid>
             <Grid item>
-              <img src="./assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
+              <img src="/assets/sheephouse.png" alt="Sheep House" height={45} className={classes.logo}/>
             </Grid>
           </Grid>
 
