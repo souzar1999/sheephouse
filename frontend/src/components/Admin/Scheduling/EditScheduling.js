@@ -75,7 +75,6 @@ function EditScheduling({ enqueueSnackbar }) {
     [photographer_id, setPhotographerId] = useState(""),
     [old_photographer_id, setOldPhotographerId] = useState(""),
     [horary, setHorary] = useState(""),
-    [client_id, setClientId] = useState(""),
     [labelWidth, setLabelWidth] = useState(0),
     [scheduling_id, setSchedulingId] = useState(""),
     [scheduling, setScheduling] = useState([]),
@@ -93,7 +92,6 @@ function EditScheduling({ enqueueSnackbar }) {
       setAddress(scheduling.data[0].address);
       setComplement(scheduling.data[0].complement);
       setComments(scheduling.data[0].comments);
-      setClientId(scheduling.data[0].client_id);
       setPhotographerId(scheduling.data[0].photographer_id);
       setOldPhotographerId(scheduling.data[0].photographer_id);
       setScheduling(scheduling.data[0]);
@@ -143,8 +141,7 @@ function EditScheduling({ enqueueSnackbar }) {
       !date ||
       !address ||
       !photographer_id ||
-      !horary ||
-      !client_id
+      !horary
     ) {
       enqueueSnackbar(
         "Informações estão faltando para dar sequência ao processo!",
@@ -178,7 +175,6 @@ function EditScheduling({ enqueueSnackbar }) {
         accompanies,
         photographer_id,
         horary,
-        client_id,
         services: codServicos,
         prices,
       })
