@@ -10,8 +10,6 @@ class Broker extends Model {
 
   services() {
     return this.belongsToMany('App/Models/Service')
-      .pivotTable('broker_service')
-      .withPivot(['price'])
   }
 }
 

@@ -117,8 +117,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [services, setServices] = useState([]),
     [horary, setHorary] = useState(""),
     [retirar_chaves, setRetirarChaves] = useState(false),
-    [city, setCity] = useState(""),
-    [district, setDistrict] = useState(""),
     [horaryDisable, setHoraryDisable] = useState(true),
     [events, setEvents] = useState([]),
     [date, setDate] = useState(moment()),
@@ -133,19 +131,19 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
     [service_id, setServiceId] = useState([]),
     [district_id, setDistrictId] = useState(""),
     [photographer, setPhotographer] = useState([]),
-    [broker, setBroker] = useState([]),
     [photographer_sabado, setPhotographerSabado] = useState([]),
     [photographer_id, setPhotographerId] = useState(""),
     [horary_id, setHoraryId] = useState(""),
     [servicesSelected, setServicesSelected] = useState([]),
     [servicesString, setServicesString] = useState(""),
     [valorTotal, setValorTotal] = useState(),
+    [client, setClient] = useState([]),
     [client_id, setClientId] = useState(clientCode),
     [labelWidth, setLabelWidth] = useState(0),
     script = document.createElement("script"),
     queryString = window.location.search,
     urlParams = new URLSearchParams(queryString),
-    loginEmail = urlParams.get("login");
+    email = urlParams.get("login");
 
   script.src = "https://apis.google.com/js/client.js";
 
@@ -154,41 +152,31 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       getPhotographerSabado();
       setServicesString("");
     }
-    if (step === 1) {
-      getBroker();
-    }
   }, [step]);
 
   useEffect(() => {
-    getClientByEmail(loginEmail);
-  }, [loginEmail]);
+    if(email) {
+      getClientByEmail(email);
+    } else {
+      getClientByCodigo(clientCode);
+    }
+  }, [email]);
 
-  async function getClientByEmail(loginEmail) {
-    await api.get(`/client/email/${loginEmail}`).then((response) => {
-      setClientId(response.data.id);
+  async function getClientByEmail(email) {
+    await api.get(`/client/email/${email}`).then((response) => {
+      if(!response.data.id){
+        setClientId(response.data.id);
+        setClient(response.data);
+      }
     });
   }
 
-  async function getBroker() {
-    await api.get(`/client/${client_id}`).then(async (response) => {
-      await api.get(`/broker/${response.data[0].broker_id}`).then((response) => {
-
-        let newServices = []
-        services.map((service, index) => {
-          const brokerService = response.data[0].services.filter(serviceBroker => {
-            return serviceBroker.pivot.service_id == service.pivot.service_id
-          })
-
-          newServices.push({
-            ...service,
-            price: brokerService[0] ? brokerService[0].pivot.price : 0
-          })
-        })
-
-        setServices(newServices);
-
-        setBroker(response.data[0]);
-      });
+  async function getClientByCodigo(clientCode) {
+    await api.get(`/client/${clientCode}`).then((response) => {
+      if(!response.data.id){
+        setClientId(response.data[0].id);
+        setClient(response.data[0]);
+      }
     });
   }
 
@@ -200,8 +188,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
 
   async function getAddress(address, lat, lng, city, district) {
     setAddress(address);
-    setCity(city);
-    setDistrict(district);
     setLat(lat);
     setLng(lng);
     await api
@@ -386,7 +372,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         !city_id ||
         !district_id ||
         !photographer_id ||
-        !client_id
+        (!client_id && !email)
       ) {
         enqueueSnackbar(
           "Informações estão faltando para dar sequência ao processo!",
@@ -422,6 +408,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           district_id,
           photographer_id,
           client_id,
+          email: email ? email : client.email,
           accompanies,
           actived: false,
           retirar_chaves,
@@ -523,7 +510,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
       !district_id ||
       !photographer_id ||
       !horary ||
-      !client_id ||
+      (!client_id && !email)||
       !service_id
     ) {
       enqueueSnackbar(
@@ -563,6 +550,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
         photographer_id,
         horary,
         client_id,
+        email: email ? email : client.email,
         services: codServicos,
         prices
       })
@@ -715,7 +703,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           <div className={classes.form}>
             <Grid container>
               {services.map((service, index) => {
-                if(service.price) {
+                if(service.pivot.price) {
                   return (
                     <Grid 
                       item 
@@ -748,7 +736,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                                   newServiceSelected.push(
                                     {
                                       'service_id': service.id, 
-                                      'price': service.price
+                                      'price': service.pivot.price
                                     }
                                   );
                                 }

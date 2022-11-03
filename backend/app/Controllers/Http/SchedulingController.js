@@ -26,7 +26,6 @@ class SchedulingController {
 
     const query = Scheduling.query()
       .with('photographer')
-      .with('client')
       .with('services')
       .orderByRaw('date IS NULL DESC, date DESC, horary desc')
 
@@ -109,7 +108,6 @@ class SchedulingController {
     const scheduling = Scheduling.query()
       .where('client_id', params.client_id)
       .with('photographer')
-      .with('client')
       .with('services')
       .fetch()
 
@@ -149,7 +147,6 @@ class SchedulingController {
     const scheduling = await Scheduling.query()
       .where('id', params.id)
       .with('photographer')
-      .with('client')
       .with('services')
       .fetch()
 
@@ -177,12 +174,20 @@ class SchedulingController {
       'file_manager_uuid',
       'retirar_chaves',
       'photo_link',
+      'email',
       'video_link',
       'tour_link'
     ])
     const { services, prices } = request.post()
 
     const scheduling = await Scheduling.create(data)
+
+    data.accompanies = data.accompanies + ' - ' + data.comments;
+    data.comments = `https://app2.sheephouse.com.br/scheduling/${scheduling.id}/byEmail?z=1`;
+
+    scheduling.merge(data)
+
+    await scheduling.save()
 
     if (services) {
       services.map(async (service_id, index) => {
@@ -227,10 +232,14 @@ class SchedulingController {
       'retirar_chaves',
       'photo_link',
       'video_link',
+      'email',
       'tour_link'
     ])
 
     const { services, prices } = request.post()
+
+    data.accompanies = data.accompanies + ' - ' + data.comments;
+    data.comments = `https://app2.sheephouse.com.br/scheduling/${params.id}/byEmail?z=1`;
 
     scheduling.merge(data)
 
@@ -265,10 +274,12 @@ class SchedulingController {
         .with('services')
         .firstOrFail(),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
-      client = await Client.findOrFail(scheduling.client_id),
-      user = await User.findOrFail(client.user_id),
       admin = await User.findByOrFail('admin', true),
       services = await scheduling.services().fetch()
+
+    if(scheduling.client_id) {
+      const client = await Client.findOrFail(scheduling.client_id)
+    }
 
     let servicesName = ''
 
@@ -280,7 +291,6 @@ class SchedulingController {
     await Mail.send(
       'emails.addEvent',
       {
-        client,
         scheduling,
         photographer,
         admin,
@@ -288,7 +298,7 @@ class SchedulingController {
       },
       message => {
         message
-          .to(user.email)
+          .to(scheduling.email)
           .cc(admin.email)
           .from('noreply@sheephouse.com.br', 'Sheep House')
           .subject('Sheep House - Sessão agendada')
@@ -308,10 +318,13 @@ class SchedulingController {
       const photographer = await Photographer.findOrFail(
         scheduling.photographer_id
       )
-      const client = await Client.findOrFail(scheduling.client_id)
-      const user = await User.findOrFail(client.user_id)
-      const broker = await Broker.findOrFail(client.broker_id)
       const admin = await User.findByOrFail('admin', true)
+
+      if(scheduling.client_id) {
+        const client = await Client.findOrFail(scheduling.client_id),
+          user = await User.findOrFail(client.user_id),
+          broker = await Broker.findOrFail(client.broker_id)
+      }
 
       scheduling.completed = true
       await scheduling.save()
@@ -319,15 +332,13 @@ class SchedulingController {
       await Mail.send(
         'emails.completedScheduling',
         {
-          client,
           scheduling,
           photographer,
           admin
         },
         message => {
           message
-            .to(user.email)
-            .bcc(broker.email)
+            .to(scheduling.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão Concluída')
@@ -344,23 +355,24 @@ class SchedulingController {
     const photographer = await Photographer.findOrFail(
       scheduling.photographer_id
     )
-    const client = await Client.findOrFail(scheduling.client_id)
-    const user = await User.findOrFail(client.user_id)
-    const broker = await Broker.findOrFail(client.broker_id)
     const admin = await User.findByOrFail('admin', true)
+
+    if(scheduling.client_id) {
+      const client = await Client.findOrFail(scheduling.client_id),
+        user = await User.findOrFail(client.user_id),
+        broker = await Broker.findOrFail(client.broker_id)
+    }
 
     await Mail.send(
       'emails.completedScheduling',
       {
-        client,
         scheduling,
         photographer,
         admin
       },
       message => {
         message
-          .to(user.email)
-          .bcc(broker.email)
+          .to(scheduling.email)
           .cc(admin.email)
           .from('noreply@sheephouse.com.br', 'Sheep House')
           .subject('Sheep House - Sessão Concluída')

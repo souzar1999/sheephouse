@@ -6,7 +6,6 @@ class BrokerController {
   async index({ request, response, view }) {
     const broker = Broker.query()
       .with('client')
-      .with('services')
       .orderBy('name', 'asc')
       .fetch()
 
@@ -16,7 +15,6 @@ class BrokerController {
   async indexActive({ request, response, view }) {
     const broker = Broker.query()
       .with('client')
-      .with('services')
       .where('active', true)
       .orderBy('name', 'asc')
       .fetch()
@@ -28,7 +26,6 @@ class BrokerController {
     const broker = await Broker.query()
       .where('id', params.id)
       .with('client')
-      .with('services')
       .fetch()
 
     return broker
@@ -44,8 +41,6 @@ class BrokerController {
       enviar_nf,
       enviar_relatorio,
       dia_vencimento,
-      services,
-      prices
     } = request.post()
 
     const broker = await Broker.create({
@@ -74,8 +69,6 @@ class BrokerController {
       enviar_nf,
       enviar_relatorio,
       dia_vencimento,
-      services,
-      prices
     } = request.post()
 
     broker.merge({
@@ -91,20 +84,6 @@ class BrokerController {
     })
 
     await broker.save()
-
-    if (services) {
-      await broker.services().detach()
-
-      services.map(async (service_id, index) => {
-        await broker.services().attach(service_id)
-        await Database.table('broker_service')
-          .where('service_id', service_id)
-          .where('broker_id', params.id)
-          .update('price', prices[index])
-      })
-
-      broker.services = await broker.services().fetch()
-    }
 
     return broker
   }

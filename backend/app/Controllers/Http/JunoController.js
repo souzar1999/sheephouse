@@ -114,9 +114,6 @@ class JunoController {
                   },{
                     text: scheduling.address,
                     alignment: 'left',
-                  },{
-                    text: scheduling.comments ? scheduling.comments : '-',
-                    alignment: 'center',
                   }
                 ]);
               }

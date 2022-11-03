@@ -3,8 +3,7 @@ import { withSnackbar } from "notistack";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 
@@ -20,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
-    minWidth: "300px",
   },
   title: {
     marginBottom: theme.spacing(4),
@@ -46,37 +44,52 @@ function CityServices({ enqueueSnackbar }) {
   }, []);
 
   async function handleLoad() {
+    let services,
+      cityServices = [];
+
+    await api.get("/service").then((response) => {
+      services = response.data;
+      services.map((service) => {
+        cityServices.push({
+          city_id,
+          service_id: service.id,
+          name: service.name,
+          price: 0,
+        });
+      });
+    });
+
     await api.get(`/city/${city_id}`).then(async (response) => {
       const city = response.data[0];
       setCity(city);
 
-      await api.get("/service").then((response) => {
-        let services = response.data;
-
-        services.map((service) => {
-          service.checked = false;
-          city.services.map((cityServ) => {
-            if (cityServ.id == service.id) service.checked = true;
-          });
-        });
-
-        setServices(response.data);
+      cityServices.map((service, index) => {
+        const cityService = response.data[0].services.filter(serviceCity => {
+          return serviceCity.pivot.service_id == service.service_id
+        }) 
+        
+        service.price = cityService[0] ? cityService[0].pivot.price : 0
       });
+
+      setServices(cityServices);
     });
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
-    let codServicos = [];
+    let codServicos = [],
+      prices = [];
 
     services.map((service) => {
-      if (service.checked) {
-        codServicos.push(service.id);
-      }
+      codServicos.push(service.service_id);
+      prices.push(service.price);
     });
 
     await api
-      .put(`/city/${city_id}`, { services: codServicos })
+      .put(`/city/${city_id}`, { 
+        services: codServicos,
+        prices,
+      })
       .then((response) => {
         enqueueSnackbar("Registro atualizado com sucesso!", {
           variant: "success",
@@ -107,39 +120,28 @@ function CityServices({ enqueueSnackbar }) {
         Serviços
       </Typography>
       <form onSubmit={handleSubmit}>
-        {services.map((service) => {
-          return (
-            <Grid className={classes.grid} item xs={12} key={service.id}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={service.checked}
-                    onChange={(event) => {
-                      let newServices = services;
+        <Grid container spacing={2}>
+          {services.map((service, index) => {
+            return (
+              <Grid item xs={12} key={index}>
+                <TextField
+                  type="text"
+                  onChange={(event) => {
+                    let newServices = services;
 
-                      newServices.map((item) => {
-                        if (item.id == event.target.value) {
-                          if (item.checked) {
-                            item.checked = false;
-                          } else {
-                            item.checked = true;
-                          }
-                        }
-                      });
+                    newServices[index].price = event.target.value;
 
-                      setServices([...newServices]);
-                    }}
-                    name={`services[${service.id}]`}
-                    id={`service${service.id}`}
-                    color="primary"
-                    value={service.id}
-                  />
-                }
-                label={service.name}
-              />
-            </Grid>
-          );
-        })}
+                    setServices([...newServices]);
+                  }}
+                  value={service.price}
+                  label={`Valor: ${service.name}`}
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+            );
+          })}
+        </Grid>
 
         <Grid item xs={12}>
           <Button

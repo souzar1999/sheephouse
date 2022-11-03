@@ -73,6 +73,7 @@ function Scheduling({ enqueueSnackbar }) {
     [photographer_id, setPhotographerId] = useState(""),
     [horary_id, setHoraryId] = useState(""),
     [client_id, setClientId] = useState(""),
+    [client, setClient] = useState([]),
     [labelWidth, setLabelWidth] = useState(0),
     inputLabel = React.useRef(null),
     script = document.createElement("script");
@@ -237,6 +238,7 @@ function Scheduling({ enqueueSnackbar }) {
         photographer_id,
         horary,
         client_id,
+        email: client.email,
         services: service_id,
       })
       .then(async (response) => {
@@ -559,8 +561,14 @@ function Scheduling({ enqueueSnackbar }) {
                 id="clientSelect"
                 labelWidth={labelWidth}
                 value={client_id}
-                onChange={(event) => {
+                onChange={async (event) => {
                   setClientId(event.target.value);
+
+                  await api.get(`/client/${event.target.value}`).then((response) => {
+                    if(!response.data.id){
+                      setClient(response.data[0]);
+                    }
+                  });
                 }}
               >
                 <MenuItem value="">-- Selecione --</MenuItem>

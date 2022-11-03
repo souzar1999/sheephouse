@@ -62,19 +62,15 @@ const useStyles = makeStyles((theme) => ({
 
 function EditScheduling({ enqueueSnackbar }) {
   const classes = useStyles(),
-    [horaries, setHoraries] = useState([]),
     [services, setServices] = useState([]),
     [servicesSelected, setServicesSelected] = useState([]),
     [photographers, setPhotographers] = useState([]),
-    [horaryDisable, setHoraryDisable] = useState(true),
     [dateDisable, setDateDisable] = useState(true),
-    [events, setEvents] = useState([]),
     [date, setDate] = useState(new Date()),
     [address, setAddress] = useState(""),
     [complement, setComplement] = useState(""),
     [comments, setComments] = useState(""),
     [accompanies, setAccompanies] = useState(false),
-    [service_id, setServiceId] = useState([]),
     [photographer, setPhotographer] = useState([]),
     [photographer_id, setPhotographerId] = useState(""),
     [old_photographer_id, setOldPhotographerId] = useState(""),
@@ -83,8 +79,6 @@ function EditScheduling({ enqueueSnackbar }) {
     [labelWidth, setLabelWidth] = useState(0),
     [scheduling_id, setSchedulingId] = useState(""),
     [scheduling, setScheduling] = useState([]),
-    [broker, setBroker] = useState([]),
-    [status, setStatus] = useState([]),
     inputLabel = React.useRef(null),
     { id } = useParams();
 
@@ -115,25 +109,12 @@ function EditScheduling({ enqueueSnackbar }) {
         city = cityResp.data[0];
       });
 
-      await api.get(`/client/${scheduling.data[0].client_id}`).then(async (client) => {
-        await api.get(`/broker/${client.data[0].broker_id}`).then((brokerResp) => {
-          setBroker(brokerResp.data[0]);
-          broker = brokerResp.data[0];
-        });
-      });
-
       city.services.map((cityService) => {
         let service = {};
 
         service.id = cityService.id;
         service.name = cityService.name;
         service.checked = false;
-
-        broker.services.map((brokerService) => {
-          if(brokerService.id === cityService.id) {
-            service.value = brokerService.pivot.price;
-          }
-        })
 
         scheduling.data[0].services.map((schedulingService) => {
           if(schedulingService.id === cityService.id) {

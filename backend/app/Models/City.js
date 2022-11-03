@@ -9,7 +9,9 @@ class City extends Model {
   }
 
   services() {
-    return this.belongsToMany('App/Models/Service').pivotTable('city_service')
+    return this.belongsToMany('App/Models/Service')
+      .pivotTable('city_service')
+      .withPivot(['price'])
   }
 }
 

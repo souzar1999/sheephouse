@@ -4,9 +4,7 @@ const { google } = require('googleapis'),
   Env = use('Env'),
   calendar = google.calendar(Env.get('GAPI_VERSION')),
   Photographer = use('App/Models/Photographer'),
-  Client = use('App/Models/Client'),
   Scheduling = use('App/Models/Scheduling'),
-  Broker = use('App/Models/Broker'),
   User = use('App/Models/User')
 
 class GapiCalendarController {
@@ -54,9 +52,6 @@ class GapiCalendarController {
         .with('services')
         .firstOrFail(),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
-      client = await Client.findOrFail(scheduling.client_id),
-      broker = await Broker.findOrFail(client.broker_id),
-      user = await User.findOrFail(client.user_id),
       services = await scheduling.services().fetch(),
       admin = await User.findByOrFail('admin', true)
 
@@ -67,13 +62,12 @@ class GapiCalendarController {
       servicesName += `${service.name}`
     })
 
-    const calendarId = photographer.email,
+    let calendarId = photographer.email,
       eventId = scheduling.google_event_id,
       retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirar_chaves}${servicesName} - (${user.email} | ${broker.name})`,
+      summary = `${retirar_chaves}${servicesName} - (${scheduling.email})`,
       complement = scheduling.complement ? scheduling.complement : '',
-      comments = scheduling.comments ? scheduling.comments : '',
-      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${scheduling.email}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}/byEmail?z=1">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -85,16 +79,11 @@ class GapiCalendarController {
         location: `${scheduling.address} - ${complement}`,
         attendees: [
           {
-            email: user.email,
-            displayName: `${client.name} / ${broker.name}`,
+            email: scheduling.email,
             responseStatus: 'accepted',
             organizer: false
           }
-        ],
-        source: {
-          title: 'Reagendar',
-          url: `https://app2.sheephouse.com.br/scheduling/${scheduling_id}`
-        }
+        ]
       },
       tokens = JSON.parse(photographer.tokens)
 
@@ -110,7 +99,6 @@ class GapiCalendarController {
       await Mail.send(
         'emails.addEventCalendar',
         {
-          client,
           scheduling,
           photographer,
           admin,
@@ -118,7 +106,7 @@ class GapiCalendarController {
         },
         message => {
           message
-            .to(user.email)
+            .to(scheduling.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão agendada')
@@ -152,9 +140,6 @@ class GapiCalendarController {
         .firstOrFail(),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
       oldPhotographer = await Photographer.findOrFail(old_photographer_id),
-      client = await Client.findOrFail(scheduling.client_id),
-      broker = await Broker.findOrFail(client.broker_id),
-      user = await User.findOrFail(client.user_id),
       services = await scheduling.services().fetch(),
       admin = await User.findByOrFail('admin', true)
 
@@ -165,14 +150,13 @@ class GapiCalendarController {
       servicesName += `${service.name}`
     })
 
-    const oldCalendarId = oldPhotographer.email,
+    let oldCalendarId = oldPhotographer.email,
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
       retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirar_chaves}${servicesName} - (${user.email} | ${broker.name})`,
+      summary = `${retirar_chaves}${servicesName} - (${scheduling.email})`,
       complement = scheduling.complement ? scheduling.complement : '',
-      comments = scheduling.comments ? scheduling.comments : '',
-      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email}\nNome / Empresa: ${client.name} / ${broker.name}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\nObservações: ${comments}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${scheduling.email}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}/byEmail?z=1">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -184,16 +168,11 @@ class GapiCalendarController {
         location: `${scheduling.address} - ${complement}`,
         attendees: [
           {
-            email: user.email,
-            displayName: `${client.name} / ${broker.name}`,
+            email: scheduling.email,
             responseStatus: 'accepted',
             organizer: false
           }
-        ],
-        source: {
-          title: 'Reagendar',
-          url: `https://app2.sheephouse.com.br/scheduling/${scheduling_id}`
-        }
+        ]
       },
       oldTokens = JSON.parse(oldPhotographer.tokens),
       tokens = JSON.parse(photographer.tokens)
@@ -214,7 +193,6 @@ class GapiCalendarController {
           await Mail.send(
             'emails.reschedulingEventCalendar',
             {
-              client,
               scheduling,
               photographer,
               admin,
@@ -222,7 +200,7 @@ class GapiCalendarController {
             },
             message => {
               message
-                .to(user.email)
+                .to(scheduling.email)
                 .cc(admin.email)
                 .from('noreply@sheephouse.com.br', 'Sheep House')
                 .subject('Sheep House - Sessão reagendada')
@@ -234,7 +212,6 @@ class GapiCalendarController {
       await Mail.send(
         'emails.reschedulingEvent',
         {
-          client,
           scheduling,
           photographer,
           admin,
@@ -242,7 +219,7 @@ class GapiCalendarController {
         },
         message => {
           message
-            .to(user.email)
+            .to(scheduling.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão reagendada')
@@ -263,9 +240,6 @@ class GapiCalendarController {
       ),
       scheduling = await Scheduling.findOrFail(scheduling_id),
       photographer = await Photographer.findOrFail(scheduling.photographer_id),
-      client = await Client.findOrFail(scheduling.client_id),
-      broker = await Broker.findOrFail(client.broker_id),
-      user = await User.findOrFail(client.user_id),
       admin = await User.findByOrFail('admin', true),
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
@@ -280,14 +254,13 @@ class GapiCalendarController {
         await Mail.send(
           'emails.cancelEventCalendar',
           {
-            client,
             scheduling,
             photographer,
             admin
           },
           message => {
             message
-              .to(user.email)
+              .to(scheduling.email)
               .cc(admin.email)
               .from('noreply@sheephouse.com.br', 'Sheep House')
               .subject('Sheep House - Sessão cancelada')
@@ -298,14 +271,13 @@ class GapiCalendarController {
       await Mail.send(
         'emails.cancelEvent',
         {
-          client,
           scheduling,
           photographer,
           admin
         },
         message => {
           message
-            .to(user.email)
+            .to(scheduling.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão cancelada')

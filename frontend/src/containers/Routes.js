@@ -16,7 +16,6 @@ import UserLogout from "./UserLogout/UserLogout";
 import UserLogoutError from "./UserLogout/UserLogoutError";
 import UserRegister from "./UserRegister/UserRegister";
 import UserResetPassword from "./UserResetPassword/UserResetPassword";
-import UserDownload from "./UserDownload/UserDownload";
 
 import NotFound from "./NotFound/NotFound";
 
@@ -38,7 +37,6 @@ import AdminScheduling from "./Admin/Scheduling/Scheduling";
 import AdminEditScheduling from "./Admin/Scheduling/EditScheduling";
 import AdminReports from "./Admin/Reports/Reports";
 import AdminService from "./Admin/Service/Service";
-import AdminBrokerServices from "./Admin/Broker/BrokerServices";
 
 import GlobalScheduling from "./Global/Scheduling/Scheduling";
 import GlobalRescheduling from "./Global/Scheduling/Rescheduling";
@@ -53,6 +51,7 @@ export default function Routes() {
           <LogoutRequeredRoute path="/signup" component={UserRegister} />
           <LogoutRequeredRoute path="/reset" component={UserResetPassword} />
           <LogoutRequeredRoute exact path="/scheduling/byEmail/" component={UserScheduling} />
+          <LogoutRequeredRoute exact path="/scheduling/:id/byEmail/" component={GlobalRescheduling} />
           <LoginRequeredRoute path="/logout" component={UserLogout} />
           <LoginRequeredRoute path="/logout/e" component={UserLogoutError} />
 
@@ -67,10 +66,6 @@ export default function Routes() {
             component={AdminCityServices}
           />
           <AdminRequeredRoute exact path="/admin/city" component={AdminCity} />
-          <AdminRequeredRoute
-            path="/admin/broker/:broker_id/services"
-            component={AdminBrokerServices}
-          />
           <AdminRequeredRoute
             exact
             path="/admin/broker"

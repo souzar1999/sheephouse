@@ -1,5 +1,6 @@
 'use strict'
 
+const Database = use('Database')
 const City = use('App/Models/City')
 
 class CityController {
@@ -45,21 +46,16 @@ class CityController {
   }
 
   async store({ request, response }) {
-    const { name, services } = request.post()
+    const { name } = request.post()
 
     const city = await City.create({ name })
-
-    if (services && services.length > 0) {
-      await city.services().attach(services)
-      city.services = await city.services().fetch()
-    }
 
     return city
   }
 
   async update({ params, request, response }) {
     const city = await City.findOrFail(params.id)
-    const { name, active, services } = request.post()
+    const { name, active, services, prices } = request.post()
 
     city.merge({ name, active })
 
@@ -67,7 +63,15 @@ class CityController {
 
     if (services) {
       await city.services().detach()
-      await city.services().attach(services)
+
+      services.map(async (service_id, index) => {
+        await city.services().attach(service_id)
+        await Database.table('city_service')
+          .where('service_id', service_id)
+          .where('city_id', params.id)
+          .update('price', prices[index])
+      })
+
       city.services = await city.services().fetch()
     }
 

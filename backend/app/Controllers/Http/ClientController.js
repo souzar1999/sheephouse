@@ -53,14 +53,19 @@ class ClientController {
       .table('users')
       .where('email', params.email)
       .first()
+    if(user){
+      const client = await Database
+        .table('clients')
+        .where('user_id', user.id)
+        .where('actived', true)
+        .first()
 
-    const client = await Database
-      .table('clients')
-      .where('user_id', user.id)
-      .where('actived', true)
-      .first()
+        return client
+    } else {
 
-    return client
+      return null;
+    }
+
   }
 
   async store({ request, response }) {

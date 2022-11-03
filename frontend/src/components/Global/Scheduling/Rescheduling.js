@@ -99,18 +99,23 @@ function Rescheduling({ enqueueSnackbar, clientCode }) {
 
   async function getScheduling() {
     await api.get(`/scheduling/${id}`).then((response) => {
-      if (
-        response.data[0].completed ||
-        (!response.data[0].actived && response.data[0].date)
-      ) {
-        history.push(`/scheduling`);
-      }
-      setPhotographerId(response.data[0].photographer_id);
-      setScheduling(response.data[0]);
-      setPhotographer(response.data[0].photographer);
+      console.log(typeof response.data[0]);
+      if(typeof response.data[0] === 'object'){
+        if (
+          response.data[0].completed ||
+          (!response.data[0].actived && response.data[0].date)
+        ) {
+          history.push(`/scheduling`);
+        }
+        setPhotographerId(response.data[0].photographer_id);
+        setScheduling(response.data[0]);
+        setPhotographer(response.data[0].photographer);
 
-      if (!response.data[0].date) {
-        getPhotographers();
+        if (!response.data[0].date) {
+          getPhotographers();
+        }
+      } else {
+        history.push(`/`);
       }
     });
   }

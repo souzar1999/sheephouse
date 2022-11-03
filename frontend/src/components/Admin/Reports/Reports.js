@@ -262,9 +262,6 @@ function Reports({ enqueueSnackbar }) {
                     <p>
                       <strong>Complemento:</strong> {rowData.complement}
                     </p>
-                    <p>
-                      <strong>Observações:</strong> {rowData.comments}
-                    </p>
                     {rowData.date_cancel && (
                       <p>
                         <strong>Cancelamento:</strong>

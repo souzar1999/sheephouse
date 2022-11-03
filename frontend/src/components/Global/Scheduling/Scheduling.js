@@ -624,13 +624,16 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                       )}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="left">
-                      {scheduling.client.name}
+                      {scheduling.email}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="left">
                       {scheduling.photographer.name}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="center">
-                      {status[scheduling.status]}
+                      {(scheduling.date ? 
+                        status[scheduling.status] : 
+                        'Administrador irá agendar'
+                      )}
                     </TableCell>
                   </TableRow>
                   <TableRow className={classes.tableRow}>
@@ -640,10 +643,6 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                       <br/>
                       {scheduling.complement ?
                           `Complemento: ${scheduling.complement}` : ''
-                      }
-                      <br/>
-                      {scheduling.comments ? 
-                          `Observações: ${scheduling.comments}` : ''
                       }
                     </TableCell>
                   </TableRow>

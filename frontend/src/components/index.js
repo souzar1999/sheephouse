@@ -12,7 +12,6 @@ import Logout from "./UserLogout/Logout";
 import LogoutError from "./UserLogout/LogoutError";
 import SignUp from "./UserRegister/SignUp";
 import ResetPassword from "./UserResetPassword/ResetPassword";
-import Download from "./UserDownload/UserDownload";
 
 import UserScheduling from "./User/Scheduling/Scheduling";
 import UserContact from "./User/Contact/Contact";
@@ -24,7 +23,6 @@ import AdminCityServices from "./Admin/City/CityServices";
 import AdminRegion from "./Admin/Region/Region";
 import AdminDistrict from "./Admin/District/District";
 import AdminBroker from "./Admin/Broker/Broker";
-import AdminBrokerServices from "./Admin/Broker/BrokerServices";
 import AdminClient from "./Admin/Client/Client";
 import AdminPhotographer from "./Admin/Photographer/Photographer";
 import AdminPhotographerHorary from "./Admin/Photographer/Horary";
@@ -55,7 +53,6 @@ export {
   AdminRegion,
   AdminPhotographer,
   AdminBroker,
-  AdminBrokerServices,
   AdminDistrict,
   AdminClient,
   AdminPhotographerHorary,
@@ -72,5 +69,4 @@ export {
   UserReports,
   UserProfile,
   ResetPassword,
-  Download,
 };
