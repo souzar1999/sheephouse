@@ -26,6 +26,7 @@ class SchedulingController {
 
     const query = Scheduling.query()
       .with('photographer')
+      .with('client')
       .with('services')
       .orderByRaw('date IS NULL DESC, date DESC, horary desc')
 
@@ -108,6 +109,7 @@ class SchedulingController {
     const scheduling = Scheduling.query()
       .where('client_id', params.client_id)
       .with('photographer')
+      .with('client')
       .with('services')
       .fetch()
 
@@ -147,6 +149,7 @@ class SchedulingController {
     const scheduling = await Scheduling.query()
       .where('id', params.id)
       .with('photographer')
+      .with('client')
       .with('services')
       .fetch()
 

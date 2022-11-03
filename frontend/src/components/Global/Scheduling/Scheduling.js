@@ -624,7 +624,7 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
                       )}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="left">
-                      {scheduling.email}
+                      {scheduling.client ? scheduling.client.name : scheduling.email}
                     </TableCell>
                     <TableCell className={classes.tableCell} align="left">
                       {scheduling.photographer.name}
