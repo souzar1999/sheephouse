@@ -5,7 +5,9 @@ const { google } = require('googleapis'),
   calendar = google.calendar(Env.get('GAPI_VERSION')),
   Photographer = use('App/Models/Photographer'),
   Scheduling = use('App/Models/Scheduling'),
-  User = use('App/Models/User')
+  User = use('App/Models/User'),
+  Client = use('App/Models/Client'),
+  Broker = use('App/Models/Broker')
 
 class GapiCalendarController {
   async eventList({ request, response }) {
