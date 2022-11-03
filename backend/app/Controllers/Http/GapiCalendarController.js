@@ -65,9 +65,9 @@ class GapiCalendarController {
     let calendarId = photographer.email,
       eventId = scheduling.google_event_id,
       retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirar_chaves}${servicesName} - (${scheduling.email})`,
+      summary = `${retirar_chaves}${servicesName} - (${user.email ? user.email : scheduling.email})`,
       complement = scheduling.complement ? scheduling.complement : '',
-      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${scheduling.email}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}/byEmail?z=1">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email ? user.email : scheduling.email}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}/byEmail?z=1">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -79,7 +79,7 @@ class GapiCalendarController {
         location: `${scheduling.address} - ${complement}`,
         attendees: [
           {
-            email: scheduling.email,
+            email: user.email ? user.email : scheduling.email,
             responseStatus: 'accepted',
             organizer: false
           }
@@ -106,7 +106,7 @@ class GapiCalendarController {
         },
         message => {
           message
-            .to(scheduling.email)
+            .to(user.email ? user.email : scheduling.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão agendada')
@@ -154,9 +154,9 @@ class GapiCalendarController {
       calendarId = photographer.email,
       eventId = scheduling.google_event_id,
       retirar_chaves = scheduling.retirar_chaves ? '(RETIRAR CHAVES)\n' : '',
-      summary = `${retirar_chaves}${servicesName} - (${scheduling.email})`,
+      summary = `${retirar_chaves}${servicesName} - (${user.email ? user.email : scheduling.email})`,
       complement = scheduling.complement ? scheduling.complement : '',
-      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${scheduling.email}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}/byEmail?z=1">aqui</a> para cancelar ou reagendar`,
+      description = `--- Serviço ---\n${servicesName}\n\n--- Funcionário ---\n${photographer.name}\n\n--- Informações sobre o cliente ---\nEmail: ${user.email ? user.email : scheduling.email}\nEndereço do Imóvel: ${scheduling.address}\nComplemento: ${complement}\n\nAcesse a plataforma <a href="https://app2.sheephouse.com.br/scheduling/${scheduling_id}/byEmail?z=1">aqui</a> para cancelar ou reagendar`,
       timeZone = 'America/Sao_Paulo',
       end = { dateTime: dateTimeEnd.substr(0, 22) + '-03:00:00', timeZone },
       start = { dateTime: dateTimeStart.substr(0, 22) + '-03:00:00', timeZone },
@@ -168,7 +168,7 @@ class GapiCalendarController {
         location: `${scheduling.address} - ${complement}`,
         attendees: [
           {
-            email: scheduling.email,
+            email: user.email ? user.email : scheduling.email,
             responseStatus: 'accepted',
             organizer: false
           }
@@ -200,7 +200,7 @@ class GapiCalendarController {
             },
             message => {
               message
-                .to(scheduling.email)
+                .to(user.email ? user.email : scheduling.email)
                 .cc(admin.email)
                 .from('noreply@sheephouse.com.br', 'Sheep House')
                 .subject('Sheep House - Sessão reagendada')
@@ -219,7 +219,7 @@ class GapiCalendarController {
         },
         message => {
           message
-            .to(scheduling.email)
+            .to(user.email ? user.email : scheduling.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão reagendada')
@@ -260,7 +260,7 @@ class GapiCalendarController {
           },
           message => {
             message
-              .to(scheduling.email)
+              .to(user.email ? user.email : scheduling.email)
               .cc(admin.email)
               .from('noreply@sheephouse.com.br', 'Sheep House')
               .subject('Sheep House - Sessão cancelada')
@@ -277,7 +277,7 @@ class GapiCalendarController {
         },
         message => {
           message
-            .to(scheduling.email)
+            .to(user.email ? user.email : scheduling.email)
             .cc(admin.email)
             .from('noreply@sheephouse.com.br', 'Sheep House')
             .subject('Sheep House - Sessão cancelada')
