@@ -35,7 +35,7 @@ services:
             - web
         labels:
             - "traefik.enable=true"
-            - "traefik.frontend.rule=Host:app.sheephouse.com.br"
+            - "traefik.frontend.rule=Host:app2.sheephouse.com.br"
         build: ./frontend
         container_name: sheephouse-frontend
         ports:
