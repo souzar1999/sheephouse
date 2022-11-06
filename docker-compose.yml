@@ -10,11 +10,6 @@ services:
               cpus: '0.5'
               memory: 128M
         restart: always
-        networks:
-            - web
-        labels:
-            - "traefik.enable=true"
-            - "traefik.frontend.rule=Host:api.sheephouse.com.br"
         build: ./backend
         container_name: sheephouse-backend
         ports:
@@ -31,11 +26,6 @@ services:
               cpus: '0.5'
               memory: 512M    
         restart: always
-        networks:
-            - web
-        labels:
-            - "traefik.enable=true"
-            - "traefik.frontend.rule=Host:app2.sheephouse.com.br"
         build: ./frontend
         container_name: sheephouse-frontend
         ports:
