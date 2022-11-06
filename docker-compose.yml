@@ -10,6 +10,8 @@ services:
               cpus: '0.5'
               memory: 128M
         restart: always
+        networks:
+            - web
         build: ./backend
         container_name: sheephouse-backend
         ports:
@@ -26,6 +28,8 @@ services:
               cpus: '0.5'
               memory: 512M    
         restart: always
+        networks:
+            - web
         build: ./frontend
         container_name: sheephouse-frontend
         ports:
@@ -33,3 +37,6 @@ services:
         links:
             - sheephouse-backend
         command: npm start
+networks:
+    web:
+        external: true
