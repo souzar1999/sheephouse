@@ -77,24 +77,7 @@ class ClientController {
       'actived'
     ])
 
-    const user = await User.findOrFail(data.user_id),
-      admin = await User.findByOrFail('admin', true)
-
-    return await Client.create(data).then(async res => {
-      await Mail.send(
-        'emails.addClient',
-        {
-          client: res.$attributes,
-          user
-        },
-        message => {
-          message
-            .to(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheep House')
-            .subject('Sheep House - Cliente cadastrado')
-        }
-      )
-    })
+    return await Client.create(data)
   }
 
   async update({ params, request, response }) {
@@ -119,24 +102,7 @@ class ClientController {
 
     client.merge(data)
 
-    await client.save().then(async res => {
-      if (enviarEmail) {
-        await Mail.send(
-          'emails.activeClient',
-          {
-            client,
-            admin
-          },
-          message => {
-            message
-              .to(user.email)
-              .cc(admin.email)
-              .from('noreply@sheephouse.com.br', 'Sheep House')
-              .subject('Sheep House - Cadastro ativado')
-          }
-        )
-      }
-    })
+    await client.save()
 
     return client
   }

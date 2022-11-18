@@ -25,18 +25,6 @@ class ForgotPasswordController {
     })
 
     const resetPasswordUrl = `${Env.get('FRONT_URL')}/reset?token=${token}`
-
-    await Mail.send(
-      'emails.forgotpassword',
-      { name: client.name, resetPasswordUrl },
-      message => {
-        message
-          .to(user.email)
-          .cc(admin.email)
-          .from('noreply@sheephouse.com.br', 'Sheep House')
-          .subject('Sheep House - Recuperação de senha')
-      }
-    )
   }
 }
 

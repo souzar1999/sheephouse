@@ -291,23 +291,6 @@ class SchedulingController {
       servicesName += `${service.name}`
     })
 
-    await Mail.send(
-      'emails.addEvent',
-      {
-        scheduling,
-        photographer,
-        admin,
-        servicesName
-      },
-      message => {
-        message
-          .to(scheduling.email)
-          .cc(admin.email)
-          .from('noreply@sheephouse.com.br', 'Sheep House')
-          .subject('Sheep House - Sessão agendada')
-      }
-    )
-
     return response
       .status(200)
       .send({ message: 'Agendamento criado com sucesso' })
@@ -331,22 +314,6 @@ class SchedulingController {
 
       scheduling.completed = true
       await scheduling.save()
-
-      await Mail.send(
-        'emails.completedScheduling',
-        {
-          scheduling,
-          photographer,
-          admin
-        },
-        message => {
-          message
-            .to(scheduling.email)
-            .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheep House')
-            .subject('Sheep House - Sessão Concluída')
-        }
-      )
     }
     return response.status(200).send({ result: 'Agendamento concluido' })
   }
@@ -366,21 +333,6 @@ class SchedulingController {
         broker = await Broker.findOrFail(client.broker_id)
     }
 
-    await Mail.send(
-      'emails.completedScheduling',
-      {
-        scheduling,
-        photographer,
-        admin
-      },
-      message => {
-        message
-          .to(scheduling.email)
-          .cc(admin.email)
-          .from('noreply@sheephouse.com.br', 'Sheep House')
-          .subject('Sheep House - Sessão Concluída')
-      }
-    )
     return response.status(200).send({ result: 'Agendamento concluido' })
   }
 }

@@ -108,23 +108,6 @@ class GapiCalendarController {
 
       await scheduling.save()
 
-      await Mail.send(
-        'emails.addEventCalendar',
-        {
-          scheduling,
-          photographer,
-          admin,
-          servicesName
-        },
-        message => {
-          message
-            .to(user ? user.email : scheduling.email)
-            .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheep House')
-            .subject('Sheep House - Sessão agendada')
-        }
-      )
-
       return response
         .status(200)
         .send({ message: 'Agendamento criado com sucesso' })
@@ -212,41 +195,8 @@ class GapiCalendarController {
           scheduling.google_event_id = res.data.id
 
           await scheduling.save()
-          await Mail.send(
-            'emails.reschedulingEventCalendar',
-            {
-              scheduling,
-              photographer,
-              admin,
-              servicesName
-            },
-            message => {
-              message
-                .to(user ? user.email : scheduling.email)
-                .cc(admin.email)
-                .from('noreply@sheephouse.com.br', 'Sheep House')
-                .subject('Sheep House - Sessão reagendada')
-            }
-          )
         })
       })
-    } else {
-      await Mail.send(
-        'emails.reschedulingEvent',
-        {
-          scheduling,
-          photographer,
-          admin,
-          servicesName
-        },
-        message => {
-          message
-            .to(user ? user.email : scheduling.email)
-            .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheep House')
-            .subject('Sheep House - Sessão reagendada')
-        }
-      )
     }
 
     return response
@@ -282,39 +232,7 @@ class GapiCalendarController {
 
       const params = { calendarId, auth: oauth2Client, eventId }
 
-      await calendar.events.delete(params).then(async res => {
-        await Mail.send(
-          'emails.cancelEventCalendar',
-          {
-            scheduling,
-            photographer,
-            admin
-          },
-          message => {
-            message
-              .to(user ? user.email : scheduling.email)
-              .cc(admin.email)
-              .from('noreply@sheephouse.com.br', 'Sheep House')
-              .subject('Sheep House - Sessão cancelada')
-          }
-        )
-      })
-    } else {
-      await Mail.send(
-        'emails.cancelEvent',
-        {
-          scheduling,
-          photographer,
-          admin
-        },
-        message => {
-          message
-            .to(user ? user.email : scheduling.email)
-            .cc(admin.email)
-            .from('noreply@sheephouse.com.br', 'Sheep House')
-            .subject('Sheep House - Sessão cancelada')
-        }
-      )
+      await calendar.events.delete(params)
     }
 
     return response

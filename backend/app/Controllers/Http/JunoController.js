@@ -168,24 +168,6 @@ class JunoController {
           pdfDoc.pipe(fs.createWriteStream(path));
           pdfDoc.end();
 
-          await Mail.send(
-            'emails.boleto',
-            {
-              broker,
-              startDate: moment(firstDay).format('DD/MM/YYYY'),
-              endDate: moment(lastDay).format('DD/MM/YYYY')
-            },
-            message => {
-              message
-                .to('victorsouzar1999@gmail.com')
-                .from('noreply@sheephouse.com.br', 'Sheep House')
-                .subject('Sheep House - Relatório mensal para cobrança')
-                .attach(path, {
-                  filename: 'Relatório-Sheephouse.pdf'
-                })
-            }
-          )
-
           fs.unlinkSync(path);
 
           if(broker.id == 1) {
