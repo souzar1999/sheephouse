@@ -185,9 +185,6 @@ class SchedulingController {
 
     const scheduling = await Scheduling.create(data)
 
-    data.accompanies = data.accompanies + ' - ' + data.comments;
-    data.comments = `https://app2.sheephouse.com.br/scheduling/${scheduling.id}/byEmail?z=1`;
-
     scheduling.merge(data)
 
     await scheduling.save()
@@ -240,9 +237,6 @@ class SchedulingController {
     ])
 
     const { services, prices } = request.post()
-
-    data.accompanies = data.accompanies + ' - ' + data.comments;
-    data.comments = `https://app2.sheephouse.com.br/scheduling/${params.id}/byEmail?z=1`;
 
     scheduling.merge(data)
 

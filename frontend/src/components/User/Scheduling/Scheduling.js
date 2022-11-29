@@ -415,17 +415,22 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
           services: codServicos,
           prices
         })
-        .then(async (response) => {
-          enqueueSnackbar("Sessão cadastrada com sucesso!", {
-            variant: "success",
-            autoHideDuration: 5000,
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "center",
-            },
-          });
+        .then(() => {
+          enqueueSnackbar(
+            "Agendamento concluído com sucesso.\n\nA Sheep House agradece a preferência!",
+            {
+              variant: "success",
+              autoHideDuration: 5000,
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center",
+              },
+            }
+          );
 
-          history.push(`/scheduling`);
+          setTimeout(() => {
+            history.go(0);
+          }, 5000);
         })
         .catch((error) => {
           enqueueSnackbar("Erro ao cadastrar sessão!", {
@@ -575,7 +580,9 @@ function Scheduling({ enqueueSnackbar, clientCode }) {
               }
             );
 
-            history.push(`/scheduling`);
+            setTimeout(() => {
+              history.go(0);
+            }, 5000);
           });
       })
       .catch((error) => {
