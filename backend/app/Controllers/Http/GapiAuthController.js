@@ -13,7 +13,7 @@ class GapiAuthController {
     const oauth2Client = new google.auth.OAuth2(
       Env.get('GCLIENT_ID'),
       Env.get('GCLIENT_SECRET'),
-      `${Env.get('FRONT_URL')}/admin/photographer/authorizationCode`
+      `https://app2.sheephouse.com.br/admin/photographer/authorizationCode`
     )
 
     const url = oauth2Client.generateAuthUrl({
@@ -29,7 +29,7 @@ class GapiAuthController {
       oauth2Client = new google.auth.OAuth2(
         Env.get('GCLIENT_ID'),
         Env.get('GCLIENT_SECRET'),
-        `${Env.get('FRONT_URL')}/admin/photographer/authorizationCode`
+        `https://app2.sheephouse.com.br/admin/photographer/authorizationCode`
       ),
       { tokens } = await oauth2Client.getToken({ code: data.code }),
       photographer = await Photographer.findOrFail(data.id),
